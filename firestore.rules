@@ -17,5 +17,11 @@ service cloud.firestore {
       allow read: if true; // Publicly readable
       allow write: if isAdmin(); // Only admins can write
     }
+
+    // Settings collection
+    match /settings/{settingId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin(); // Only admins can write
+    }
   }
 }

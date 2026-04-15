@@ -87,16 +87,16 @@ export default function Projects() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-24 px-8 bg-[#111827] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-30 bg-[url('https://picsum.photos/seed/factory-dark/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
+      <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/factory-dark/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-sm text-slate-400 mb-4 flex items-center gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
+          <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
+            <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-white font-medium">Dự án</span>
+            <span className="text-[var(--text-main)] font-medium">Dự án</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Dự án đã thực hiện</h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
+          <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             Sản phẩm thật — Đã giao cho hơn 500 doanh nghiệp trên toàn quốc
           </p>
         </div>
@@ -168,7 +168,7 @@ export default function Projects() {
         {/* CTA */}
         <div className="mt-20 text-center">
           <p className="text-slate-600 mb-6">Bạn muốn có sản phẩm tương tự? Liên hệ ngay để nhận báo giá miễn phí.</p>
-          <button className="bg-[#d9381e] text-white font-bold py-3 px-8 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 mx-auto shadow-lg shadow-red-500/30">
+          <button className="bg-[var(--accent)] text-white font-bold py-3 px-8 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 mx-auto shadow-lg shadow-red-500/30">
             Nhận báo giá miễn phí <ArrowRight size={18} />
           </button>
         </div>
@@ -237,7 +237,7 @@ export default function Projects() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">Ghi chú thêm</label>
                 <textarea placeholder="Mô tả yêu cầu chi tiết..." rows={4} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"></textarea>
               </div>
-              <button type="button" className="w-full bg-[#d9381e] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2">
+              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2">
                 GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={20} />
               </button>
               <p className="text-center text-xs text-slate-500 mt-4">Cam kết bảo mật thông tin - Phản hồi trong 5 phút</p>

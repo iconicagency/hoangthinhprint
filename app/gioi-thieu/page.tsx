@@ -100,7 +100,7 @@ export default function About() {
       </section>
 
       {/* Section 2: Con số nói lên tất cả */}
-      <section className="py-24 px-8 bg-[#111827] text-white text-center">
+      <section className="py-24 px-8 bg-[var(--card-bg)] text-[var(--text-main)] text-center border-y border-[var(--border)]">
         <div className="max-w-6xl mx-auto">
           <div className="mb-16">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
@@ -114,22 +114,22 @@ export default function About() {
             <div className="flex flex-col items-center">
               <TrendingUp size={32} className="text-[var(--accent)] mb-6" />
               <div className="text-5xl font-bold text-[var(--accent)] mb-2">17+</div>
-              <div className="text-sm text-slate-300">Năm kinh nghiệm</div>
+              <div className="text-sm text-[var(--text-dim)]">Năm kinh nghiệm</div>
             </div>
             <div className="flex flex-col items-center">
               <Users size={32} className="text-[var(--accent)] mb-6" />
               <div className="text-5xl font-bold text-[var(--accent)] mb-2">500+</div>
-              <div className="text-sm text-slate-300">Doanh nghiệp đã đặt in</div>
+              <div className="text-sm text-[var(--text-dim)]">Doanh nghiệp đã đặt in</div>
             </div>
             <div className="flex flex-col items-center">
               <Award size={32} className="text-[var(--accent)] mb-6" />
               <div className="text-5xl font-bold text-[var(--accent)] mb-2">300tr</div>
-              <div className="text-sm text-slate-300">Đơn hàng lớn nhất (VNĐ)</div>
+              <div className="text-sm text-[var(--text-dim)]">Đơn hàng lớn nhất (VNĐ)</div>
             </div>
             <div className="flex flex-col items-center">
               <Package size={32} className="text-[var(--accent)] mb-6" />
               <div className="text-5xl font-bold text-[var(--accent)] mb-2">500</div>
-              <div className="text-sm text-slate-300">MOQ tối thiểu (sản phẩm)</div>
+              <div className="text-sm text-[var(--text-dim)]">MOQ tối thiểu (sản phẩm)</div>
             </div>
           </div>
         </div>
@@ -308,7 +308,7 @@ export default function About() {
       </section>
 
       {/* Section 8: Cam kết */}
-      <section className="py-24 px-8 bg-[#111827] text-white">
+      <section className="py-24 px-8 bg-[var(--card-bg)] text-[var(--text-main)] border-y border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
@@ -326,12 +326,12 @@ export default function About() {
               { icon: Handshake, title: 'Đối tác đáng tin cậy', desc: '17+ năm hoạt động, 500+ đối tác tin tưởng trên toàn quốc.' },
               { icon: Gem, title: 'Giá trị thực', desc: 'Giá cạnh tranh, không phát sinh chi phí, minh bạch trong mọi giao dịch.' }
             ].map((item, i) => (
-              <div key={i} className="bg-[#1f2937] p-8 rounded-2xl border border-slate-700 text-center hover:border-[var(--accent)] transition-colors">
-                <div className="w-12 h-12 bg-[#374151] rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6">
+              <div key={i} className="bg-[var(--bg)] p-8 rounded-2xl border border-[var(--border)] text-center hover:border-[var(--accent)] transition-colors shadow-sm">
+                <div className="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6">
                   <item.icon size={24} />
                 </div>
                 <h3 className="text-lg font-bold mb-3">{item.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -450,7 +450,7 @@ export default function About() {
                   <label className="block text-sm font-medium text-slate-700 mb-2">Ghi chú thêm</label>
                   <textarea placeholder="Mô tả yêu cầu chi tiết..." rows={4} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"></textarea>
                 </div>
-                <button type="button" className="w-full bg-[#d9381e] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2">
+                <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2">
                   GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={20} />
                 </button>
                 <p className="text-center text-xs text-slate-500 mt-4">Cam kết bảo mật thông tin - Phản hồi trong 5 phút</p>

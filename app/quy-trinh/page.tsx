@@ -49,16 +49,16 @@ export default function Process() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-24 px-8 bg-[#111827] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://picsum.photos/seed/process/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
+      <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/process/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-sm text-slate-400 mb-4 flex items-center gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
+          <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
+            <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-white font-medium">Quy trình</span>
+            <span className="text-[var(--text-main)] font-medium">Quy trình</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Quy trình làm việc</h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
+          <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             5 bước chuẩn chuyên nghiệp — Đảm bảo chất lượng ở mọi công đoạn.
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function Process() {
       </section>
 
       {/* Form Section */}
-      <section className="py-24 px-8 bg-[#111827] text-white">
+      <section className="py-24 px-8 bg-[var(--bg)] text-white">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-serif mb-4 tracking-tight">Bắt đầu ngay</h2>
@@ -158,7 +158,7 @@ export default function Process() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">Ghi chú thêm</label>
                 <textarea placeholder="Mô tả yêu cầu chi tiết..." rows={4} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"></textarea>
               </div>
-              <button type="button" className="w-full bg-[#d9381e] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-500/30">
+              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-500/30">
                 GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={20} />
               </button>
               <p className="text-center text-xs text-slate-500 mt-4">Cam kết bảo mật thông tin · Phản hồi trong 5 phút</p>

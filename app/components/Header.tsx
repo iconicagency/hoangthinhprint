@@ -1,25 +1,30 @@
+'use client';
+
 import Link from 'next/link';
 import { Phone, Mail, MapPin } from 'lucide-react';
+import { useSettings } from './SettingsProvider';
 
 export default function Header() {
+  const settings = useSettings();
+
   return (
     <>
       {/* Top Bar */}
       <div className="bg-[var(--card-bg)] text-[var(--text-dim)] text-xs py-2 px-8 flex justify-between items-center hidden md:flex border-b border-[var(--border)]">
         <div className="flex gap-6">
-          <span className="flex items-center gap-2"><Mail size={14}/> admin@inhoangthinh.com</span>
-          <span className="flex items-center gap-2"><MapPin size={14}/> Số 12, Đường số 5, KDC CityLand, Gò Vấp, TP.HCM</span>
+          <span className="flex items-center gap-2"><Mail size={14}/> {settings.contactEmail}</span>
+          <span className="flex items-center gap-2"><MapPin size={14}/> {settings.contactAddress}</span>
         </div>
         <div className="flex gap-6 items-center">
-          <span className="flex items-center gap-2 text-[var(--accent)] font-bold text-sm"><Phone size={14}/> Hotline: 090.XXX.XXXX</span>
-          <span className="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer">ZALO</span>
+          <span className="flex items-center gap-2 text-[var(--accent)] font-bold text-sm"><Phone size={14}/> Hotline: {settings.contactPhone}</span>
+          <a href={settings.zaloLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer">ZALO</a>
         </div>
       </div>
 
       {/* Header */}
       <header className="bg-[var(--bg)] py-4 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
         <Link href="/" className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
-          <div className="w-8 h-8 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-xs">IHT</div>
+          <div className="w-8 h-8 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-xs">{settings.logoText}</div>
           IN HOÀNG THỊNH
         </Link>
         <nav className="hidden lg:block">
@@ -34,9 +39,9 @@ export default function Header() {
             <li><Link href="/lien-he" className="hover:text-[var(--accent)] transition-colors">Liên hệ</Link></li>
           </ul>
         </nav>
-        <button className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20">
+        <Link href="/bao-gia" className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20">
           Báo Giá Ngay
-        </button>
+        </Link>
       </header>
     </>
   );

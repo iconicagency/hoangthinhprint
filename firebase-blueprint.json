@@ -11,12 +11,32 @@
         "imageUrl": { "type": "string", "description": "URL of the product image" }
       },
       "required": ["name", "price"]
+    },
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Global settings for the website content like logo, contact info, etc.",
+      "type": "object",
+      "properties": {
+        "logoText": { "type": "string", "description": "Text for the logo" },
+        "contactPhone": { "type": "string", "description": "Contact phone number" },
+        "contactEmail": { "type": "string", "description": "Contact email address" },
+        "contactAddress": { "type": "string", "description": "Physical address" },
+        "facebookLink": { "type": "string", "description": "Facebook URL" },
+        "zaloLink": { "type": "string", "description": "Zalo URL" },
+        "heroTitle": { "type": "string", "description": "Main hero title on homepage" },
+        "heroSubtitle": { "type": "string", "description": "Main hero subtitle on homepage" }
+      },
+      "required": ["logoText", "contactPhone"]
     }
   },
   "firestore": {
     "/products/{productId}": {
       "schema": { "$ref": "Product" },
       "description": "Collection of products"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "SiteSettings" },
+      "description": "Collection for site settings, usually just one document 'general'"
     }
   }
 }

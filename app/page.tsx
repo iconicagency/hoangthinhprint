@@ -6,8 +6,11 @@ import { Phone, Mail, MapPin, ChevronDown, Star, Play, CheckCircle2, Clock, Thum
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { useSettings } from './components/SettingsProvider';
 
 export default function Home() {
+  const settings = useSettings();
+
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
       <Header />
@@ -20,10 +23,10 @@ export default function Home() {
             Giải Pháp In Ấn Bao Bì Trọn Gói
           </div>
           <h1 className="text-5xl md:text-6xl font-serif mb-6 leading-tight text-[var(--text-main)] tracking-tight">
-            Hộp Cứng Cao Cấp – Ép Kim Vàng<br/>Ngay Tại Xưởng
+            {settings.heroTitle}
           </h1>
           <p className="text-[var(--text-dim)] mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-            Hộp âm dương - Nam châm - Ngăn kéo. Ép kim vàng trực tiếp tại xưởng, không qua trung gian. Đạt chuẩn xuất khẩu, mỹ phẩm, dược phẩm cao cấp.
+            {settings.heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
@@ -130,16 +133,16 @@ export default function Home() {
       </section>
 
       {/* Machinery */}
-      <section className="py-20 px-8 bg-[#0f172a] relative overflow-hidden border-y border-slate-800">
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#475569 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+      <section className="py-20 px-8 bg-[var(--card-bg)] relative overflow-hidden border-y border-[var(--border)]">
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
-            <div className="text-[#c5a059] text-sm font-bold tracking-widest uppercase mb-4">
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               NĂNG LỰC SẢN XUẤT
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-white mb-4 tracking-tight">MÁY MÓC & CÔNG NGHỆ</h2>
-            <p className="text-slate-400 mb-6">Toàn bộ máy móc tại xưởng — không thuê ngoài</p>
-            <div className="w-16 h-[2px] bg-[#c5a059] mx-auto"></div>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-4 tracking-tight">MÁY MÓC & CÔNG NGHỆ</h2>
+            <p className="text-[var(--text-dim)] mb-6">Toàn bộ máy móc tại xưởng — không thuê ngoài</p>
+            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
@@ -152,16 +155,16 @@ export default function Home() {
             ].map((machine, i) => (
               <div key={i} className="flex flex-col gap-4">
                 {/* Image Box */}
-                <div className="relative h-40 rounded-xl overflow-hidden border border-slate-700/50 group">
+                <div className="relative h-40 rounded-xl overflow-hidden border border-[var(--border)] group">
                   <Image src={`https://picsum.photos/seed/machine${i+10}/300/200`} alt={machine.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/90 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                   <div className="absolute bottom-0 left-0 w-full p-3">
                     <span className="text-white font-bold text-xs drop-shadow-md">{machine.title}</span>
                   </div>
                 </div>
                 {/* Text Box */}
-                <div className="bg-[#1e293b]/60 border border-slate-700/50 rounded-xl p-5 text-center hover:border-[#c5a059]/50 transition-colors backdrop-blur-sm flex-1 flex flex-col justify-center">
-                  <p className="text-xs text-slate-400 leading-relaxed">{machine.desc}</p>
+                <div className="bg-[var(--bg)] border border-[var(--border)] rounded-xl p-5 text-center hover:border-[var(--accent)] transition-colors flex-1 flex flex-col justify-center shadow-sm">
+                  <p className="text-xs text-[var(--text-dim)] leading-relaxed">{machine.desc}</p>
                 </div>
               </div>
             ))}
@@ -173,11 +176,11 @@ export default function Home() {
       <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
-            <div className="text-[#c5a059] text-sm font-bold tracking-widest uppercase mb-4">
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               ĐỐI TÁC
             </div>
             <h2 className="text-4xl md:text-5xl font-serif text-[#0f172a] mb-6 tracking-tight">KHÁCH HÀNG CỦA CHÚNG TÔI</h2>
-            <div className="w-16 h-[2px] bg-[#c5a059] mx-auto"></div>
+            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
         </div>
         
@@ -345,7 +348,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-sm text-[var(--text-dim)] font-normal">Gọi ngay hotline</div>
-                <div className="text-xl text-[var(--accent)]">090.XXX.XXXX</div>
+                <div className="text-xl text-[var(--accent)]">{settings.contactPhone}</div>
               </div>
             </div>
           </div>

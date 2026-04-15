@@ -11,16 +11,16 @@ export default function Pricing() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-24 px-8 bg-[#111827] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
+      <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-sm text-slate-400 mb-4 flex items-center gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
+          <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
+            <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-white font-medium">Bảng giá</span>
+            <span className="text-[var(--text-main)] font-medium">Bảng giá</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Bảng giá sản phẩm</h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
+          <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             Giá tham khảo — Liên hệ để nhận báo giá chính xác cho đơn hàng của bạn.
           </p>
         </div>
@@ -47,37 +47,37 @@ export default function Pricing() {
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Âm dương thanh quay</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">53.200đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">39.200đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">39.200đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Âm dương 25x33</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">28.000đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">17.800đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">17.800đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Âm dương 15x15</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">17.000đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">10.200đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">10.200đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Nam châm 20x15</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">27.200đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">18.000đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">18.000đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Nam châm 24x32</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">39.800đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">30.400đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">30.400đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Bao diêm 20x24</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">33.200đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">21.500đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">21.500đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Bao diêm 12x8.5</td>
                   <td className="py-4 px-6 md:px-8 text-slate-400 line-through text-right">20.000đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">11.900đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">11.900đ</td>
                 </tr>
               </tbody>
             </table>
@@ -100,15 +100,15 @@ export default function Pricing() {
               <tbody className="divide-y divide-slate-100">
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Cao cấp Ivory</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">8.500đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">8.500đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Trung cấp Couche</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">4.200đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">4.200đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Giá rẻ Kraft</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">1.500đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">1.500đ</td>
                 </tr>
               </tbody>
             </table>
@@ -131,15 +131,15 @@ export default function Pricing() {
               <tbody className="divide-y divide-slate-100">
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Nắp gài 30x20</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">3.000đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">3.000đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Nắp gài 40x30</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">4.500đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">4.500đ</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6 md:px-8 text-slate-700 font-medium">Cuộn</td>
-                  <td className="py-4 px-6 md:px-8 text-[#d9381e] font-bold text-right">3.500đ</td>
+                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">3.500đ</td>
                 </tr>
               </tbody>
             </table>
@@ -148,7 +148,7 @@ export default function Pricing() {
 
         {/* CTA Button */}
         <div className="flex justify-center pt-8">
-          <Link href="/gioi-thieu" className="bg-[#d9381e] text-white font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-500/30">
+          <Link href="/gioi-thieu" className="bg-[var(--accent)] text-white font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-500/30">
             NHẬN BÁO GIÁ CHI TIẾT <ArrowRight size={20} />
           </Link>
         </div>

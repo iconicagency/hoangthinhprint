@@ -90,13 +90,13 @@ export default function Products() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-20 px-8 bg-[#111827] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://picsum.photos/seed/pattern/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
+      <section className="relative py-20 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/pattern/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-sm text-slate-400 mb-4 flex items-center gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
+          <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
+            <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-white">Sản phẩm</span>
+            <span className="text-[var(--text-main)] font-medium">Sản phẩm</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight">Tất cả sản phẩm</h1>
         </div>

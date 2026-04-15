@@ -2,12 +2,12 @@
 
 @layer base {
   :root {
-    --bg: #0a0e14;
-    --card-bg: #11171f;
-    --accent: #c5a059;
-    --text-main: #ffffff;
-    --text-dim: #a0a0a0;
-    --border: #2a3038;
+    --bg: #ffffff;
+    --card-bg: #f8fafc;
+    --accent: #b92b27;
+    --text-main: #0f172a;
+    --text-dim: #64748b;
+    --border: #e2e8f0;
   }
 
   body {

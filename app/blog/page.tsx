@@ -96,16 +96,16 @@ export default function Blog() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-24 px-8 bg-[#111827] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://picsum.photos/seed/blog-hero/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
+      <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/blog-hero/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-sm text-slate-400 mb-4 flex items-center gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
+          <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
+            <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-white font-medium">Blog</span>
+            <span className="text-[var(--text-main)] font-medium">Blog</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Blog — Kiến Thức Bao Bì & In Ấn</h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
+          <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             Cập nhật xu hướng bao bì và kiến thức in ấn cho doanh nghiệp.
           </p>
         </div>
@@ -124,7 +124,7 @@ export default function Blog() {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                   activeCategory === cat 
-                    ? 'bg-[#cca35e] text-white' 
+                    ? 'bg-[var(--accent)] text-white' 
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
@@ -161,7 +161,7 @@ export default function Blog() {
                     <span className="flex items-center gap-1"><Clock size={14} /> {post.readTime}</span>
                   </div>
                   <div className="mt-4">
-                    <Link href="#" className="text-[#cca35e] font-bold text-sm flex items-center gap-1 hover:text-yellow-700 transition-colors">
+                    <Link href="#" className="text-[var(--accent)] font-bold text-sm flex items-center gap-1 hover:text-yellow-700 transition-colors">
                       Đọc thêm <ArrowRight size={14} />
                     </Link>
                   </div>
@@ -179,7 +179,7 @@ export default function Blog() {
             <input 
               type="text" 
               placeholder="Tìm kiếm bài viết..." 
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 focus:outline-none focus:border-[#cca35e] focus:ring-1 focus:ring-[#cca35e]"
+              className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
           </div>
@@ -194,7 +194,7 @@ export default function Blog() {
                     <Image src={post.img} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-[#cca35e] transition-colors mb-1">
+                    <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-[var(--accent)] transition-colors mb-1">
                       {post.title}
                     </h4>
                     <span className="text-xs text-slate-500">{post.date}</span>
@@ -212,7 +212,7 @@ export default function Blog() {
                 <li key={index} className="flex items-center justify-between group cursor-pointer">
                   <div className="flex items-center gap-3">
                     <span className={`w-2 h-2 rounded-full ${cat.color}`}></span>
-                    <span className="text-slate-600 group-hover:text-[#cca35e] transition-colors text-sm">{cat.name}</span>
+                    <span className="text-slate-600 group-hover:text-[var(--accent)] transition-colors text-sm">{cat.name}</span>
                   </div>
                   <span className="text-slate-400 text-sm">({cat.count})</span>
                 </li>
@@ -225,7 +225,7 @@ export default function Blog() {
             <h3 className="font-bold text-lg text-slate-900 mb-6">Tags phổ biến</h3>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag, index) => (
-                <span key={index} className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs hover:bg-[#cca35e] hover:text-white transition-colors cursor-pointer">
+                <span key={index} className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs hover:bg-[var(--accent)] hover:text-white transition-colors cursor-pointer">
                   {tag}
                 </span>
               ))}
@@ -233,7 +233,7 @@ export default function Blog() {
           </div>
 
           {/* CTA Box */}
-          <div className="bg-[#cca35e] rounded-2xl p-8 text-white">
+          <div className="bg-[var(--accent)] rounded-2xl p-8 text-white">
             <h3 className="font-bold text-xl mb-2">Cần báo giá?</h3>
             <p className="text-white/90 text-sm mb-6">Liên hệ ngay để nhận báo giá miễn phí.</p>
             <div className="flex items-center gap-2 font-bold text-xl">

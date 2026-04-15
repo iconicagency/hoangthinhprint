@@ -1,20 +1,25 @@
+'use client';
+
 import Image from 'next/image';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import { useSettings } from './SettingsProvider';
 
 export default function Footer() {
+  const settings = useSettings();
+
   return (
     <footer className="bg-[var(--bg)] text-[var(--text-dim)] pt-24 pb-12 px-8 relative z-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         <div>
           <div className="text-3xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">IHT</div>
+            <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">{settings.logoText}</div>
             IN HOÀNG THỊNH
           </div>
           <p className="text-sm leading-relaxed mb-6">Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.</p>
           <div className="flex gap-4">
-             <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">FB</div>
+             <a href={settings.facebookLink} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">FB</a>
              <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">YT</div>
-             <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">ZL</div>
+             <a href={settings.zaloLink} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">ZL</a>
           </div>
         </div>
         
@@ -34,15 +39,15 @@ export default function Footer() {
           <ul className="space-y-4 text-sm">
             <li className="flex items-start gap-3">
               <MapPin size={18} className="text-[var(--accent)] shrink-0 mt-0.5" />
-              <span>Số 12, Đường số 5, KDC CityLand, Phường 10, Quận Gò Vấp, TP.HCM</span>
+              <span>{settings.contactAddress}</span>
             </li>
             <li className="flex items-center gap-3">
               <Phone size={18} className="text-[var(--accent)] shrink-0" />
-              <span>090.XXX.XXXX</span>
+              <span>{settings.contactPhone}</span>
             </li>
             <li className="flex items-center gap-3">
               <Mail size={18} className="text-[var(--accent)] shrink-0" />
-              <span>admin@inhoangthinh.com</span>
+              <span>{settings.contactEmail}</span>
             </li>
           </ul>
         </div>
