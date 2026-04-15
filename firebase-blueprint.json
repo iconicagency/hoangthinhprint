@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A product listed on the website.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the product" },
+        "description": { "type": "string", "description": "Description of the product" },
+        "price": { "type": "number", "description": "Price of the product" },
+        "imageUrl": { "type": "string", "description": "URL of the product image" }
+      },
+      "required": ["name", "price"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "Product" },
+      "description": "Collection of products"
+    }
+  }
+}
