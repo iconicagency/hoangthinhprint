@@ -113,8 +113,8 @@ export default function Products() {
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === cat 
-                  ? 'bg-slate-900 text-white' 
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-[var(--accent)] text-[var(--bg)]' 
+                  : 'bg-[var(--bg)] text-[var(--text-dim)] hover:bg-[var(--card-bg)] border border-[var(--border)]'
               }`}
             >
               {cat}
@@ -125,8 +125,8 @@ export default function Products() {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
-              <div className="relative aspect-square overflow-hidden bg-slate-100">
+            <div key={product.id} className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+              <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
                 <Image 
                   src={product.img} 
                   alt={product.title} 
@@ -136,7 +136,7 @@ export default function Products() {
                 />
               </div>
               <div className="p-5">
-                <h3 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
+                <h3 className="font-bold text-[var(--text-main)] text-sm mb-2 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
                   {product.title}
                 </h3>
                 <div className="text-xs font-medium text-[var(--accent)]">
@@ -148,7 +148,7 @@ export default function Products() {
         </div>
 
         {filteredProducts.length === 0 && (
-          <div className="text-center py-20 text-slate-500">
+          <div className="text-center py-20 text-[var(--text-dim)]">
             Không tìm thấy sản phẩm nào trong danh mục này.
           </div>
         )}

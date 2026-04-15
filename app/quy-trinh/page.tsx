@@ -68,13 +68,13 @@ export default function Process() {
       <section className="py-24 px-4 md:px-8 max-w-4xl mx-auto">
         <div className="relative">
           {/* Vertical Line */}
-          <div className="absolute left-[39px] top-0 bottom-0 w-[2px] bg-slate-100 hidden md:block"></div>
+          <div className="absolute left-[39px] top-0 bottom-0 w-[2px] bg-[var(--border)] hidden md:block"></div>
           
           <div className="space-y-16">
             {steps.map((step, index) => (
               <div key={step.id} className="relative flex flex-col md:flex-row gap-8 md:gap-12 items-start group">
                 {/* Icon */}
-                <div className="relative z-10 w-20 h-20 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-[var(--accent)] transition-colors shrink-0 shadow-sm mx-auto md:mx-0">
+                <div className="relative z-10 w-20 h-20 rounded-full bg-[var(--bg)] border-2 border-[var(--border)] flex items-center justify-center text-[var(--accent)] transition-colors shrink-0 shadow-sm mx-auto md:mx-0">
                   <step.icon size={32} strokeWidth={1.5} />
                 </div>
                 
@@ -83,8 +83,8 @@ export default function Process() {
                   <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-2">
                     BƯỚC {step.id}
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{step.title}</h3>
-                  <div className="space-y-4 text-slate-600 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-[var(--text-main)] mb-4">{step.title}</h3>
+                  <div className="space-y-4 text-[var(--text-dim)] leading-relaxed">
                     <p>{step.desc1}</p>
                     <p>{step.desc2}</p>
                   </div>
@@ -96,39 +96,39 @@ export default function Process() {
       </section>
 
       {/* Form Section */}
-      <section className="py-24 px-8 bg-[var(--bg)] text-white">
+      <section className="py-24 px-8 bg-[var(--card-bg)] text-[var(--text-main)] border-t border-[var(--border)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-serif mb-4 tracking-tight">Bắt đầu ngay</h2>
-            <p className="text-slate-400">Gửi yêu cầu — nhận báo giá trong 5 phút</p>
+            <p className="text-[var(--text-dim)]">Gửi yêu cầu — nhận báo giá trong 5 phút</p>
           </div>
           
-          <div className="bg-white p-8 md:p-10 rounded-3xl border border-slate-200 shadow-xl text-slate-900">
+          <div className="bg-[var(--bg)] p-8 md:p-10 rounded-3xl border border-[var(--border)] shadow-xl text-[var(--text-main)]">
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Họ và tên <span className="text-red-500">*</span></label>
-                  <input type="text" placeholder="Nguyễn Văn A" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]" />
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Họ và tên <span className="text-red-500">*</span></label>
+                  <input type="text" placeholder="Nguyễn Văn A" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Số điện thoại <span className="text-red-500">*</span></label>
-                  <input type="tel" placeholder="0901 234 567" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]" />
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Số điện thoại <span className="text-red-500">*</span></label>
+                  <input type="tel" placeholder="0901 234 567" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                  <input type="email" placeholder="email@example.com" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]" />
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Email</label>
+                  <input type="email" placeholder="email@example.com" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Tên công ty</label>
-                  <input type="text" placeholder="Công ty ABC" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]" />
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Tên công ty</label>
+                  <input type="text" placeholder="Công ty ABC" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Sản phẩm cần in</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white">
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Sản phẩm cần in</label>
+                  <select className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]">
                     <option>-- Chọn --</option>
                     <option>Hộp cứng</option>
                     <option>Túi giấy</option>
@@ -136,8 +136,8 @@ export default function Process() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Số lượng dự kiến</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white">
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Số lượng dự kiến</label>
+                  <select className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]">
                     <option>-- Chọn --</option>
                     <option>500 - 1.000</option>
                     <option>1.000 - 5.000</option>
@@ -145,8 +145,8 @@ export default function Process() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Ngành hàng</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white">
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Ngành hàng</label>
+                  <select className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]">
                     <option>-- Chọn --</option>
                     <option>Mỹ phẩm</option>
                     <option>Thực phẩm</option>
@@ -155,13 +155,13 @@ export default function Process() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Ghi chú thêm</label>
-                <textarea placeholder="Mô tả yêu cầu chi tiết..." rows={4} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"></textarea>
+                <label className="block text-sm font-medium text-[var(--text-dim)] mb-2">Ghi chú thêm</label>
+                <textarea placeholder="Mô tả yêu cầu chi tiết..." rows={4} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)]"></textarea>
               </div>
-              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-lg hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-500/30">
+              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-lg hover:opacity-90 transition-opacity uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
                 GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={20} />
               </button>
-              <p className="text-center text-xs text-slate-500 mt-4">Cam kết bảo mật thông tin · Phản hồi trong 5 phút</p>
+              <p className="text-center text-xs text-[var(--text-dim)] mt-4">Cam kết bảo mật thông tin · Phản hồi trong 5 phút</p>
             </form>
           </div>
         </div>

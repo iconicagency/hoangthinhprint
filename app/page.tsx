@@ -173,21 +173,21 @@ export default function Home() {
       </section>
 
       {/* Partners */}
-      <section className="py-24 bg-white overflow-hidden">
+      <section className="py-24 bg-[var(--bg)] overflow-hidden">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               ĐỐI TÁC
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[#0f172a] mb-6 tracking-tight">KHÁCH HÀNG CỦA CHÚNG TÔI</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">KHÁCH HÀNG CỦA CHÚNG TÔI</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
         </div>
         
         <div className="w-full relative">
           {/* Gradient masks for smooth fade on edges */}
-          <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-[var(--bg)] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-[var(--bg)] to-transparent z-10 pointer-events-none"></div>
           
           <motion.div 
             className="flex w-max"
@@ -196,8 +196,8 @@ export default function Home() {
           >
             {/* First set */}
             <div className="flex items-center gap-16 md:gap-32 px-8 md:px-16 opacity-60">
-              <div className="text-2xl font-black text-gray-300">BRAND LOGO</div>
-              <div className="text-2xl font-black text-gray-300">PARTNER</div>
+              <div className="text-2xl font-black text-[var(--border)]">BRAND LOGO</div>
+              <div className="text-2xl font-black text-[var(--border)]">PARTNER</div>
               <div className="text-2xl font-black text-gray-300">COMPANY</div>
               <div className="text-2xl font-black text-gray-300">STUDIO</div>
               <div className="text-2xl font-black text-gray-300">AGENCY</div>

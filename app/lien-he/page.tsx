@@ -34,7 +34,7 @@ export default function Contact() {
           <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
             THÔNG TIN
           </div>
-          <h2 className="text-4xl font-serif text-slate-900 mb-6 tracking-tight">Kết nối với In Hoàng Thịnh</h2>
+          <h2 className="text-4xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Kết nối với In Hoàng Thịnh</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mb-12"></div>
 
           <div className="space-y-8 mb-12">
@@ -43,8 +43,8 @@ export default function Contact() {
                 <Phone size={24} />
               </div>
               <div>
-                <div className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">HOTLINE</div>
-                <div className="font-bold text-slate-900 text-lg">090.XXX.XXXX</div>
+                <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">HOTLINE</div>
+                <div className="font-bold text-[var(--text-main)] text-lg">090.XXX.XXXX</div>
               </div>
             </div>
 
@@ -53,8 +53,8 @@ export default function Contact() {
                 <Mail size={24} />
               </div>
               <div>
-                <div className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">EMAIL</div>
-                <div className="font-bold text-slate-900">admin@inhoangthinh.com</div>
+                <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">EMAIL</div>
+                <div className="font-bold text-[var(--text-main)]">admin@inhoangthinh.com</div>
               </div>
             </div>
 
@@ -63,8 +63,8 @@ export default function Contact() {
                 <Building2 size={24} />
               </div>
               <div>
-                <div className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">VĂN PHÒNG</div>
-                <div className="text-slate-900 leading-relaxed">Số 12, Đường số 5, KDC CityLand, Phường 10, Quận Gò Vấp, TP.HCM</div>
+                <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">VĂN PHÒNG</div>
+                <div className="text-[var(--text-main)] leading-relaxed">Số 12, Đường số 5, KDC CityLand, Phường 10, Quận Gò Vấp, TP.HCM</div>
               </div>
             </div>
 
@@ -73,17 +73,17 @@ export default function Contact() {
                 <MapPin size={24} />
               </div>
               <div>
-                <div className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">XƯỞNG SX</div>
-                <div className="text-slate-900 leading-relaxed">KCN Tân Triều, Thanh Trì, Hà Nội</div>
+                <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">XƯỞNG SX</div>
+                <div className="text-[var(--text-main)] leading-relaxed">KCN Tân Triều, Thanh Trì, Hà Nội</div>
               </div>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <button className="px-6 py-2.5 border border-slate-200 rounded-lg text-slate-700 font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-white shadow-sm">
+            <button className="px-6 py-2.5 border border-[var(--border)] rounded-lg text-[var(--text-main)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] shadow-sm">
               Facebook
             </button>
-            <button className="px-6 py-2.5 border border-slate-200 rounded-lg text-slate-700 font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-white shadow-sm">
+            <button className="px-6 py-2.5 border border-[var(--border)] rounded-lg text-[var(--text-main)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] shadow-sm">
               Zalo
             </button>
           </div>
@@ -91,31 +91,31 @@ export default function Contact() {
 
         {/* Right Column: Form */}
         <div className="lg:w-7/12">
-          <div className="bg-slate-50 p-8 md:p-10 rounded-3xl border border-slate-200 shadow-sm">
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">Gửi yêu cầu báo giá</h3>
-            <p className="text-slate-500 mb-8">Điền thông tin bên dưới — nhận phản hồi nhanh nhất.</p>
+          <div className="bg-[var(--card-bg)] p-8 md:p-10 rounded-3xl border border-[var(--border)] shadow-sm">
+            <h3 className="text-2xl font-bold text-[var(--text-main)] mb-2">Gửi yêu cầu báo giá</h3>
+            <p className="text-[var(--text-dim)] mb-8">Điền thông tin bên dưới — nhận phản hồi nhanh nhất.</p>
             
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <input type="text" placeholder="Họ và tên *" className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white" />
+                  <input type="text" placeholder="Họ và tên *" className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
                 </div>
                 <div>
-                  <input type="tel" placeholder="Số điện thoại *" className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white" />
+                  <input type="tel" placeholder="Số điện thoại *" className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <input type="email" placeholder="Email" className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white" />
+                  <input type="email" placeholder="Email" className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
                 </div>
                 <div>
-                  <input type="text" placeholder="Tên công ty" className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white" />
+                  <input type="text" placeholder="Tên công ty" className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
                 </div>
               </div>
 
               <div>
-                <select className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-500">
+                <select className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-dim)]">
                   <option>Chọn loại sản phẩm</option>
                   <option>Hộp cứng</option>
                   <option>Túi giấy</option>
@@ -126,22 +126,22 @@ export default function Contact() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <input type="text" placeholder="Số lượng dự kiến" className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white" />
+                  <input type="text" placeholder="Số lượng dự kiến" className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
                 </div>
                 <div>
-                  <input type="text" placeholder="Ngành nghề" className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white" />
+                  <input type="text" placeholder="Ngành nghề" className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
                 </div>
               </div>
 
               <div>
-                <textarea placeholder="Mô tả yêu cầu chi tiết" rows={5} className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white"></textarea>
+                <textarea placeholder="Mô tả yêu cầu chi tiết" rows={5} className="w-full px-4 py-3.5 rounded-xl border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]"></textarea>
               </div>
 
-              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-xl hover:bg-red-700 transition-colors uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-500/20">
+              <button type="button" className="w-full bg-[var(--accent)] text-[var(--bg)] font-bold py-4 rounded-xl hover:opacity-90 transition-opacity uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
                 GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={20} />
               </button>
               
-              <p className="text-center text-xs text-slate-500 mt-4">Cam kết bảo mật thông tin · Phản hồi trong 30 phút</p>
+              <p className="text-center text-xs text-[var(--text-dim)] mt-4">Cam kết bảo mật thông tin · Phản hồi trong 30 phút</p>
             </form>
           </div>
         </div>

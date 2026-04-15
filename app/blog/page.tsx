@@ -124,8 +124,8 @@ export default function Blog() {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                   activeCategory === cat 
-                    ? 'bg-[var(--accent)] text-white' 
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[var(--accent)] text-[var(--bg)]' 
+                    : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'
                 }`}
               >
                 {cat}
@@ -136,7 +136,7 @@ export default function Blog() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {blogPosts.map((post) => (
-              <div key={post.id} className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+              <div key={post.id} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow flex flex-col">
                 <div className="relative h-60 overflow-hidden">
                   <Image 
                     src={post.img} 
@@ -145,23 +145,23 @@ export default function Blog() {
                     className="object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  <div className={`absolute top-4 left-4 ${post.categoryColor} text-white text-xs font-bold px-3 py-1.5 rounded-full`}>
+                  <div className={`absolute top-4 left-4 ${post.categoryColor} text-[var(--bg)] text-xs font-bold px-3 py-1.5 rounded-full`}>
                     {post.category}
                   </div>
                 </div>
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-bold text-xl text-slate-900 mb-3 line-clamp-2 hover:text-[var(--accent)] transition-colors cursor-pointer">
+                  <h3 className="font-bold text-xl text-[var(--text-main)] mb-3 line-clamp-2 hover:text-[var(--accent)] transition-colors cursor-pointer">
                     {post.title}
                   </h3>
-                  <p className="text-slate-600 text-sm mb-6 line-clamp-3 flex-1">
+                  <p className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1">
                     {post.excerpt}
                   </p>
-                  <div className="flex items-center justify-between text-sm text-slate-500 pt-4 border-t border-slate-100 mt-auto">
+                  <div className="flex items-center justify-between text-sm text-[var(--text-dim)] pt-4 border-t border-[var(--border)] mt-auto">
                     <span>{post.date}</span>
                     <span className="flex items-center gap-1"><Clock size={14} /> {post.readTime}</span>
                   </div>
                   <div className="mt-4">
-                    <Link href="#" className="text-[var(--accent)] font-bold text-sm flex items-center gap-1 hover:text-yellow-700 transition-colors">
+                    <Link href="#" className="text-[var(--accent)] font-bold text-sm flex items-center gap-1 hover:opacity-80 transition-opacity">
                       Đọc thêm <ArrowRight size={14} />
                     </Link>
                   </div>
@@ -179,14 +179,14 @@ export default function Blog() {
             <input 
               type="text" 
               placeholder="Tìm kiếm bài viết..." 
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+              className="w-full pl-12 pr-4 py-4 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[var(--text-main)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-dim)]" size={20} />
           </div>
 
           {/* Popular Posts */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h3 className="font-bold text-lg text-slate-900 mb-6">Bài viết nổi bật</h3>
+          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
+            <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Bài viết nổi bật</h3>
             <div className="space-y-6">
               {popularPosts.map((post) => (
                 <div key={post.id} className="flex gap-4 group cursor-pointer">
@@ -194,10 +194,10 @@ export default function Blog() {
                     <Image src={post.img} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-[var(--accent)] transition-colors mb-1">
+                    <h4 className="font-bold text-sm text-[var(--text-main)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors mb-1">
                       {post.title}
                     </h4>
-                    <span className="text-xs text-slate-500">{post.date}</span>
+                    <span className="text-xs text-[var(--text-dim)]">{post.date}</span>
                   </div>
                 </div>
               ))}
@@ -205,27 +205,27 @@ export default function Blog() {
           </div>
 
           {/* Categories */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h3 className="font-bold text-lg text-slate-900 mb-6">Danh mục</h3>
+          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
+            <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Danh mục</h3>
             <ul className="space-y-4">
               {sidebarCategories.map((cat, index) => (
                 <li key={index} className="flex items-center justify-between group cursor-pointer">
                   <div className="flex items-center gap-3">
                     <span className={`w-2 h-2 rounded-full ${cat.color}`}></span>
-                    <span className="text-slate-600 group-hover:text-[var(--accent)] transition-colors text-sm">{cat.name}</span>
+                    <span className="text-[var(--text-dim)] group-hover:text-[var(--accent)] transition-colors text-sm">{cat.name}</span>
                   </div>
-                  <span className="text-slate-400 text-sm">({cat.count})</span>
+                  <span className="text-[var(--text-dim)] text-sm">({cat.count})</span>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Tags */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h3 className="font-bold text-lg text-slate-900 mb-6">Tags phổ biến</h3>
+          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
+            <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Tags phổ biến</h3>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag, index) => (
-                <span key={index} className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs hover:bg-[var(--accent)] hover:text-white transition-colors cursor-pointer">
+                <span key={index} className="px-3 py-1.5 bg-[var(--bg)] text-[var(--text-dim)] border border-[var(--border)] rounded-full text-xs hover:bg-[var(--accent)] hover:text-[var(--bg)] transition-colors cursor-pointer">
                   {tag}
                 </span>
               ))}
@@ -233,9 +233,9 @@ export default function Blog() {
           </div>
 
           {/* CTA Box */}
-          <div className="bg-[var(--accent)] rounded-2xl p-8 text-white">
+          <div className="bg-[var(--accent)] rounded-2xl p-8 text-[var(--bg)]">
             <h3 className="font-bold text-xl mb-2">Cần báo giá?</h3>
-            <p className="text-white/90 text-sm mb-6">Liên hệ ngay để nhận báo giá miễn phí.</p>
+            <p className="text-[var(--bg)]/90 text-sm mb-6">Liên hệ ngay để nhận báo giá miễn phí.</p>
             <div className="flex items-center gap-2 font-bold text-xl">
               <Phone size={24} />
               090.XXX.XXXX
