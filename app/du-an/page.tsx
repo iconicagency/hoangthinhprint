@@ -168,9 +168,9 @@ export default function Projects() {
         {/* CTA */}
         <div className="mt-20 text-center">
           <p className="text-[var(--text-dim)] mb-6">Bạn muốn có sản phẩm tương tự? Liên hệ ngay để nhận báo giá miễn phí.</p>
-          <button className="bg-[var(--accent)] text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mx-auto shadow-lg shadow-[var(--accent)]/20">
+          <Link href="/bao-gia" className="bg-[var(--accent)] text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mx-auto shadow-lg shadow-[var(--accent)]/20 w-fit">
             Nhận báo giá miễn phí <ArrowRight size={18} />
-          </button>
+          </Link>
         </div>
 
       </section>

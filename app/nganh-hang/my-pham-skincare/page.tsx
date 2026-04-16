@@ -93,9 +93,9 @@ export default function CosmeticsPage() {
                 </div>
                 <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">{prod.title}</h3>
                 <p className="text-[var(--text-dim)] mb-8 h-12">{prod.desc}</p>
-                <button className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
+                <Link href="/san-pham" className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
                   Xem thêm <ArrowRight size={18} />
-                </button>
+                </Link>
               </div>
             ))}
           </div>

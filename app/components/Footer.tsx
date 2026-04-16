@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 
@@ -26,11 +27,11 @@ export default function Footer() {
         <div>
           <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Dịch Vụ In Ấn</h4>
           <ul className="space-y-3 text-sm">
-            <li className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hộp Cứng Cao Cấp</li>
-            <li className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Túi Giấy</li>
-            <li className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hộp Sóng Carton</li>
-            <li className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tem Nhãn Decal</li>
-            <li className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Catalogue, Brochure</li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hộp Cứng Cao Cấp</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Túi Giấy</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hộp Sóng Carton</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tem Nhãn Decal</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Catalogue, Brochure</Link></li>
           </ul>
         </div>
 

@@ -4,8 +4,10 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Phone, Mail, MapPin, Building2, ArrowRight } from 'lucide-react';
+import { useSettings } from '../components/SettingsProvider';
 
 export default function Contact() {
+  const settings = useSettings();
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
       <Header />
@@ -44,7 +46,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">HOTLINE</div>
-                <div className="font-bold text-[var(--text-main)] text-lg">090.XXX.XXXX</div>
+                <div className="font-bold text-[var(--text-main)] text-lg">{settings.contactPhone}</div>
               </div>
             </div>
 
@@ -54,7 +56,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">EMAIL</div>
-                <div className="font-bold text-[var(--text-main)]">admin@inhoangthinh.com</div>
+                <div className="font-bold text-[var(--text-main)]">{settings.contactEmail}</div>
               </div>
             </div>
 
@@ -64,7 +66,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="text-sm text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">VĂN PHÒNG</div>
-                <div className="text-[var(--text-main)] leading-relaxed">Số 12, Đường số 5, KDC CityLand, Phường 10, Quận Gò Vấp, TP.HCM</div>
+                <div className="text-[var(--text-main)] leading-relaxed">{settings.contactAddress}</div>
               </div>
             </div>
 
@@ -80,12 +82,12 @@ export default function Contact() {
           </div>
 
           <div className="flex gap-4">
-            <button className="px-6 py-2.5 border border-[var(--border)] rounded-lg text-[var(--text-main)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] shadow-sm">
+            <a href={settings.facebookLink} target="_blank" rel="noopener noreferrer" className="px-6 py-2.5 border border-[var(--border)] rounded-lg text-[var(--text-main)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] shadow-sm">
               Facebook
-            </button>
-            <button className="px-6 py-2.5 border border-[var(--border)] rounded-lg text-[var(--text-main)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] shadow-sm">
+            </a>
+            <a href={settings.zaloLink} target="_blank" rel="noopener noreferrer" className="px-6 py-2.5 border border-[var(--border)] rounded-lg text-[var(--text-main)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] shadow-sm">
               Zalo
-            </button>
+            </a>
           </div>
         </div>
 

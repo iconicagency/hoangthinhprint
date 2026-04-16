@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Phone, Mail, MapPin, ChevronDown, Star, Play, CheckCircle2, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote } from 'lucide-react';
 
@@ -31,12 +32,12 @@ export default function Home() {
             {settings.heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
+            <Link href="/san-pham" className="bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
               Xem sản phẩm <ArrowRight size={18}/>
-            </button>
-            <button className="border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">
+            </Link>
+            <Link href="/bao-gia" className="border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] flex items-center justify-center">
               Nhận báo giá miễn phí
-            </button>
+            </Link>
           </div>
           <div className="mt-14 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-[var(--text-dim)] font-medium">
             <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-[var(--accent)]"/> Thiết kế 3D miễn phí</span>
@@ -100,7 +101,7 @@ export default function Home() {
                   <p>{service.desc}</p>
                   <p className="mt-1 text-[var(--accent)] underline">{service.price}</p>
                 </div>
-                <a href="#" className="text-[var(--accent)] text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity">Xem chi tiết <ArrowRight size={16}/></a>
+                <Link href="/san-pham" className="text-[var(--accent)] text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity">Xem chi tiết <ArrowRight size={16}/></Link>
               </div>
             </div>
           ))}
@@ -205,9 +206,9 @@ export default function Home() {
           ))}
         </div>
         <div className="text-center mt-12">
-          <button className="border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">
+          <Link href="/du-an" className="inline-block border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">
             Xem tất cả dự án
-          </button>
+          </Link>
         </div>
       </section>
 

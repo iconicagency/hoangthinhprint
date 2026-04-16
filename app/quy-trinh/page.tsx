@@ -4,15 +4,17 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { MessageSquare, PenTool, Printer, Factory, Truck, ArrowRight } from 'lucide-react';
+import { useSettings } from '../components/SettingsProvider';
 
 export default function Process() {
+  const settings = useSettings();
   const steps = [
     {
       id: '01',
       title: 'Tư Vấn & Báo Giá',
       icon: MessageSquare,
       desc1: 'Bạn gửi yêu cầu, chúng tôi báo giá trong 5 phút. Tư vấn chọn chất liệu, kích thước, kỹ thuật in phù hợp.',
-      desc2: 'Liên hệ qua Hotline 090.XXX.XXXX hoặc Zalo. Nhân viên sẽ tư vấn chi tiết và gửi báo giá nhanh nhất.'
+      desc2: `Liên hệ qua Hotline ${settings.contactPhone} hoặc Zalo. Nhân viên sẽ tư vấn chi tiết và gửi báo giá nhanh nhất.`
     },
     {
       id: '02',

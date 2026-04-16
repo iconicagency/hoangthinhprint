@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
+import { useSettings } from '../components/SettingsProvider';
 
 const categories = [
   'Tất cả',
@@ -90,6 +91,7 @@ const tags = [
 
 export default function Blog() {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const settings = useSettings();
 
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
@@ -238,7 +240,7 @@ export default function Blog() {
             <p className="text-[var(--bg)]/90 text-sm mb-6">Liên hệ ngay để nhận báo giá miễn phí.</p>
             <div className="flex items-center gap-2 font-bold text-xl">
               <Phone size={24} />
-              090.XXX.XXXX
+              {settings.contactPhone}
             </div>
           </div>
 

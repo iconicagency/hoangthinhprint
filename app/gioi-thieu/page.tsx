@@ -1,11 +1,14 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Target, Eye, TrendingUp, Users, Award, Package, Printer, Sparkles, Shield, Settings, Box, UserCheck, ShieldCheck, Gem, Truck, Wand2, RefreshCcw, Factory, ArrowRight, Lightbulb, HeartHandshake, Handshake, MapPin, Phone, Mail } from 'lucide-react';
+import { useSettings } from '../components/SettingsProvider';
 
 export default function About() {
+  const settings = useSettings();
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
       <Header />
@@ -284,7 +287,7 @@ export default function About() {
               { title: 'Tem Nhãn Decal', desc: 'Tem decal - Tem bạc - Tem vỡ', img: null },
               { title: 'Thiết Kế Bao Bì', desc: 'Thiết kế 3D miễn phí', img: null }
             ].map((srv, i) => (
-              <div key={i} className="group cursor-pointer flex flex-col">
+              <Link href="/san-pham" key={i} className="group cursor-pointer flex flex-col">
                 {srv.img && (
                   <div className="relative h-48 rounded-t-2xl overflow-hidden shrink-0">
                     <Image src={srv.img} alt={srv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
@@ -301,7 +304,7 @@ export default function About() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -357,7 +360,7 @@ export default function About() {
                 </div>
                 <div>
                   <div className="font-bold text-[var(--text-main)]">Địa chỉ xưởng</div>
-                  <div className="text-[var(--text-dim)]">KCN Tân Triều, Thanh Trì, Hà Nội</div>
+                  <div className="text-[var(--text-dim)]">{settings.contactAddress}</div>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -366,7 +369,7 @@ export default function About() {
                 </div>
                 <div>
                   <div className="font-bold text-[var(--text-main)]">Hotline</div>
-                  <div className="text-[var(--accent)] font-bold">090.XXX.XXXX</div>
+                  <div className="text-[var(--accent)] font-bold">{settings.contactPhone}</div>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -375,7 +378,7 @@ export default function About() {
                 </div>
                 <div>
                   <div className="font-bold text-[var(--text-main)]">Email</div>
-                  <div className="text-[var(--accent)]">admin@inhoangthinh.com</div>
+                  <div className="text-[var(--accent)]">{settings.contactEmail}</div>
                 </div>
               </div>
             </div>
