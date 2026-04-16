@@ -7,12 +7,14 @@ import { Phone, Mail, MapPin, ChevronDown, Star, Play, CheckCircle2, Clock, Thum
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { useSettings } from './components/SettingsProvider';
+import PromoPopup from './components/PromoPopup';
 
 export default function Home() {
   const settings = useSettings();
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
+      <PromoPopup />
       <Header />
 
       {/* Hero Section */}
@@ -132,6 +134,83 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Process Section */}
+      <section className="py-24 px-8 bg-[var(--bg)]">
+        <div className="text-center mb-16">
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
+            QUY TRÌNH LÀM VIỆC
+          </div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">QUY TRÌNH 8 BƯỚC CHUYÊN NGHIỆP</h2>
+          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+        </div>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-center">
+            {[
+              { step: '01', title: 'Tiếp nhận' },
+              { step: '02', title: 'Tư vấn & Báo giá' },
+              { step: '03', title: 'Thiết kế 3D' },
+              { step: '04', title: 'In mẫu test' },
+              { step: '05', title: 'Ký hợp đồng' },
+              { step: '06', title: 'Sản xuất hàng loạt' },
+              { step: '07', title: 'Kiểm tra QC' },
+              { step: '08', title: 'Giao hàng' },
+            ].map((item, i) => (
+              <div key={i} className="relative">
+                <div className="w-16 h-16 mx-auto bg-[var(--card-bg)] rounded-full flex items-center justify-center border-2 border-[var(--accent)] text-[var(--accent)] font-black text-xl mb-4 relative z-10">
+                  {item.step}
+                </div>
+                {i < 7 && <div className="hidden lg:block absolute top-8 left-[60%] w-full h-[2px] bg-[var(--border)] -z-0"></div>}
+                <h3 className="font-bold text-sm text-[var(--text-main)]">{item.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Portfolio / Projects */}
+      <section className="py-24 px-8 bg-[var(--bg)]">
+        <div className="text-center mb-16">
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
+            DỰ ÁN TIÊU BIỂU
+          </div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">SẢN PHẨM ĐÃ THỰC HIỆN</h2>
+          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+        </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Happy New Year — rượu vang cao cấp', img: 'project1' },
+            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Chúc Mừng Năm Mới — ép kim vàng', img: 'project2' },
+            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Vinh Hoa — thiết kế truyền thống tinh xảo', img: 'project3' },
+            { tag: 'Hộp cứng', title: 'Hộp cứng Thuận Buồm Xuôi Gió — ép kim vàng', img: 'project4' },
+            { tag: 'Hộp cứng', title: 'Hộp cứng cao cấp — in logo ép kim', img: 'project5' },
+            { tag: 'Hộp cứng', title: 'Hộp quà tặng doanh nghiệp — lót lụa sang trọng', img: 'project6' },
+            { tag: 'Hộp cứng', title: 'Hộp yến sào cao cấp — thiết kế độc quyền', img: 'project7' },
+            { tag: 'Túi giấy', title: 'Túi giấy 3 phân khúc — Ivory · Couche · Kraft', img: 'project8' },
+          ].map((project, i) => (
+            <div key={i} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[var(--border)] group flex flex-col">
+              <div className="h-64 relative overflow-hidden border-b border-[var(--border)]">
+                <Image src={`https://picsum.photos/seed/${project.img}/400/400`} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100" referrerPolicy="no-referrer" />
+              </div>
+              <div className="p-5 flex-1 flex flex-col">
+                <div className="mb-3">
+                  <span className="inline-block border border-[var(--accent)]/50 text-[var(--accent)] px-3 py-1 rounded-md text-xs font-medium">
+                    {project.tag}
+                  </span>
+                </div>
+                <h3 className="text-[var(--text-main)] font-medium leading-relaxed text-sm">
+                  {project.title}
+                </h3>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-12">
+          <button className="border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">
+            Xem tất cả dự án
+          </button>
+        </div>
+      </section>
+
       {/* Machinery */}
       <section className="py-20 px-8 bg-[var(--card-bg)] relative overflow-hidden border-y border-[var(--border)]">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -214,50 +293,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Portfolio / Projects */}
-      <section className="py-24 px-8 bg-[var(--bg)]">
-        <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-            DỰ ÁN TIÊU BIỂU
-          </div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">SẢN PHẨM ĐÃ THỰC HIỆN</h2>
-          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
-        </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Happy New Year — rượu vang cao cấp', img: 'project1' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Chúc Mừng Năm Mới — ép kim vàng', img: 'project2' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Vinh Hoa — thiết kế truyền thống tinh xảo', img: 'project3' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng Thuận Buồm Xuôi Gió — ép kim vàng', img: 'project4' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng cao cấp — in logo ép kim', img: 'project5' },
-            { tag: 'Hộp cứng', title: 'Hộp quà tặng doanh nghiệp — lót lụa sang trọng', img: 'project6' },
-            { tag: 'Hộp cứng', title: 'Hộp yến sào cao cấp — thiết kế độc quyền', img: 'project7' },
-            { tag: 'Túi giấy', title: 'Túi giấy 3 phân khúc — Ivory · Couche · Kraft', img: 'project8' },
-          ].map((project, i) => (
-            <div key={i} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[var(--border)] group flex flex-col">
-              <div className="h-64 relative overflow-hidden border-b border-[var(--border)]">
-                <Image src={`https://picsum.photos/seed/${project.img}/400/400`} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100" referrerPolicy="no-referrer" />
-              </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="mb-3">
-                  <span className="inline-block border border-[var(--accent)]/50 text-[var(--accent)] px-3 py-1 rounded-md text-xs font-medium">
-                    {project.tag}
-                  </span>
-                </div>
-                <h3 className="text-[var(--text-main)] font-medium leading-relaxed text-sm">
-                  {project.title}
-                </h3>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="text-center mt-12">
-          <button className="border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">
-            Xem tất cả dự án
-          </button>
-        </div>
-      </section>
-
       {/* Video Section */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)] relative overflow-hidden">
          <div className="absolute inset-0 opacity-10 bg-[url('https://picsum.photos/seed/factory/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
@@ -269,39 +304,6 @@ export default function Home() {
             <p className="text-[var(--text-dim)] text-lg max-w-2xl mx-auto mb-8">Khám phá quy trình sản xuất khép kín từ thiết kế, in ấn đến gia công thành phẩm tại xưởng in quy mô lớn của chúng tôi.</p>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
          </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-24 px-8 bg-[var(--bg)]">
-        <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-            QUY TRÌNH LÀM VIỆC
-          </div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">QUY TRÌNH 8 BƯỚC CHUYÊN NGHIỆP</h2>
-          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
-        </div>
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-center">
-            {[
-              { step: '01', title: 'Tiếp nhận' },
-              { step: '02', title: 'Tư vấn & Báo giá' },
-              { step: '03', title: 'Thiết kế 3D' },
-              { step: '04', title: 'In mẫu test' },
-              { step: '05', title: 'Ký hợp đồng' },
-              { step: '06', title: 'Sản xuất hàng loạt' },
-              { step: '07', title: 'Kiểm tra QC' },
-              { step: '08', title: 'Giao hàng' },
-            ].map((item, i) => (
-              <div key={i} className="relative">
-                <div className="w-16 h-16 mx-auto bg-[var(--card-bg)] rounded-full flex items-center justify-center border-2 border-[var(--accent)] text-[var(--accent)] font-black text-xl mb-4 relative z-10">
-                  {item.step}
-                </div>
-                {i < 7 && <div className="hidden lg:block absolute top-8 left-[60%] w-full h-[2px] bg-[var(--border)] -z-0"></div>}
-                <h3 className="font-bold text-sm text-[var(--text-main)]">{item.title}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* Testimonials */}
@@ -353,11 +355,45 @@ export default function Home() {
             </div>
           </div>
           <div className="md:w-1/2 w-full">
-            <form className="flex flex-col gap-4">
-              <input type="text" placeholder="Họ và tên *" className="w-full px-4 py-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-main)] placeholder-[var(--text-dim)]" />
-              <input type="tel" placeholder="Số điện thoại *" className="w-full px-4 py-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-main)] placeholder-[var(--text-dim)]" />
-              <textarea placeholder="Nội dung yêu cầu (Số lượng, kích thước...)" rows={3} className="w-full px-4 py-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-main)] placeholder-[var(--text-dim)]"></textarea>
-              <button type="button" className="w-full bg-[var(--accent)] text-[var(--bg)] font-bold py-4 rounded-lg hover:opacity-90 transition-opacity uppercase tracking-wide">Gửi Yêu Cầu Báo Giá</button>
+            <form className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-1">Họ và tên <span className="text-red-500">*</span></label>
+                  <input type="text" placeholder="Nguyễn Văn A" className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-1">Số điện thoại <span className="text-red-500">*</span></label>
+                  <input type="tel" placeholder="0901 234 567" className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-1">Sản phẩm cần in</label>
+                  <select className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]">
+                    <option>-- Chọn --</option>
+                    <option>Hộp cứng</option>
+                    <option>Túi giấy</option>
+                    <option>Hộp sóng</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-dim)] mb-1">Số lượng dự kiến</label>
+                  <select className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]">
+                    <option>-- Chọn --</option>
+                    <option>500 - 1.000</option>
+                    <option>1.000 - 5.000</option>
+                    <option>&gt; 5.000</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-dim)] mb-1">Ghi chú thêm</label>
+                <textarea placeholder="Mô tả yêu cầu chi tiết (kích thước, chất liệu...)" rows={3} className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-[var(--bg)] text-[var(--text-main)]"></textarea>
+              </div>
+              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-3.5 rounded-lg hover:opacity-90 transition-opacity uppercase tracking-wide flex items-center justify-center gap-2 mt-2">
+                GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={18} />
+              </button>
+              <p className="text-center text-xs text-[var(--text-dim)] mt-2">Cam kết bảo mật thông tin - Phản hồi trong 5 phút</p>
             </form>
           </div>
         </div>
