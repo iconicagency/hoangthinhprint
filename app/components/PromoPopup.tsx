@@ -20,7 +20,7 @@ export default function PromoPopup() {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-300">
         {/* Header with gradient */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-[var(--accent)] p-6 text-white relative">
+        <div className="bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] p-6 text-white relative">
           <button 
             onClick={() => setIsOpen(false)}
             className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
@@ -29,17 +29,17 @@ export default function PromoPopup() {
           </button>
           
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
-              <Gift className="text-[var(--accent)]" size={24} />
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center border border-white/30">
+              <Gift className="text-white" size={24} />
             </div>
             <div>
               <h3 className="text-2xl font-black tracking-tight">GIẢM NGAY 10%</h3>
-              <p className="text-white/80 text-sm">Cho mọi đơn hàng · Tối đa 2.000.000đ</p>
+              <p className="text-white/90 text-sm">Cho mọi đơn hàng · Tối đa 2.000.000đ</p>
             </div>
           </div>
           
-          <div className="bg-white/10 border border-white/20 rounded-lg py-2 px-4 flex items-center gap-2 text-sm font-medium">
-            <Sparkles size={16} className="text-yellow-400" />
+          <div className="bg-white/20 border border-white/30 rounded-lg py-2 px-4 flex items-center gap-2 text-sm font-medium">
+            <Sparkles size={16} className="text-yellow-300" />
             Đăng ký ngay để nhận ưu đãi đặc biệt từ In Hoàng Thịnh!
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function PromoPopup() {
               <input type="text" placeholder="Quận/Huyện, Tỉnh/TP" className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
             </div>
             
-            <button type="button" className="w-full bg-[#d83b20] text-white font-bold py-3.5 rounded-lg hover:bg-[#b92b27] transition-colors mt-2 text-lg">
+            <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-3.5 rounded-lg hover:bg-[var(--accent-secondary)] transition-colors mt-2 text-lg">
               Nhận ưu đãi 10% ngay
             </button>
             

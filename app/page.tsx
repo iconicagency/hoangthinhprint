@@ -10,6 +10,62 @@ import Footer from './components/Footer';
 import { useSettings } from './components/SettingsProvider';
 import PromoPopup from './components/PromoPopup';
 
+// =========================================================================
+// MOCK DATA: PHẦN NÀY LÀ KHUNG ĐỂ CHUẨN BỊ ĐỔ DỮ LIỆU TỪ WORDPRESS SANG
+// =========================================================================
+const pageData = {
+  stats: [
+    { number: '17+', label: 'Năm kinh nghiệm' },
+    { number: '500+', label: 'Đối tác tin tưởng' },
+    { number: '300tr', label: 'Đơn hàng lớn nhất', suffix: 'tr' },
+    { number: '99%', label: 'Giao đúng hẹn' },
+  ],
+  services: [
+    { title: 'Hộp Cứng Cao Cấp', desc: 'Âm dương · Nam châm · Ngăn kéo', price: 'Từ 10.200đ', img: 'box1' },
+    { title: 'Túi Giấy In Logo', desc: 'Ivory · Couche · Kraft', price: 'Từ 1.500đ', img: 'bag1' },
+    { title: 'Hộp Sóng Carton', desc: 'In logo brand · Ship không méo', price: 'Từ 3.000đ', img: 'carton1' },
+    { title: 'Hộp Quà Doanh Nghiệp', desc: 'Đa kích thước · In offset', price: 'Từ 15.000đ', img: 'gift1' },
+    { title: 'Hộp Mỹ Phẩm', desc: 'Cán mờ · Ép kim bạc', price: 'Từ 8.500đ', img: 'cosmetic1' },
+    { title: 'Hộp Yến Sào & TPCN', desc: 'Hộp cứng · Ép kim vàng', price: 'Từ 25.000đ', img: 'health1' },
+    { title: 'Tem Nhãn Decal', desc: 'Tem decal · Tem bạc · Tem vỡ', price: 'Từ 200đ', img: 'label1' },
+    { title: 'Thiết Kế Bao Bì', desc: 'Thiết kế 3D miễn phí', price: 'Miễn phí', img: 'design1' },
+  ],
+  features: [
+    { icon: Clock, title: 'Máy Ép Kim Tại Xưởng', desc: 'In và ép kim ngay trong xưởng. Không gửi ngoài, không outsource. Kiểm soát chất lượng từ đầu đến cuối.' },
+    { icon: ShieldCheck, title: 'Chủ Xưởng QC Trực Tiếp', desc: 'Không qua trung gian - chính chủ xưởng kiểm tra từng lô hàng trước khi giao. 17 năm kinh nghiệm.' },
+    { icon: CheckCircle2, title: 'Sai Màu = In Lại Miễn Phí', desc: 'Cam kết bằng hợp đồng. Không đạt yêu cầu về màu sắc -> in lại toàn bộ, miễn phí.' },
+    { icon: ThumbsUp, title: 'MOQ 500 - Nhận Đơn Vừa', desc: 'Xưởng lớn từ chối đơn nhỏ, In Hoàng Thịnh nhận từ 500 sản phẩm. Startup hay doanh nghiệp lớn đều phục vụ.' }
+  ],
+  process: [
+    { step: '01', title: 'Tiếp nhận' },
+    { step: '02', title: 'Tư vấn & Báo giá' },
+    { step: '03', title: 'Thiết kế 3D' },
+    { step: '04', title: 'In mẫu test' },
+    { step: '05', title: 'Ký hợp đồng' },
+    { step: '06', title: 'Sản xuất hàng loạt' },
+    { step: '07', title: 'Kiểm tra QC' },
+    { step: '08', title: 'Giao hàng' },
+  ],
+  projects: [
+    { tag: 'Hộp cứng', title: 'Hộp cứng Tết Happy New Year — rượu vang cao cấp', img: 'project1' },
+    { tag: 'Hộp cứng', title: 'Hộp cứng Tết Chúc Mừng Năm Mới — ép kim vàng', img: 'project2' },
+    { tag: 'Hộp cứng', title: 'Hộp cứng Tết Vinh Hoa — thiết kế truyền thống tinh xảo', img: 'project3' },
+    { tag: 'Hộp cứng', title: 'Hộp cứng Thuận Buồm Xuôi Gió — ép kim vàng', img: 'project4' },
+    { tag: 'Hộp cứng', title: 'Hộp cứng cao cấp — in logo ép kim', img: 'project5' },
+    { tag: 'Hộp cứng', title: 'Hộp quà tặng doanh nghiệp — lót lụa sang trọng', img: 'project6' },
+    { tag: 'Hộp cứng', title: 'Hộp yến sào cao cấp — thiết kế độc quyền', img: 'project7' },
+    { tag: 'Túi giấy', title: 'Túi giấy 3 phân khúc — Ivory · Couche · Kraft', img: 'project8' },
+  ],
+  machines: [
+    { title: 'Máy In Offset', desc: 'In 4 màu CMYK, chuẩn quốc tế. Công suất cao,...' },
+    { title: 'Máy Ép Kim Vàng', desc: 'Ép foil vàng, bạc, rose gold. Máy tại xưởng — không...' },
+    { title: 'Máy Cán Màng', desc: 'Cán mờ, cán bóng. Bảo vệ bề mặt, tăng độ sang trọng.' },
+    { title: 'Máy Bế Tự Động', desc: 'Bế hình chính xác. Đường cắt sắc nét, không bavia.' },
+    { title: 'Máy Dán Hộp', desc: 'Dán cạnh, dán đáy tự động. Năng suất cao, đều đẹp.' },
+    { title: 'Khu Kiểm Tra QC', desc: 'Bảng Pantone chuẩn. Chủ xưởng kiểm tra trực tiếp...' }
+  ]
+};
+
 export default function Home() {
   const settings = useSettings();
 
@@ -51,22 +107,15 @@ export default function Home() {
       {/* Stats Section */}
       <section className="bg-[var(--card-bg)] py-12 border border-[var(--border)] shadow-xl relative z-20 -mt-10 mx-4 md:mx-12 rounded-xl">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-[var(--border)]">
-          <div>
-            <div className="text-4xl md:text-5xl font-black text-[var(--accent)] mb-2">17+</div>
-            <div className="text-sm text-[var(--text-dim)] font-medium uppercase tracking-wide">Năm kinh nghiệm</div>
-          </div>
-          <div>
-            <div className="text-4xl md:text-5xl font-black text-[var(--accent)] mb-2">500+</div>
-            <div className="text-sm text-[var(--text-dim)] font-medium uppercase tracking-wide">Đối tác tin tưởng</div>
-          </div>
-          <div>
-            <div className="text-4xl md:text-5xl font-black text-[var(--accent)] mb-2">300<span className="text-2xl">tr</span></div>
-            <div className="text-sm text-[var(--text-dim)] font-medium uppercase tracking-wide">Đơn hàng lớn nhất</div>
-          </div>
-          <div>
-            <div className="text-4xl md:text-5xl font-black text-[var(--accent)] mb-2">99%</div>
-            <div className="text-sm text-[var(--text-dim)] font-medium uppercase tracking-wide">Giao đúng hẹn</div>
-          </div>
+          {pageData.stats.map((stat, i) => (
+            <div key={i}>
+              <div className="text-4xl md:text-5xl font-black text-[var(--accent)] mb-2">
+                {stat.number.replace(stat.suffix || '', '')}
+                {stat.suffix && <span className="text-2xl">{stat.suffix}</span>}
+              </div>
+              <div className="text-sm text-[var(--text-dim)] font-medium uppercase tracking-wide">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -80,16 +129,7 @@ export default function Home() {
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {[
-            { title: 'Hộp Cứng Cao Cấp', desc: 'Âm dương · Nam châm · Ngăn kéo', price: 'Từ 10.200đ', img: 'box1' },
-            { title: 'Túi Giấy In Logo', desc: 'Ivory · Couche · Kraft', price: 'Từ 1.500đ', img: 'bag1' },
-            { title: 'Hộp Sóng Carton', desc: 'In logo brand · Ship không méo', price: 'Từ 3.000đ', img: 'carton1' },
-            { title: 'Hộp Quà Doanh Nghiệp', desc: 'Đa kích thước · In offset', price: 'Từ 15.000đ', img: 'gift1' },
-            { title: 'Hộp Mỹ Phẩm', desc: 'Cán mờ · Ép kim bạc', price: 'Từ 8.500đ', img: 'cosmetic1' },
-            { title: 'Hộp Yến Sào & TPCN', desc: 'Hộp cứng · Ép kim vàng', price: 'Từ 25.000đ', img: 'health1' },
-            { title: 'Tem Nhãn Decal', desc: 'Tem decal · Tem bạc · Tem vỡ', price: 'Từ 200đ', img: 'label1' },
-            { title: 'Thiết Kế Bao Bì', desc: 'Thiết kế 3D miễn phí', price: 'Miễn phí', img: 'design1' },
-          ].map((service, i) => (
+          {pageData.services.map((service, i) => (
             <div key={i} className="bg-[var(--card-bg)] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[var(--border)] group">
               <div className="h-56 bg-[var(--border)] relative overflow-hidden">
                 <Image src={`https://picsum.photos/seed/${service.img}/400/300`} alt={service.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" />
@@ -118,12 +158,7 @@ export default function Home() {
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-          {[
-            { icon: Clock, title: 'Máy Ép Kim Tại Xưởng', desc: 'In và ép kim ngay trong xưởng. Không gửi ngoài, không outsource. Kiểm soát chất lượng từ đầu đến cuối.' },
-            { icon: ShieldCheck, title: 'Chủ Xưởng QC Trực Tiếp', desc: 'Không qua trung gian - chính chủ xưởng kiểm tra từng lô hàng trước khi giao. 17 năm kinh nghiệm.' },
-            { icon: CheckCircle2, title: 'Sai Màu = In Lại Miễn Phí', desc: 'Cam kết bằng hợp đồng. Không đạt yêu cầu về màu sắc -> in lại toàn bộ, miễn phí.' },
-            { icon: ThumbsUp, title: 'MOQ 500 - Nhận Đơn Vừa', desc: 'Xưởng lớn từ chối đơn nhỏ, In Hoàng Thịnh nhận từ 500 sản phẩm. Startup hay doanh nghiệp lớn đều phục vụ.' }
-          ].map((item, i) => (
+          {pageData.features.map((item, i) => (
             <div key={i} className="flex flex-col items-center group">
               <div className="w-20 h-20 rounded-2xl bg-[var(--bg)] flex items-center justify-center text-[var(--accent)] mb-6 border border-[var(--border)] group-hover:bg-[var(--accent)] group-hover:text-[var(--bg)] transition-colors duration-300 shadow-sm">
                 <item.icon size={36} strokeWidth={1.5} />
@@ -146,16 +181,7 @@ export default function Home() {
         </div>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-center">
-            {[
-              { step: '01', title: 'Tiếp nhận' },
-              { step: '02', title: 'Tư vấn & Báo giá' },
-              { step: '03', title: 'Thiết kế 3D' },
-              { step: '04', title: 'In mẫu test' },
-              { step: '05', title: 'Ký hợp đồng' },
-              { step: '06', title: 'Sản xuất hàng loạt' },
-              { step: '07', title: 'Kiểm tra QC' },
-              { step: '08', title: 'Giao hàng' },
-            ].map((item, i) => (
+            {pageData.process.map((item, i) => (
               <div key={i} className="relative">
                 <div className="w-16 h-16 mx-auto bg-[var(--card-bg)] rounded-full flex items-center justify-center border-2 border-[var(--accent)] text-[var(--accent)] font-black text-xl mb-4 relative z-10">
                   {item.step}
@@ -178,16 +204,7 @@ export default function Home() {
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Happy New Year — rượu vang cao cấp', img: 'project1' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Chúc Mừng Năm Mới — ép kim vàng', img: 'project2' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng Tết Vinh Hoa — thiết kế truyền thống tinh xảo', img: 'project3' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng Thuận Buồm Xuôi Gió — ép kim vàng', img: 'project4' },
-            { tag: 'Hộp cứng', title: 'Hộp cứng cao cấp — in logo ép kim', img: 'project5' },
-            { tag: 'Hộp cứng', title: 'Hộp quà tặng doanh nghiệp — lót lụa sang trọng', img: 'project6' },
-            { tag: 'Hộp cứng', title: 'Hộp yến sào cao cấp — thiết kế độc quyền', img: 'project7' },
-            { tag: 'Túi giấy', title: 'Túi giấy 3 phân khúc — Ivory · Couche · Kraft', img: 'project8' },
-          ].map((project, i) => (
+          {pageData.projects.map((project, i) => (
             <div key={i} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[var(--border)] group flex flex-col">
               <div className="h-64 relative overflow-hidden border-b border-[var(--border)]">
                 <Image src={`https://picsum.photos/seed/${project.img}/400/400`} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100" referrerPolicy="no-referrer" />
@@ -225,14 +242,7 @@ export default function Home() {
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { title: 'Máy In Offset', desc: 'In 4 màu CMYK, chuẩn quốc tế. Công suất cao,...' },
-              { title: 'Máy Ép Kim Vàng', desc: 'Ép foil vàng, bạc, rose gold. Máy tại xưởng — không...' },
-              { title: 'Máy Cán Màng', desc: 'Cán mờ, cán bóng. Bảo vệ bề mặt, tăng độ sang trọng.' },
-              { title: 'Máy Bế Tự Động', desc: 'Bế hình chính xác. Đường cắt sắc nét, không bavia.' },
-              { title: 'Máy Dán Hộp', desc: 'Dán cạnh, dán đáy tự động. Năng suất cao, đều đẹp.' },
-              { title: 'Khu Kiểm Tra QC', desc: 'Bảng Pantone chuẩn. Chủ xưởng kiểm tra trực tiếp...' }
-            ].map((machine, i) => (
+            {pageData.machines.map((machine, i) => (
               <div key={i} className="flex flex-col gap-4">
                 {/* Image Box */}
                 <div className="relative h-40 rounded-xl overflow-hidden border border-[var(--border)] group">

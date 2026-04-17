@@ -1,10 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "UTM Swiss Condensed", Arial, sans-serif;
+  --font-serif: "UTM Swiss", Arial, sans-serif;
+}
+
 @layer base {
   :root {
     --bg: #ffffff;
     --card-bg: #f8fafc;
-    --accent: #b92b27;
+    --accent: #DA2128;
+    --accent-secondary: #F15922;
     --text-main: #0f172a;
     --text-dim: #64748b;
     --border: #e2e8f0;
@@ -13,6 +19,10 @@
   body {
     background-color: var(--bg);
     color: var(--text-main);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
   }
 }
