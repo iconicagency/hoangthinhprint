@@ -1,6 +1,20 @@
 import type {Metadata} from 'next';
+import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css'; // Global styles
 import SettingsProvider from './components/SettingsProvider';
+
+const inter = Inter({
+  subsets: ["vietnamese"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["vietnamese"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-serif",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: 'In Hoàng Thịnh',
@@ -9,8 +23,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="vi">
-      <body suppressHydrationWarning className="font-sans">
+    <html lang="vi" className={`${inter.variable} ${playfair.variable}`}>
+      <body suppressHydrationWarning className="font-sans antialiased text-[var(--text-main)]">
         <SettingsProvider>
           {children}
         </SettingsProvider>

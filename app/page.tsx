@@ -9,6 +9,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { useSettings } from './components/SettingsProvider';
 import PromoPopup from './components/PromoPopup';
+import HeroSlider from './components/HeroSlider';
 
 // =========================================================================
 // MOCK DATA: PHẦN NÀY LÀ KHUNG ĐỂ CHUẨN BỊ ĐỔ DỮ LIỆU TỪ WORDPRESS SANG
@@ -21,20 +22,20 @@ const pageData = {
     { number: '99%', label: 'Giao đúng hẹn' },
   ],
   services: [
-    { title: 'Hộp Cứng Cao Cấp', desc: 'Âm dương · Nam châm · Ngăn kéo', price: 'Từ 10.200đ', img: 'box1' },
-    { title: 'Túi Giấy In Logo', desc: 'Ivory · Couche · Kraft', price: 'Từ 1.500đ', img: 'bag1' },
-    { title: 'Hộp Sóng Carton', desc: 'In logo brand · Ship không méo', price: 'Từ 3.000đ', img: 'carton1' },
-    { title: 'Hộp Quà Doanh Nghiệp', desc: 'Đa kích thước · In offset', price: 'Từ 15.000đ', img: 'gift1' },
-    { title: 'Hộp Mỹ Phẩm', desc: 'Cán mờ · Ép kim bạc', price: 'Từ 8.500đ', img: 'cosmetic1' },
-    { title: 'Hộp Yến Sào & TPCN', desc: 'Hộp cứng · Ép kim vàng', price: 'Từ 25.000đ', img: 'health1' },
-    { title: 'Tem Nhãn Decal', desc: 'Tem decal · Tem bạc · Tem vỡ', price: 'Từ 200đ', img: 'label1' },
-    { title: 'Thiết Kế Bao Bì', desc: 'Thiết kế 3D miễn phí', price: 'Miễn phí', img: 'design1' },
+    { title: 'In Hộp Cứng Cao Cấp', desc: 'Hộp bánh Trung Thu · Hộp quà Tết', price: 'Liên hệ', img: 'box1' },
+    { title: 'In Sách - Sổ Tay', desc: 'Bìa cứng · Bìa mềm · Đóng gáy', price: 'Liên hệ', img: 'book1' },
+    { title: 'In Nhãn - Tem Decal', desc: 'Tem decal · Tem vỡ · Kraft', price: 'Liên hệ', img: 'label1' },
+    { title: 'Bao Bì Mỹ Phẩm', desc: 'Bảo vệ tính chất · Ép kim cao cấp', price: 'Liên hệ', img: 'cosmetic1' },
+    { title: 'Bao Bì Nông Sản', desc: 'Chuẩn xuất khẩu · Độ bền cao', price: 'Liên hệ', img: 'farm1' },
+    { title: 'Bao Bì Dược Phẩm', desc: 'Bảo quản thuốc · Chuẩn y tế', price: 'Liên hệ', img: 'health1' },
+    { title: 'Túi Giấy In Logo', desc: 'Ivory · Couche · Kraft', price: 'Liên hệ', img: 'bag1' },
+    { title: 'Thiết Kế Đồ Họa', desc: 'Cập nhật xu hướng thiết kế', price: 'Liên hệ', img: 'design1' },
   ],
   features: [
-    { icon: Clock, title: 'Máy Ép Kim Tại Xưởng', desc: 'In và ép kim ngay trong xưởng. Không gửi ngoài, không outsource. Kiểm soát chất lượng từ đầu đến cuối.' },
-    { icon: ShieldCheck, title: 'Chủ Xưởng QC Trực Tiếp', desc: 'Không qua trung gian - chính chủ xưởng kiểm tra từng lô hàng trước khi giao. 17 năm kinh nghiệm.' },
-    { icon: CheckCircle2, title: 'Sai Màu = In Lại Miễn Phí', desc: 'Cam kết bằng hợp đồng. Không đạt yêu cầu về màu sắc -> in lại toàn bộ, miễn phí.' },
-    { icon: ThumbsUp, title: 'MOQ 500 - Nhận Đơn Vừa', desc: 'Xưởng lớn từ chối đơn nhỏ, In Hoàng Thịnh nhận từ 500 sản phẩm. Startup hay doanh nghiệp lớn đều phục vụ.' }
+    { icon: Clock, title: 'Máy Ép Kim Tại Xưởng', desc: 'In và ép kim ngay trong cùng xưởng. Không gửi ngoài, không outsource. Kiểm soát chất lượng từ đầu đến cuối.' },
+    { icon: ShieldCheck, title: 'Chủ Xưởng QC Trực Tiếp', desc: 'Không phải NV QC — chính chủ xưởng kiểm tra từng lô hàng trước khi giao. 17 năm vẫn giữ nguyên nguyên tắc này.' },
+    { icon: CheckCircle2, title: 'Sai Màu = In Lại Miễn Phí', desc: 'Cam kết bằng hợp đồng. Không đạt yêu cầu về màu sắc — in lại toàn bộ, miễn phí.' },
+    { icon: ThumbsUp, title: 'MOQ 500 — Nhận Đơn Vừa', desc: 'Xưởng lớn từ chối đơn nhỏ. In Hoàng Thịnh nhận từ 500 sản phẩm. Startup hay doanh nghiệp lớn — đều phục vụ.' }
   ],
   process: [
     { step: '01', title: 'Tiếp nhận' },
@@ -47,14 +48,14 @@ const pageData = {
     { step: '08', title: 'Giao hàng' },
   ],
   projects: [
-    { tag: 'Hộp cứng', title: 'Hộp cứng Tết Happy New Year — rượu vang cao cấp', img: 'project1' },
-    { tag: 'Hộp cứng', title: 'Hộp cứng Tết Chúc Mừng Năm Mới — ép kim vàng', img: 'project2' },
-    { tag: 'Hộp cứng', title: 'Hộp cứng Tết Vinh Hoa — thiết kế truyền thống tinh xảo', img: 'project3' },
-    { tag: 'Hộp cứng', title: 'Hộp cứng Thuận Buồm Xuôi Gió — ép kim vàng', img: 'project4' },
-    { tag: 'Hộp cứng', title: 'Hộp cứng cao cấp — in logo ép kim', img: 'project5' },
-    { tag: 'Hộp cứng', title: 'Hộp quà tặng doanh nghiệp — lót lụa sang trọng', img: 'project6' },
-    { tag: 'Hộp cứng', title: 'Hộp yến sào cao cấp — thiết kế độc quyền', img: 'project7' },
-    { tag: 'Túi giấy', title: 'Túi giấy 3 phân khúc — Ivory · Couche · Kraft', img: 'project8' },
+    { tag: 'Hộp Trung Thu', title: 'Bộ sưu tập bánh trung thu Hoàng Thịnh #4', img: 'mooncake1' },
+    { tag: 'Hộp Trung Thu', title: 'Bộ hộp bánh trung thu của Hoàng Thịnh #3', img: 'mooncake2' },
+    { tag: 'Hộp Quà Tết', title: 'Hộp quà Tết âm dương Sen Tây Hồ', img: 'project1' },
+    { tag: 'Hộp Quà Tết', title: 'Hộp quà tết tập đoàn công nghệ G-GROUP', img: 'project2' },
+    { tag: 'Hộp Chức Năng', title: 'Hộp đựng Đông Trùng Hạ Thảo Viện Hàn Lâm', img: 'project3' },
+    { tag: 'Hộp Quà Tết', title: 'Hộp quà tết Tân Niên Phú Quý', img: 'project4' },
+    { tag: 'Hộp Cao Cấp', title: 'Hộp cứng đựng trà cao cấp PASHANCHA', img: 'project5' },
+    { tag: 'Hộp Quà Tết', title: 'Hộp quà Tết quai xách Sen Tây Hồ', img: 'project6' },
   ],
   machines: [
     { title: 'Máy In Offset', desc: 'In 4 màu CMYK, chuẩn quốc tế. Công suất cao,...' },
@@ -74,35 +75,7 @@ export default function Home() {
       <PromoPopup />
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative bg-[var(--bg)] text-[var(--text-main)] py-28 px-8 text-center overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://picsum.photos/seed/printingpress/1920/1080')] bg-cover bg-center"></div>
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-block border border-[var(--accent)] text-[var(--accent)] px-5 py-1.5 rounded-full text-xs mb-8 uppercase tracking-widest font-bold bg-[var(--accent)]/10">
-            Giải Pháp In Ấn Bao Bì Trọn Gói
-          </div>
-          <h1 className="text-5xl md:text-6xl font-serif mb-6 leading-tight text-[var(--text-main)] tracking-tight">
-            {settings.heroTitle}
-          </h1>
-          <p className="text-[var(--text-dim)] mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-            {settings.heroSubtitle}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/san-pham" className="bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
-              Xem sản phẩm <ArrowRight size={18}/>
-            </Link>
-            <Link href="/bao-gia" className="border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)] flex items-center justify-center">
-              Nhận báo giá miễn phí
-            </Link>
-          </div>
-          <div className="mt-14 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-[var(--text-dim)] font-medium">
-            <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-[var(--accent)]"/> Thiết kế 3D miễn phí</span>
-            <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-[var(--accent)]"/> In mẫu test màu</span>
-            <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-[var(--accent)]"/> Giao hàng tận nơi</span>
-            <span className="flex items-center gap-2"><CheckCircle2 size={18} className="text-[var(--accent)]"/> Giá gốc tại xưởng</span>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       {/* Stats Section */}
       <section className="bg-[var(--card-bg)] py-12 border border-[var(--border)] shadow-xl relative z-20 -mt-10 mx-4 md:mx-12 rounded-xl">
@@ -195,7 +168,7 @@ export default function Home() {
       </section>
 
       {/* Portfolio / Projects */}
-      <section className="py-24 px-8 bg-[var(--bg)]">
+      <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="text-center mb-16">
           <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
             DỰ ÁN TIÊU BIỂU
@@ -230,7 +203,7 @@ export default function Home() {
       </section>
 
       {/* Machinery */}
-      <section className="py-20 px-8 bg-[var(--card-bg)] relative overflow-hidden border-y border-[var(--border)]">
+      <section className="py-20 px-8 bg-[var(--bg)] relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
@@ -263,7 +236,7 @@ export default function Home() {
       </section>
 
       {/* Partners */}
-      <section className="py-24 bg-[var(--bg)] overflow-hidden">
+      <section className="py-24 bg-[var(--card-bg)] border-t border-[var(--border)] overflow-hidden">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
@@ -276,8 +249,8 @@ export default function Home() {
         
         <div className="w-full relative">
           {/* Gradient masks for smooth fade on edges */}
-          <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-[var(--bg)] to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-[var(--bg)] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-[var(--card-bg)] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-[var(--card-bg)] to-transparent z-10 pointer-events-none"></div>
           
           <motion.div 
             className="flex w-max"
@@ -305,7 +278,7 @@ export default function Home() {
       </section>
 
       {/* Video Section */}
-      <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)] relative overflow-hidden">
+      <section className="py-24 px-8 bg-[var(--bg)] border-y border-[var(--border)] relative overflow-hidden">
          <div className="absolute inset-0 opacity-10 bg-[url('https://picsum.photos/seed/factory/1920/1080')] bg-cover bg-center mix-blend-overlay"></div>
          <div className="max-w-4xl mx-auto relative z-10 text-center">
             <div className="w-24 h-24 bg-[var(--accent)] rounded-full flex items-center justify-center mx-auto mb-8 cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-[var(--accent)]/40 text-[var(--bg)]">
