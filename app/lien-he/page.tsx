@@ -1,30 +1,60 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Building2, ArrowRight } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
+import { getPageBySlug } from '../lib/wp';
 
 export default function Contact() {
   const settings = useSettings();
+  const [pageData, setPageData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getPageBySlug('lien-he');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang liên hệ:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/contact-hero/1920/1080')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/contact-hero/1920/1080')] bg-cover bg-center">
+          {pageData?.featuredImage?.node?.sourceUrl && (
+            <img src={pageData.featuredImage.node.sourceUrl} className="w-full h-full object-cover" alt="" />
+          )}
+        </div>
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
             <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-[var(--text-main)] font-medium">Liên hệ</span>
+            <span className="text-[var(--text-main)] font-medium">{pageData?.title || 'Liên hệ'}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Liên hệ báo giá</h1>
+          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">{pageData?.title || 'Liên hệ báo giá'}</h1>
           <p className="text-[var(--text-dim)] text-lg max-w-2xl">
-            Đội ngũ tư vấn sẵn sàng hỗ trợ bạn trong 30 phút.
+            {pageData?.excerpt ? <div dangerouslySetInnerHTML={{ __html: pageData.excerpt }} /> : 'Đội ngũ tư vấn sẵn sàng hỗ trợ bạn trong 30 phút.'}
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Main Content From CMS */}
+      {pageData?.content && (
+        <section className="py-12 px-4 md:px-8 max-w-6xl mx-auto">
+           <div className="prose max-w-none bg-slate-50 p-8 rounded-3xl border border-[var(--border)]" dangerouslySetInnerHTML={{ __html: pageData.content }} />
+        </section>
+      )}
+
+      {/* Main Content Info */}
       <section className="py-24 px-4 md:px-8 max-w-6xl mx-auto flex flex-col lg:flex-row gap-16">
         
         {/* Left Column: Contact Info */}

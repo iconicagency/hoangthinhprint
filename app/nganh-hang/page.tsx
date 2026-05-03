@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Package, Sparkles, Heart, Gift, ShoppingCart } from 'lucide-react';
+import { getPageBySlug } from '../lib/wp';
 
 const industries = [
   {
@@ -43,25 +45,53 @@ const industries = [
 ];
 
 export default function Industries() {
+  const [pageData, setPageData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getPageBySlug('nganh-hang');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang ngành hàng:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/industry/1920/1080')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/industry/1920/1080')] bg-cover bg-center">
+          {pageData?.featuredImage?.node?.sourceUrl && (
+            <img src={pageData.featuredImage.node.sourceUrl} className="w-full h-full object-cover" alt="" />
+          )}
+        </div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
             <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-[var(--text-main)] font-medium">Ngành hàng</span>
+            <span className="text-[var(--text-main)] font-medium">{pageData?.title || 'Ngành hàng'}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Giải pháp bao bì theo ngành hàng</h1>
+          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">{pageData?.title || 'Giải pháp bao bì theo ngành hàng'}</h1>
           <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             Thiết kế và sản xuất bao bì chuyên biệt, tối ưu cho từng lĩnh vực kinh doanh.
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Main Content From CMS */}
+      {pageData?.content && (
+        <section className="py-12 px-4 md:px-8 max-w-7xl mx-auto">
+           <div className="prose max-w-none bg-slate-50 p-8 rounded-3xl border border-[var(--border)]" dangerouslySetInnerHTML={{ __html: pageData.content }} />
+        </section>
+      )}
+
+      {/* Main Content Grid */}
       <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {industries.map((industry, index) => (

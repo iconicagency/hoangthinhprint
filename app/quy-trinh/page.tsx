@@ -1,11 +1,30 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MessageSquare, PenTool, Printer, Factory, Truck, ArrowRight } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
+import { getPageBySlug } from '../lib/wp';
 
 export default function Process() {
   const settings = useSettings();
+  const [pageData, setPageData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getPageBySlug('quy-trinh');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang quy trình:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   const steps = [
     {
       id: '01',

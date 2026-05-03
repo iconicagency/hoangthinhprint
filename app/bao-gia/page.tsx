@@ -1,28 +1,58 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { getPageBySlug } from '../lib/wp';
 
 export default function Pricing() {
+  const [pageData, setPageData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getPageBySlug('bao-gia');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang báo giá:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50 text-[var(--text-main)] font-sans">
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center">
+          {pageData?.featuredImage?.node?.sourceUrl && (
+            <img src={pageData.featuredImage.node.sourceUrl} className="w-full h-full object-cover" alt="" />
+          )}
+        </div>
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
             <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
-            <span className="text-[var(--text-main)] font-medium">Bảng giá</span>
+            <span className="text-[var(--text-main)] font-medium">{pageData?.title || 'Bảng giá'}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">Bảng giá sản phẩm</h1>
+          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">{pageData?.title || 'Bảng giá sản phẩm'}</h1>
           <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             Giá tham khảo — Liên hệ để nhận báo giá chính xác cho đơn hàng của bạn.
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Main Content From CMS */}
+      {pageData?.content && (
+        <section className="py-12 px-4 md:px-8 max-w-4xl mx-auto">
+           <div className="prose max-w-none bg-white p-8 rounded-2xl border border-[var(--border)] shadow-sm" dangerouslySetInnerHTML={{ __html: pageData.content }} />
+        </section>
+      )}
+
+      {/* Default Static Tables if no CMS content replaces them */}
       <section className="py-16 px-4 md:px-8 max-w-4xl mx-auto space-y-12">
         
         {/* Table 1: Hộp cứng cao cấp */}

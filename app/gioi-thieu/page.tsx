@@ -1,12 +1,31 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Target, Eye, TrendingUp, Users, Award, Package, Printer, Sparkles, Shield, Settings, Box, UserCheck, ShieldCheck, Gem, Truck, Wand2, RefreshCcw, Factory, ArrowRight, Lightbulb, HeartHandshake, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
+import { getPageBySlug } from '../lib/wp';
 
 export default function About() {
   const settings = useSettings();
+  const [pageData, setPageData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getPageBySlug('gioi-thieu');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang giới thiệu:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
       {/* Hero Section */}
@@ -17,7 +36,7 @@ export default function About() {
             Về Chúng Tôi
           </div>
           <h1 className="text-5xl md:text-6xl font-serif mb-6 leading-tight text-[var(--text-main)] tracking-tight">
-            17 Năm Kinh Nghiệm<br/>Kiến Tạo Bao Bì Đẳng Cấp
+            {pageData?.title || '17 Năm Kinh Nghiệm Kiến Tạo Bao Bì Đẳng Cấp'}
           </h1>
           <p className="text-[var(--text-dim)] mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
             In Hoàng Thịnh tự hào là đối tác in ấn bao bì trọn gói chuyên nghiệp, đồng hành cùng hơn 500+ thương hiệu lớn nhỏ trên toàn quốc.
@@ -30,7 +49,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
           <div className="md:w-1/2">
             <div className="relative h-[500px] w-full rounded-2xl overflow-hidden border border-[var(--border)]">
-              <Image src="https://picsum.photos/seed/factory/800/1000" alt="Xưởng in Hoàng Thịnh" fill className="object-cover" referrerPolicy="no-referrer" />
+              <Image src={pageData?.featuredImage?.node?.sourceUrl || "https://picsum.photos/seed/factory/800/1000"} alt="Xưởng in Hoàng Thịnh" fill className="object-cover" referrerPolicy="no-referrer" />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-transparent to-transparent"></div>
               <div className="absolute bottom-8 left-8 right-8">
                 <div className="bg-[var(--bg)]/90 backdrop-blur-md border border-[var(--border)] p-6 rounded-xl">
@@ -47,15 +66,21 @@ export default function About() {
             <h2 className="text-4xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Từ Xưởng In Nhỏ Đến Đối Tác Tin Cậy</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mb-8"></div>
             <div className="space-y-6 text-[var(--text-dim)] leading-relaxed">
-              <p>
-                Khởi đầu từ một xưởng in quy mô nhỏ, In Hoàng Thịnh đã không ngừng nỗ lực và phát triển trong suốt 17 năm qua. Chúng tôi hiểu rằng, bao bì không chỉ là vật chứa đựng, mà còn là &quot;người phát ngôn&quot; thầm lặng cho giá trị thương hiệu của bạn.
-              </p>
-              <p>
-                Với phương châm <strong>&quot;Chất lượng làm nên thương hiệu&quot;</strong>, chúng tôi đầu tư mạnh mẽ vào hệ thống máy móc hiện đại, đồng bộ ngay tại xưởng. Từ máy in Offset 4 màu chuẩn quốc tế, máy ép kim, bế tự động đến máy dán hộp, tất cả đều được vận hành bởi đội ngũ thợ lành nghề.
-              </p>
-              <p>
-                Đặc biệt, In Hoàng Thịnh tự hào với chính sách <strong>&quot;Sai màu = In lại miễn phí&quot;</strong>, khẳng định sự tự tin tuyệt đối vào chất lượng sản phẩm và cam kết mang lại sự an tâm cao nhất cho khách hàng.
-              </p>
+              {pageData?.content ? (
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: pageData.content }} />
+              ) : (
+                <>
+                  <p>
+                    Khởi đầu từ một xưởng in quy mô nhỏ, In Hoàng Thịnh đã không ngừng nỗ lực và phát triển trong suốt 17 năm qua. Chúng tôi hiểu rằng, bao bì không chỉ là vật chứa đựng, mà còn là &quot;người phát ngôn&quot; thầm lặng cho giá trị thương hiệu của bạn.
+                  </p>
+                  <p>
+                    Với phương châm <strong>&quot;Chất lượng làm nên thương hiệu&quot;</strong>, chúng tôi đầu tư mạnh mẽ vào hệ thống máy móc hiện đại, đồng bộ ngay tại xưởng. Từ máy in Offset 4 màu chuẩn quốc tế, máy ép kim, bế tự động đến máy dán hộp, tất cả đều được vận hành bởi đội ngũ thợ lành nghề.
+                  </p>
+                  <p>
+                    Đặc biệt, In Hoàng Thịnh tự hào với chính sách <strong>&quot;Sai màu = In lại miễn phí&quot;</strong>, khẳng định sự tự tin tuyệt đối vào chất lượng sản phẩm và cam kết mang lại sự an tâm cao nhất cho khách hàng.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>

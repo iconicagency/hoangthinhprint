@@ -52,6 +52,53 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
   }
 }
 
+// Lấy nội dung chi tiết của một trang theo Slug/URI
+export async function getPageBySlug(slug: string) {
+  const query = `
+    query GetPageBySlug($id: ID!) {
+      page(id: $id, idType: URI) {
+        title
+        content
+        slug
+        featuredImage {
+          node {
+            sourceUrl
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query, { variables: { id: slug } });
+  return data?.page;
+}
+
+// Lấy chi tiết bài viết theo Slug
+export async function getPostBySlug(slug: string) {
+  const query = `
+    query GetPostBySlug($id: ID!) {
+      post(id: $id, idType: SLUG) {
+        title
+        content
+        date
+        slug
+        featuredImage {
+          node {
+            sourceUrl
+          }
+        }
+        categories {
+          nodes {
+            name
+            slug
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query, { variables: { id: slug } });
+  return data?.post;
+}
+
 // Lấy danh sách chuyên mục (Categories)
 export async function getCategories() {
   const query = `
@@ -129,25 +176,7 @@ export async function getProjects() {
   return data?.cacDuAn?.nodes || [];
 }
 
-// Lấy Chi Tiết Bài Viết (Tin Tức)
-export async function getPostBySlug(slug: string) {
-  const query = `
-    query GetPostBySlug($id: ID!) {
-      post(id: $id, idType: SLUG) {
-        title
-        content
-        date
-        featuredImage {
-          node {
-            sourceUrl
-          }
-        }
-      }
-    }
-  `;
-  const data = await fetchWP(query, { variables: { id: slug } });
-  return data?.post;
-}
+// Lấy chi tiết bài viết theo Slug (Consolidated)
 
 // Lấy Chi Tiết Dự Án
 export async function getProjectBySlug(slug: string) {
@@ -171,6 +200,33 @@ export async function getProjectBySlug(slug: string) {
   return data?.duAn;
 }
 
+// Lấy danh sách Sản phẩm theo danh mục (Sử dụng Category 'san-pham' hoặc CPT)
+export async function getProductsByCategory(categoryName = "san-pham", first = 100) {
+  const query = `
+    query GetProducts($first: Int!, $categoryName: String!) {
+      posts(first: $first, where: {categoryName: $categoryName, orderby: {field: DATE, order: DESC}}) {
+        nodes {
+          id
+          title
+          slug
+          featuredImage {
+            node {
+              sourceUrl
+            }
+          }
+          categories {
+            nodes {
+              name
+              slug
+            }
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query, { variables: { first, categoryName } });
+  return data?.posts?.nodes || [];
+}
 // Lấy Dữ liệu Trang Chủ (ACF Option trang chủ)
 export async function getHomePageData() {
   const query = `
