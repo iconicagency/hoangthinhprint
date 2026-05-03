@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
+import { getPosts, getCategories } from '../lib/wp';
 
 const categories = [
   'Tất cả',
@@ -91,7 +92,37 @@ const tags = [
 
 export default function Blog() {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const [posts, setPosts] = useState<any[]>([]);
+  const [categoriesData, setCategoriesData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const settings = useSettings();
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [postsData, catsData] = await Promise.all([
+          getPosts(20),
+          getCategories()
+        ]);
+        setPosts(postsData);
+        setCategoriesData(catsData);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu blog:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const categories = ['Tất cả', ...categoriesData.map(c => c.name)];
+
+  const filteredPosts = activeCategory === 'Tất cả' 
+    ? posts 
+    : posts.filter(post => post.categories?.nodes?.some((cat: any) => cat.name === activeCategory));
+
+  // Lấy các bài nổi bật (giả sử chọn 3 bài đầu)
+  const popularPostsData = posts.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
@@ -135,42 +166,53 @@ export default function Blog() {
             ))}
           </div>
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {blogPosts.map((post) => (
-              <div key={post.id} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                <div className="relative h-60 overflow-hidden">
-                  <Image 
-                    src={post.img} 
-                    alt={post.title} 
-                    fill 
-                    className="object-cover hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className={`absolute top-4 left-4 ${post.categoryColor} text-[var(--bg)] text-xs font-bold px-3 py-1.5 rounded-full`}>
-                    {post.category}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="animate-pulse bg-slate-100 h-80 rounded-2xl"></div>
+              ))}
+            </div>
+          ) : filteredPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {filteredPosts.map((post) => (
+                <div key={post.id} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                  <div className="relative h-60 overflow-hidden bg-slate-200">
+                    {post.featuredImage?.node?.sourceUrl && (
+                      <Image 
+                        src={post.featuredImage.node.sourceUrl} 
+                        alt={post.title} 
+                        fill 
+                        className="object-cover hover:scale-105 transition-transform duration-500"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
+                    <div className="absolute top-4 left-4 bg-[var(--accent)] text-[var(--bg)] text-xs font-bold px-3 py-1.5 rounded-full">
+                      {post.categories?.nodes[0]?.name || 'Tin tức'}
+                    </div>
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="font-bold text-xl text-[var(--text-main)] mb-3 line-clamp-2 hover:text-[var(--accent)] transition-colors cursor-pointer">
+                      <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                    </h3>
+                    <div className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1" dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+                    <div className="flex items-center justify-between text-sm text-[var(--text-dim)] pt-4 border-t border-[var(--border)] mt-auto">
+                      <span>{new Date(post.date).toLocaleDateString('vi-VN')}</span>
+                      <span className="flex items-center gap-1"><Clock size={14} /> 5 phút đọc</span>
+                    </div>
+                    <div className="mt-4">
+                      <Link href={`/blog/${post.slug}`} className="text-[var(--accent)] font-bold text-sm flex items-center gap-1 hover:opacity-80 transition-opacity">
+                        Đọc thêm <ArrowRight size={14} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-bold text-xl text-[var(--text-main)] mb-3 line-clamp-2 hover:text-[var(--accent)] transition-colors cursor-pointer">
-                    {post.title}
-                  </h3>
-                  <p className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-[var(--text-dim)] pt-4 border-t border-[var(--border)] mt-auto">
-                    <span>{post.date}</span>
-                    <span className="flex items-center gap-1"><Clock size={14} /> {post.readTime}</span>
-                  </div>
-                  <div className="mt-4">
-                    <Link href="#" className="text-[var(--accent)] font-bold text-sm flex items-center gap-1 hover:opacity-80 transition-opacity">
-                      Đọc thêm <ArrowRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
+              <p className="text-slate-400">Không tìm thấy bài viết nào trong danh mục này.</p>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Sidebar */}
@@ -190,17 +232,21 @@ export default function Blog() {
           <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
             <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Bài viết nổi bật</h3>
             <div className="space-y-6">
-              {popularPosts.map((post) => (
+              {popularPostsData.map((post) => (
                 <div key={post.id} className="flex gap-4 group cursor-pointer">
-                  <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0">
-                    <Image src={post.img} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <h4 className="font-bold text-sm text-[var(--text-main)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors mb-1">
-                      {post.title}
-                    </h4>
-                    <span className="text-xs text-[var(--text-dim)]">{post.date}</span>
-                  </div>
+                  <Link href={`/blog/${post.slug}`} className="flex gap-4 w-full">
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-100">
+                      {post.featuredImage?.node?.sourceUrl && (
+                        <Image src={post.featuredImage.node.sourceUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+                      )}
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <h4 className="font-bold text-sm text-[var(--text-main)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors mb-1">
+                        {post.title}
+                      </h4>
+                      <span className="text-xs text-[var(--text-dim)]">{new Date(post.date).toLocaleDateString('vi-VN')}</span>
+                    </div>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -210,10 +256,10 @@ export default function Blog() {
           <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
             <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Danh mục</h3>
             <ul className="space-y-4">
-              {sidebarCategories.map((cat, index) => (
-                <li key={index} className="flex items-center justify-between group cursor-pointer">
+              {categoriesData.map((cat, index) => (
+                <li key={index} className="flex items-center justify-between group cursor-pointer" onClick={() => setActiveCategory(cat.name)}>
                   <div className="flex items-center gap-3">
-                    <span className={`w-2 h-2 rounded-full ${cat.color}`}></span>
+                    <span className={`w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[var(--accent)]`}></span>
                     <span className="text-[var(--text-dim)] group-hover:text-[var(--accent)] transition-colors text-sm">{cat.name}</span>
                   </div>
                   <span className="text-[var(--text-dim)] text-sm">({cat.count})</span>

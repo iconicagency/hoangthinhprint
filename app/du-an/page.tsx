@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 
 const categories = [
   'Tất cả',
@@ -77,14 +75,49 @@ const products = [
 
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const [selectedImage, setSelectedImage] = useState<{img: string, title: string} | null>(null);
 
   const filteredProducts = activeCategory === 'Tất cả' 
-    ? products.filter(p => categories.includes(p.category) || p.category === 'Hộp cứng') // Just show a subset if needed, or all that match the categories
+    ? products.filter(p => categories.includes(p.category) || p.category === 'Hộp cứng') 
     : products.filter(p => p.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
-      <Header />
+    <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
+    
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 sm:p-8"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 text-white hover:text-[var(--accent)] transition-colors p-2 bg-white/10 rounded-full z-10"
+            onClick={() => setSelectedImage(null)}
+          >
+            <X size={32} />
+          </button>
+          
+          <div 
+            className="relative w-full max-w-5xl aspect-auto max-h-[85vh] h-full mb-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image 
+              src={selectedImage.img} 
+              alt={selectedImage.title} 
+              fill 
+              className="object-contain" 
+              referrerPolicy="no-referrer"
+              unoptimized
+            />
+          </div>
+
+          <div className="text-center z-10 max-w-4xl px-4">
+            <h3 className="text-xl md:text-2xl font-bold text-white drop-shadow-lg">
+              {selectedImage.title}
+            </h3>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
@@ -137,7 +170,11 @@ export default function Projects() {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+            <div 
+              key={product.id} 
+              onClick={() => setSelectedImage({ img: product.img, title: product.title })}
+              className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
+            >
               <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
                 <Image 
                   src={product.img} 
@@ -145,6 +182,7 @@ export default function Projects() {
                   fill 
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
+                  unoptimized
                 />
               </div>
               <div className="p-5">
@@ -245,8 +283,6 @@ export default function Projects() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

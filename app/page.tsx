@@ -1,26 +1,19 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'motion/react';
 import { Phone, Mail, MapPin, ChevronDown, Star, Play, CheckCircle2, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote } from 'lucide-react';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { useSettings } from './components/SettingsProvider';
 import PromoPopup from './components/PromoPopup';
 import HeroSlider from './components/HeroSlider';
+import WPRecentPosts from './components/WPRecentPosts';
+import WPProjects from './components/WPProjects';
+import { homeConfig } from './lib/config';
+import { getHomePageData } from './lib/wp';
+import ClientLogoSlider from './components/ClientLogoSlider';
 
 // =========================================================================
-// MOCK DATA: PHẦN NÀY LÀ KHUNG ĐỂ CHUẨN BỊ ĐỔ DỮ LIỆU TỪ WORDPRESS SANG
+// MOCK DATA CÒN LẠI (Chờ tích hợp nốt)
 // =========================================================================
 const pageData = {
-  stats: [
-    { number: '17+', label: 'Năm kinh nghiệm' },
-    { number: '500+', label: 'Đối tác tin tưởng' },
-    { number: '300tr', label: 'Đơn hàng lớn nhất', suffix: 'tr' },
-    { number: '99%', label: 'Giao đúng hẹn' },
-  ],
   services: [
     { title: 'In Hộp Cứng Cao Cấp', desc: 'Hộp bánh Trung Thu · Hộp quà Tết', price: 'Liên hệ', img: 'box1' },
     { title: 'In Sách - Sổ Tay', desc: 'Bìa cứng · Bìa mềm · Đóng gáy', price: 'Liên hệ', img: 'book1' },
@@ -67,23 +60,27 @@ const pageData = {
   ]
 };
 
-export default function Home() {
-  const settings = useSettings();
+export default async function Home() {
+  const wpHomeData = await getHomePageData();
+  
+  // Ưu tiên dữ liệu WordPress, nếu không có fallback config tĩnh
+  const finalStats = wpHomeData?.stats || homeConfig.stats;
+  const finalPartners = wpHomeData?.partners?.map((p: any) => p.partnerName) || homeConfig.partners;
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
+    <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
       <PromoPopup />
-      <Header />
+      
 
-      <HeroSlider />
+      <HeroSlider dynamicHero={wpHomeData} />
 
       {/* Stats Section */}
       <section className="bg-[var(--card-bg)] py-12 border border-[var(--border)] shadow-xl relative z-20 -mt-10 mx-4 md:mx-12 rounded-xl">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-[var(--border)]">
-          {pageData.stats.map((stat, i) => (
+          {finalStats.map((stat: any, i: number) => (
             <div key={i}>
               <div className="text-4xl md:text-5xl font-black text-[var(--accent)] mb-2">
-                {stat.number.replace(stat.suffix || '', '')}
+                {stat.number}
                 {stat.suffix && <span className="text-2xl">{stat.suffix}</span>}
               </div>
               <div className="text-sm text-[var(--text-dim)] font-medium uppercase tracking-wide">{stat.label}</div>
@@ -176,25 +173,9 @@ export default function Home() {
           <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">SẢN PHẨM ĐÃ THỰC HIỆN</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {pageData.projects.map((project, i) => (
-            <div key={i} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[var(--border)] group flex flex-col">
-              <div className="h-64 relative overflow-hidden border-b border-[var(--border)]">
-                <Image src={`https://picsum.photos/seed/${project.img}/400/400`} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100" referrerPolicy="no-referrer" />
-              </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="mb-3">
-                  <span className="inline-block border border-[var(--accent)]/50 text-[var(--accent)] px-3 py-1 rounded-md text-xs font-medium">
-                    {project.tag}
-                  </span>
-                </div>
-                <h3 className="text-[var(--text-main)] font-medium leading-relaxed text-sm">
-                  {project.title}
-                </h3>
-              </div>
-            </div>
-          ))}
-        </div>
+        
+        <WPProjects />
+
         <div className="text-center mt-12">
           <Link href="/du-an" className="inline-block border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">
             Xem tất cả dự án
@@ -247,33 +228,12 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="w-full relative">
+        <div className="w-full relative overflow-hidden">
           {/* Gradient masks for smooth fade on edges */}
           <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-[var(--card-bg)] to-transparent z-10 pointer-events-none"></div>
           <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-[var(--card-bg)] to-transparent z-10 pointer-events-none"></div>
           
-          <motion.div 
-            className="flex w-max"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ repeat: Infinity, ease: "linear", duration: 25 }}
-          >
-            {/* First set */}
-            <div className="flex items-center gap-16 md:gap-32 px-8 md:px-16 opacity-60">
-              <div className="text-2xl font-black text-[var(--border)]">BRAND LOGO</div>
-              <div className="text-2xl font-black text-[var(--border)]">PARTNER</div>
-              <div className="text-2xl font-black text-gray-300">COMPANY</div>
-              <div className="text-2xl font-black text-gray-300">STUDIO</div>
-              <div className="text-2xl font-black text-gray-300">AGENCY</div>
-            </div>
-            {/* Second set (duplicate for seamless loop) */}
-            <div className="flex items-center gap-16 md:gap-32 px-8 md:px-16 opacity-60">
-              <div className="text-2xl font-black text-gray-300">BRAND LOGO</div>
-              <div className="text-2xl font-black text-gray-300">PARTNER</div>
-              <div className="text-2xl font-black text-gray-300">COMPANY</div>
-              <div className="text-2xl font-black text-gray-300">STUDIO</div>
-              <div className="text-2xl font-black text-gray-300">AGENCY</div>
-            </div>
-          </motion.div>
+          <ClientLogoSlider partners={finalPartners} />
         </div>
       </section>
 
@@ -334,7 +294,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-sm text-[var(--text-dim)] font-normal">Gọi ngay hotline</div>
-                <div className="text-xl text-[var(--accent)]">{settings.contactPhone}</div>
+                <div className="text-xl text-[var(--accent)]">{wpHomeData?.baoGiaHotline || '090.XXX.XXXX'}</div>
               </div>
             </div>
           </div>
@@ -383,7 +343,25 @@ export default function Home() {
         </div>
       </section>
 
-      <Footer />
+      {/* Real Blog Integration Wrapper */}
+      <section className="py-24 px-8 bg-[var(--bg)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-12 flex justify-between items-end">
+            <div>
+              <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
+                TIN TỨC LIVE TỪ WORDPRESS
+              </div>
+              <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] tracking-tight">BÀI VIẾT MỚI NHẤT</h2>
+            </div>
+            <Link href="/blog" className="hidden md:inline-flex border-b-2 border-transparent hover:border-[var(--accent)] text-[var(--text-dim)] hover:text-[var(--text-main)] font-medium pb-1 transition-colors">
+              Xem tất cả bài viết
+            </Link>
+          </div>
+          
+          <WPRecentPosts />
+          
+        </div>
+      </section>
     </div>
   );
 }

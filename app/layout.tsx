@@ -2,6 +2,8 @@ import type {Metadata} from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css'; // Global styles
 import SettingsProvider from './components/SettingsProvider';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 const inter = Inter({
   subsets: ["vietnamese"],
@@ -24,9 +26,13 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="vi" className={`${inter.variable} ${playfair.variable}`}>
-      <body suppressHydrationWarning className="font-sans antialiased text-[var(--text-main)]">
+      <body suppressHydrationWarning className="font-sans antialiased text-[var(--text-main)] overflow-x-hidden flex flex-col min-h-screen">
         <SettingsProvider>
-          {children}
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
         </SettingsProvider>
       </body>
     </html>
