@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 import { getPosts, getCategories } from '../lib/wp';
@@ -126,8 +124,6 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/blog-hero/1920/1080')] bg-cover bg-center"></div>
@@ -293,8 +289,6 @@ export default function Blog() {
         </div>
 
       </section>
-
-      <Footer />
     </div>
   );
 }

@@ -4,8 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
 
 export default function YenSaoPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -19,8 +17,6 @@ export default function YenSaoPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="bg-slate-900 text-white py-20 px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -226,8 +222,6 @@ export default function YenSaoPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 const categories = [
   'Tất cả',
@@ -87,8 +85,6 @@ export default function Products() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative py-20 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/pattern/1920/1080')] bg-cover bg-center"></div>
@@ -154,8 +150,6 @@ export default function Products() {
         )}
 
       </section>
-
-      <Footer />
     </div>
   );
 }

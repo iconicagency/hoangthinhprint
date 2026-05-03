@@ -2,8 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { Target, Eye, TrendingUp, Users, Award, Package, Printer, Sparkles, Shield, Settings, Box, UserCheck, ShieldCheck, Gem, Truck, Wand2, RefreshCcw, Factory, ArrowRight, Lightbulb, HeartHandshake, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 
@@ -11,8 +9,6 @@ export default function About() {
   const settings = useSettings();
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative py-24 px-8 text-center overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-10 bg-[url('https://picsum.photos/seed/printingpress/1920/1080')] bg-cover bg-center"></div>
@@ -462,8 +458,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

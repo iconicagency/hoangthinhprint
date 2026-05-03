@@ -1,8 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { Phone, Mail, MapPin, Building2, ArrowRight } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 
@@ -10,8 +8,6 @@ export default function Contact() {
   const settings = useSettings();
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/contact-hero/1920/1080')] bg-cover bg-center"></div>
@@ -149,8 +145,6 @@ export default function Contact() {
         </div>
 
       </section>
-
-      <Footer />
     </div>
   );
 }

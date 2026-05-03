@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -99,8 +97,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-[var(--text-main)] font-sans">
-      <Header />
-
       <section className="py-24 px-8 max-w-4xl mx-auto">
         <div className="bg-[var(--card-bg)] p-8 md:p-10 rounded-3xl border border-[var(--border)] shadow-sm">
           <div className="flex justify-between items-center mb-8 pb-6 border-b border-[var(--border)]">
@@ -238,8 +234,6 @@ export default function AdminPage() {
           )}
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

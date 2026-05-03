@@ -2,8 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { ArrowRight, Package, Sparkles, Heart, Gift, ShoppingCart } from 'lucide-react';
 
 const industries = [
@@ -47,8 +45,6 @@ const industries = [
 export default function Industries() {
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/industry/1920/1080')] bg-cover bg-center"></div>
@@ -99,8 +95,6 @@ export default function Industries() {
           ))}
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

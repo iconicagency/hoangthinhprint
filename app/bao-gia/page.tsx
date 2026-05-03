@@ -1,15 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { ArrowRight } from 'lucide-react';
 
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-slate-50 text-[var(--text-main)] font-sans">
-      <Header />
-
       {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center"></div>
@@ -154,8 +150,6 @@ export default function Pricing() {
         </div>
 
       </section>
-
-      <Footer />
     </div>
   );
 }
