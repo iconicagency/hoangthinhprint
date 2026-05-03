@@ -7,12 +7,34 @@ export default function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Show popup after a short delay when the page loads
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 1000);
-    return () => clearTimeout(timer);
+    let timer: NodeJS.Timeout;
+    
+    const checkPopup = () => {
+      if (typeof window === 'undefined') return;
+      
+      const dismissedAt = localStorage.getItem('promo_popup_dismissed_at');
+      const now = Date.now();
+      const thirtyMinutes = 30 * 60 * 1000;
+
+      if (!dismissedAt || now - parseInt(dismissedAt) > thirtyMinutes) {
+        // Show popup after a short delay when the page loads
+        timer = setTimeout(() => {
+          setIsOpen(true);
+        }, 1000);
+      }
+    };
+
+    checkPopup();
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, []);
+
+  const handleClose = () => {
+    localStorage.setItem('promo_popup_dismissed_at', Date.now().toString());
+    setIsOpen(false);
+  };
 
   if (!isOpen) return null;
 
@@ -22,7 +44,7 @@ export default function PromoPopup() {
         {/* Header with gradient */}
         <div className="bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] p-6 text-white relative">
           <button 
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
           >
             <X size={20} />
@@ -72,7 +94,11 @@ export default function PromoPopup() {
               <input type="text" placeholder="Quận/Huyện, Tỉnh/TP" className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
             </div>
             
-            <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-3.5 rounded-lg hover:bg-[var(--accent-secondary)] transition-colors mt-2 text-lg">
+            <button 
+              type="button" 
+              onClick={handleClose}
+              className="w-full bg-[var(--accent)] text-white font-bold py-3.5 rounded-lg hover:bg-[var(--accent-secondary)] transition-colors mt-2 text-lg"
+            >
               Nhận ưu đãi 10% ngay
             </button>
             
