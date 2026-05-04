@@ -349,7 +349,7 @@ export default async function Home() {
           <div className="mb-12 flex justify-between items-end">
             <div>
               <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-                TIN TỨC LIVE TỪ WORDPRESS
+                Tin tức
               </div>
               <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] tracking-tight">BÀI VIẾT MỚI NHẤT</h2>
             </div>
