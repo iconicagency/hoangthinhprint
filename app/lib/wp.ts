@@ -232,6 +232,15 @@ export async function getHomePageData() {
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
+        whyChooseUs {
+          tagline
+          title
+          features {
+            iconName
+            featureTitle
+            featureDescription
+          }
+        }
         cauHinhTrangChu {
           heroTagline
           heroTitle
@@ -242,9 +251,13 @@ export async function getHomePageData() {
             }
           }
           heroBenefits {
-            benefitText
+            title
+            subtitle
           }
-          baoGiaHotline
+          heroButtons {
+            label
+            link
+          }
           stats {
             number
             suffix
@@ -253,10 +266,59 @@ export async function getHomePageData() {
           partners {
             partnerName
           }
+          services {
+            title
+            description
+            image {
+              node {
+                sourceUrl
+              }
+            }
+            price
+          }
+          whyChooseUs {
+            title
+            description
+            iconName
+          }
+          processSteps {
+            stepNumber
+            title
+          }
+          machinery {
+            title
+            description
+            image {
+              node {
+                sourceUrl
+              }
+            }
+          }
+          videoSection {
+            title
+            description
+            videoUrl
+            backgroundImage {
+              node {
+                sourceUrl
+              }
+            }
+          }
+          testimonials {
+            content
+            author
+            position
+            rating
+          }
         }
       }
     }
   `;
   const data = await fetchWP(query);
-  return data?.page?.cauHinhTrangChu;
+  if (!data?.page) return null;
+  
+  return {
+    ...data.page.cauHinhTrangChu,
+    newWhyChooseUs: data.page.whyChooseUs
+  };
 }

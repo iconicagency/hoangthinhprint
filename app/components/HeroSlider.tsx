@@ -13,14 +13,22 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
   const finalHero = dynamicHero || homeConfig.hero;
 
   // Xử lý slide ảnh (Do WP trả về object có chứa node)
-  const slideUrls = finalHero.slides?.nodes 
-    ? finalHero.slides.nodes.map((n: any) => n.sourceUrl) 
-    : finalHero.slides;
+  const slideUrls = finalHero.heroSlides?.nodes 
+    ? finalHero.heroSlides.nodes.map((n: any) => n.sourceUrl) 
+    : (finalHero.slides?.nodes ? finalHero.slides.nodes.map((n: any) => n.sourceUrl) : finalHero.slides);
 
   // Xử lý benefits text
   const benefits = finalHero.heroBenefits 
-    ? finalHero.heroBenefits.map((b: any) => b.benefitText) 
-    : finalHero.benefits;
+    ? finalHero.heroBenefits.map((b: any) => ({ title: b.title, subtitle: b.subtitle })) 
+    : finalHero.benefits?.map((b: string) => ({ title: b, subtitle: '' }));
+
+  // Xử lý buttons
+  const buttons = finalHero.heroButtons 
+    ? finalHero.heroButtons 
+    : [
+        { label: 'Xem sản phẩm', link: '/san-pham' },
+        { label: 'Nhận báo giá miễn phí', link: '/bao-gia' }
+      ];
 
   useEffect(() => {
     if (!slideUrls || slideUrls.length === 0) return;
@@ -31,7 +39,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
   }, [slideUrls?.length]);
 
   return (
-    <section className="relative h-[650px] bg-slate-900 text-white overflow-hidden flex items-center justify-center">
+    <section className="relative h-[750px] bg-slate-900 text-white overflow-hidden flex items-center justify-center">
       <AnimatePresence mode="popLayout">
         <motion.div
           key={currentSlide}
@@ -69,26 +77,36 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/san-pham" className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] text-white px-10 py-4 rounded-lg font-bold hover:scale-105 transition-all shadow-xl shadow-[var(--accent)]/30 flex items-center justify-center gap-2 text-lg">
-              Xem sản phẩm <ArrowRight size={20}/>
-            </Link>
-            <Link href={finalHero.baoGiaHotline ? `tel:${finalHero.baoGiaHotline}` : "/bao-gia"} className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-lg font-bold hover:bg-white/20 transition-colors flex items-center justify-center text-lg shadow-lg">
-              Nhận báo giá miễn phí
-            </Link>
+            {buttons.map((btn: any, i: number) => (
+              <Link 
+                key={i} 
+                href={btn.link} 
+                className={i === 0 
+                  ? "bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] text-white px-10 py-4 rounded-lg font-bold hover:scale-105 transition-all shadow-xl shadow-[var(--accent)]/30 flex items-center justify-center gap-2 text-lg"
+                  : "bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-lg font-bold hover:bg-white/20 transition-colors flex items-center justify-center text-lg shadow-lg"
+                }
+              >
+                {btn.label} {i === 0 && <ArrowRight size={20}/>}
+              </Link>
+            ))}
           </div>
           
-          <div className="mt-14 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm md:text-base text-gray-200 font-medium">
-            {benefits && benefits.map((benefit: string, i: number) => (
-              <span key={i} className="flex items-center gap-2">
-                <CheckCircle2 size={20} className="text-[var(--accent-secondary)]"/> {benefit}
-              </span>
+          <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm md:text-base text-gray-200 font-medium">
+            {benefits && benefits.map((benefit: any, i: number) => (
+              <div key={i} className="flex flex-col items-center gap-1 group">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={24} className="text-[var(--accent-secondary)] group-hover:scale-110 transition-transform"/> 
+                  <span className="font-bold text-white text-lg">{benefit.title}</span>
+                </div>
+                {benefit.subtitle && <span className="text-gray-300 text-xs md:text-sm">{benefit.subtitle}</span>}
+              </div>
             ))}
           </div>
         </motion.div>
       </div>
 
       {/* Slider Indicators */}
-      <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
+      <div className="absolute bottom-12 left-0 right-0 flex justify-center gap-2 z-20">
         {slideUrls && slideUrls.map((_: any, i: number) => (
           <button 
             key={i}
