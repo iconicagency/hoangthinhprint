@@ -89,9 +89,20 @@ export default async function Home() {
   
   // Ưu tiên dữ liệu WordPress, nếu không có fallback config tĩnh
   const finalStats = wpHomeData?.stats || homeConfig.stats;
-  const finalPartners = wpHomeData?.partners?.map((p: any) => p.partnerName) || homeConfig.partners;
+  const clientsSectionData = wpHomeData?.newClients;
+  const finalPartners = clientsSectionData?.clients?.map((c: any) => ({
+    name: c.clientName,
+    logo: c.clientLogo?.node?.sourceUrl
+  })) || wpHomeData?.partners?.map((p: any) => ({ name: p.partnerName })) 
+    || homeConfig.partners.map(name => ({ name }));
   
-  const finalServices = wpHomeData?.services?.map((s: any, i: number) => ({
+  const printingServicesData = wpHomeData?.newPrintingServices;
+  const finalServices = printingServicesData?.services?.map((s: any, i: number) => ({
+    title: s.serviceTitle,
+    desc: s.serviceDescription,
+    price: 'Liên hệ',
+    img: s.serviceImage?.node?.sourceUrl || `https://picsum.photos/seed/service-${i}/400/300`
+  })) || wpHomeData?.services?.map((s: any, i: number) => ({
     title: s.title,
     desc: s.description,
     price: s.price || 'Liên hệ',
@@ -135,22 +146,34 @@ export default async function Home() {
     }
   ];
 
-  const finalProcess = wpHomeData?.processSteps?.map((p: any) => ({
+  const workingProcessData = wpHomeData?.newWorkingProcess;
+  const finalProcess = workingProcessData?.steps?.map((s: any, i: number) => ({
+    step: (i + 1).toString().padStart(2, '0'),
+    title: s.stepTitle,
+    desc: s.stepDescription,
+    icon: iconMap[s.stepIcon] || Settings
+  })) || wpHomeData?.processSteps?.map((p: any) => ({
     step: p.stepNumber,
     title: p.title
   })) || pageData.process;
-
-  const finalMachines = wpHomeData?.machinery?.map((m: any, i: number) => ({
+  
+  const machinerySectionData = wpHomeData?.newMachinery;
+  const finalMachines = machinerySectionData?.machines?.map((m: any, i: number) => ({
+    title: m.machineName,
+    desc: m.machineDescription,
+    img: m.machineImage?.node?.sourceUrl || `https://picsum.photos/seed/machine-${i}/300/200`
+  })) || wpHomeData?.machinery?.map((m: any, i: number) => ({
     title: m.title,
     desc: m.description,
     img: m.image?.node?.sourceUrl || `https://picsum.photos/seed/machine-${i}/300/200`
   })) || pageData.machines;
 
-  const videoData = wpHomeData?.videoSection || {
-    title: 'Tham Quan Xưởng In Hoàng Thịnh',
-    description: 'Khám phá quy trình sản xuất khép kín từ thiết kế, in ấn đến gia công thành phẩm tại xưởng in quy mô lớn của chúng tôi.',
-    backgroundImage: null,
-    videoUrl: '#'
+  const factoryTourData = wpHomeData?.newFactoryTour;
+  const videoData = {
+    title: factoryTourData?.title || wpHomeData?.videoTitle || homeConfig.videoSection.title,
+    description: factoryTourData?.description || wpHomeData?.videoDescription || homeConfig.videoSection.description,
+    videoUrl: factoryTourData?.videoUrl || wpHomeData?.videoUrl || homeConfig.videoSection.videoUrl,
+    coverImage: factoryTourData?.coverImage?.node?.sourceUrl
   };
 
   return (
@@ -179,9 +202,11 @@ export default async function Home() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="text-center mb-16">
           <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-            DỊCH VỤ IN ẤN
+            {printingServicesData?.tagline || 'DỊCH VỤ IN ẤN'}
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">DỊCH VỤ IN ẤN CHUYÊN NGHIỆP</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">
+            {printingServicesData?.title || 'DỊCH VỤ IN ẤN CHUYÊN NGHIỆP'}
+          </h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -238,20 +263,23 @@ export default async function Home() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="text-center mb-16">
           <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-            QUY TRÌNH LÀM VIỆC
+            {workingProcessData?.tagline || 'QUY TRÌNH LÀM VIỆC'}
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">QUY TRÌNH BAO GỒM CÁC BƯỚC</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">
+            {workingProcessData?.title || 'QUY TRÌNH BAO GỒM CÁC BƯỚC'}
+          </h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 text-center">
             {finalProcess.map((item: any, i: number) => (
-              <div key={i} className="relative">
-                <div className="w-16 h-16 mx-auto bg-[var(--card-bg)] rounded-full flex items-center justify-center border-2 border-[var(--accent)] text-[var(--accent)] font-black text-xl mb-4 relative z-10">
+              <div key={i} className="relative group">
+                <div className="w-16 h-16 mx-auto bg-[var(--card-bg)] rounded-full flex items-center justify-center border-2 border-[var(--border)] group-hover:border-[var(--accent)] text-[var(--accent)] font-black text-xl mb-4 relative z-10 transition-colors">
                   {item.step}
                 </div>
                 {i < finalProcess.length - 1 && <div className="hidden lg:block absolute top-8 left-[60%] w-full h-[2px] bg-[var(--border)] -z-0"></div>}
-                <h3 className="font-bold text-sm text-[var(--text-main)]">{item.title}</h3>
+                <h3 className="font-bold text-sm text-[var(--text-main)] mb-1">{item.title}</h3>
+                {item.desc && <p className="text-[10px] text-[var(--text-dim)] leading-tight px-1">{item.desc}</p>}
               </div>
             ))}
           </div>
@@ -283,9 +311,11 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-              NĂNG LỰC SẢN XUẤT
+              {machinerySectionData?.tagline || 'NĂNG LỰC SẢN XUẤT'}
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-4 tracking-tight">MÁY MÓC & CÔNG NGHỆ</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-4 tracking-tight">
+              {machinerySectionData?.title || 'MÁY MÓC & CÔNG NGHỆ'}
+            </h2>
             <p className="text-[var(--text-dim)] mb-6">Toàn bộ máy móc tại xưởng — không thuê ngoài</p>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
@@ -321,9 +351,11 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-              ĐỐI TÁC
+              {clientsSectionData?.tagline || 'ĐỐI TÁC'}
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">KHÁCH HÀNG CỦA CHÚNG TÔI</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">
+              {clientsSectionData?.title || 'KHÁCH HÀNG CỦA CHÚNG TÔI'}
+            </h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
         </div>
@@ -337,19 +369,44 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Video Section */}
-      <section className="py-24 px-8 bg-[var(--bg)] border-y border-[var(--border)] relative overflow-hidden">
+      {/* Factory Tour / Video Section */}
+      <section className="py-32 px-8 bg-[var(--bg)] border-y border-[var(--border)] relative overflow-hidden flex items-center justify-center min-h-[600px]">
          <div 
-          className="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-overlay"
-          style={{ backgroundImage: `url(${videoData.backgroundImage?.node?.sourceUrl || 'https://picsum.photos/seed/factory/1920/1080'})` }}
+          className="absolute inset-0 opacity-20 bg-cover bg-center transition-transform duration-1000"
+          style={{ 
+            backgroundImage: `url(${videoData.coverImage || 'https://picsum.photos/seed/factory/1920/1080'})`,
+          }}
          ></div>
+         <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg)] via-transparent to-[var(--bg)]"></div>
+         
          <div className="max-w-4xl mx-auto relative z-10 text-center">
-            <Link href={videoData.videoUrl || '#'} target="_blank" className="w-24 h-24 bg-[var(--accent)] rounded-full flex items-center justify-center mx-auto mb-8 cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-[var(--accent)]/40 text-[var(--bg)] block">
-              <Play size={40} fill="currentColor" className="ml-2" />
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
+              {factoryTourData?.tagline || 'VIDEO GIỚI THIỆU'}
+            </div>
+            
+            <Link 
+              href={videoData.videoUrl || '#'} 
+              target="_blank" 
+              className="w-24 h-24 bg-[var(--accent)] rounded-full flex items-center justify-center mx-auto mb-10 cursor-pointer hover:scale-110 transition-transform shadow-2xl shadow-[var(--accent)]/50 text-[var(--bg)] group relative"
+            >
+              {/* Ripple Effect Animation */}
+              <div className="absolute inset-0 bg-[var(--accent)] rounded-full animate-ping opacity-20"></div>
+              <Play size={40} fill="currentColor" className="ml-2 relative z-10" />
             </Link>
-            <h2 className="text-4xl md:text-5xl font-serif mb-6 text-[var(--text-main)] tracking-tight">{videoData.title}</h2>
-            <p className="text-[var(--text-dim)] text-lg max-w-2xl mx-auto mb-8">{videoData.description}</p>
-            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+
+            <h2 className="text-4xl md:text-6xl font-serif mb-6 text-[var(--text-main)] tracking-tight leading-tight uppercase">
+              {videoData.title}
+            </h2>
+            <p className="text-[var(--text-dim)] text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+              {videoData.description}
+            </p>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-20 h-[1px] bg-[var(--accent)] mb-4"></div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-dim)] opacity-50">
+                Click to explore our facility
+              </p>
+            </div>
          </div>
       </section>
 

@@ -27,5 +27,10 @@ export const homeConfig = {
     "FPT",
     "Samsung",
     "BIDV"
-  ]
+  ],
+  videoSection: {
+    title: 'Tham Quan Xưởng In Hoàng Thịnh',
+    description: 'Khám phá quy trình sản xuất khép kín từ thiết kế, in ấn đến gia công thành phẩm tại xưởng in quy mô lớn của chúng tôi.',
+    videoUrl: '#'
+  }
 };

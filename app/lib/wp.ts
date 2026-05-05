@@ -232,6 +232,28 @@ export async function getHomePageData() {
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
+        workingProcess {
+          tagline
+          title
+          steps {
+            stepTitle
+            stepDescription
+            stepIcon
+          }
+        }
+        printingServices {
+          tagline
+          title
+          services {
+            serviceTitle
+            serviceDescription
+            serviceImage {
+              node {
+                sourceUrl
+              }
+            }
+          }
+        }
         whyChooseUs {
           tagline
           title
@@ -239,6 +261,42 @@ export async function getHomePageData() {
             iconName
             featureTitle
             featureDescription
+          }
+        }
+        machinerySection {
+          tagline
+          title
+          machines {
+            machineName
+            machineDescription
+            machineImage {
+              node {
+                sourceUrl
+              }
+            }
+          }
+        }
+        clientsSection {
+          tagline
+          title
+          clients {
+            clientName
+            clientLogo {
+              node {
+                sourceUrl
+              }
+            }
+          }
+        }
+        factoryTour {
+          tagline
+          title
+          description
+          videoUrl
+          coverImage {
+            node {
+              sourceUrl
+            }
           }
         }
         cauHinhTrangChu {
@@ -319,6 +377,11 @@ export async function getHomePageData() {
   
   return {
     ...data.page.cauHinhTrangChu,
-    newWhyChooseUs: data.page.whyChooseUs
+    newWhyChooseUs: data.page.whyChooseUs,
+    newWorkingProcess: data.page.workingProcess,
+    newPrintingServices: data.page.printingServices,
+    newMachinery: data.page.machinerySection,
+    newClients: data.page.clientsSection,
+    newFactoryTour: data.page.factoryTour
   };
 }
