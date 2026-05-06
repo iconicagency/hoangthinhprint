@@ -37,6 +37,7 @@ export default function AdminPage() {
 
   const fetchSettings = async () => {
     try {
+      if (!db) return;
       const docRef = doc(db, 'settings', 'general');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -77,6 +78,10 @@ export default function AdminPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!db) {
+       setError('Database not initialized on client');
+       return;
+    }
     setSaving(true);
     setError('');
     setSuccess('');

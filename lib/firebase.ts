@@ -1,11 +1,13 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 // Import the Firebase configuration
 import firebaseConfig from '../firebase-applet-config.json';
 
 // Initialize Firebase SDK
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-export const auth = getAuth();
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+// Only initialize Firestore & Auth on the client side to prevent Next.js SSR hangs
+export const db = (typeof window !== 'undefined' ? getFirestore(app, firebaseConfig.firestoreDatabaseId) : null) as Firestore;
+export const auth = (typeof window !== 'undefined' ? getAuth() : null) as any;

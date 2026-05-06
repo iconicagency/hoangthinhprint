@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Target, Eye, TrendingUp, Users, Award, Package, Printer, Sparkles, Shield, Settings, Box, UserCheck, ShieldCheck, Gem, Truck, Wand2, RefreshCcw, Factory, ArrowRight, Lightbulb, HeartHandshake, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
-import { getPageBySlug } from '../lib/wp';
+import { getAboutPageData, getPageBySlug } from '../lib/wp';
 
 export default function About() {
   const settings = useSettings();
@@ -15,7 +15,12 @@ export default function About() {
   useEffect(() => {
     async function loadData() {
       try {
-        const data = await getPageBySlug('gioi-thieu');
+        let data = await getAboutPageData();
+        if (!data?.cauHinhTrangGioiThieu) {
+          // Fallback to basic page data if ACF is not setup yet
+          const basicData = await getPageBySlug('gioi-thieu');
+          if (basicData) data = basicData;
+        }
         if (data) setPageData(data);
       } catch (error) {
         console.error("Lỗi khi tải trang giới thiệu:", error);
@@ -25,6 +30,8 @@ export default function About() {
     }
     loadData();
   }, []);
+
+  const acf = pageData?.cauHinhTrangGioiThieu;
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -36,10 +43,10 @@ export default function About() {
             Về Chúng Tôi
           </div>
           <h1 className="text-5xl md:text-6xl font-serif mb-6 leading-tight text-[var(--text-main)] tracking-tight">
-            {pageData?.title || '17 Năm Kinh Nghiệm Kiến Tạo Bao Bì Đẳng Cấp'}
+            {acf?.heroTitle || pageData?.title || '17 Năm Kinh Nghiệm Kiến Tạo Bao Bì Đẳng Cấp'}
           </h1>
           <p className="text-[var(--text-dim)] mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-            In Hoàng Thịnh tự hào là đối tác in ấn bao bì trọn gói chuyên nghiệp, đồng hành cùng hơn 500+ thương hiệu lớn nhỏ trên toàn quốc.
+            {acf?.heroSubtitle || 'In Hoàng Thịnh tự hào là đối tác in ấn bao bì trọn gói chuyên nghiệp, đồng hành cùng hơn 500+ thương hiệu lớn nhỏ trên toàn quốc.'}
           </p>
         </div>
       </section>
@@ -61,12 +68,14 @@ export default function About() {
           </div>
           <div className="md:w-1/2">
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
-              CÂU CHUYỆN CỦA CHÚNG TÔI
+              {acf?.storySubtitle || 'CÂU CHUYỆN CỦA CHÚNG TÔI'}
             </div>
-            <h2 className="text-4xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Từ Xưởng In Nhỏ Đến Đối Tác Tin Cậy</h2>
+            <h2 className="text-4xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{acf?.storyTitle || 'Từ Xưởng In Nhỏ Đến Đối Tác Tin Cậy'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mb-8"></div>
             <div className="space-y-6 text-[var(--text-dim)] leading-relaxed">
-              {pageData?.content ? (
+              {acf?.storyContent ? (
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: acf.storyContent }} />
+              ) : pageData?.content ? (
                 <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: pageData.content }} />
               ) : (
                 <>
@@ -103,9 +112,9 @@ export default function About() {
               <div className="w-14 h-14 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mb-6">
                 <Target size={28} />
               </div>
-              <h3 className="text-2xl font-bold text-[var(--text-main)] mb-4">Tầm nhìn</h3>
+              <h3 className="text-2xl font-bold text-[var(--text-main)] mb-4">{acf?.visionTitle || 'Tầm nhìn'}</h3>
               <p className="text-[var(--text-dim)] leading-relaxed">
-                Trở thành xưởng in bao bì uy tín hàng đầu tại Hà Nội, được đối tác tin tưởng lựa chọn nhờ chất lượng thực sự — không phải lời hứa suông. Phát triển bền vững dựa trên năng lực sản xuất thật, máy móc tại xưởng và cam kết bằng hành động.
+                {acf?.visionContent || 'Trở thành xưởng in bao bì uy tín hàng đầu tại Hà Nội, được đối tác tin tưởng lựa chọn nhờ chất lượng thực sự — không phải lời hứa suông. Phát triển bền vững dựa trên năng lực sản xuất thật, máy móc tại xưởng và cam kết bằng hành động.'}
               </p>
             </div>
 
@@ -114,9 +123,9 @@ export default function About() {
               <div className="w-14 h-14 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mb-6">
                 <Eye size={28} />
               </div>
-              <h3 className="text-2xl font-bold text-[var(--text-main)] mb-4">Sứ mệnh</h3>
+              <h3 className="text-2xl font-bold text-[var(--text-main)] mb-4">{acf?.missionTitle || 'Sứ mệnh'}</h3>
               <p className="text-[var(--text-dim)] leading-relaxed">
-                Mang đến cho doanh nghiệp Việt giải pháp bao bì chất lượng cao với giá xưởng trực tiếp. Đặt khách hàng là trung tâm — tư vấn tận tâm, thiết kế miễn phí, sản xuất chỉn chu. Cam kết: sai màu in lại miễn phí, giao hàng đúng hẹn.
+                {acf?.missionContent || 'Mang đến cho doanh nghiệp Việt giải pháp bao bì chất lượng cao với giá xưởng trực tiếp. Đặt khách hàng là trung tâm — tư vấn tận tâm, thiết kế miễn phí, sản xuất chỉn chu. Cam kết: sai màu in lại miễn phí, giao hàng đúng hẹn.'}
               </p>
             </div>
           </div>

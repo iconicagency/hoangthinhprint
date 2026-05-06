@@ -72,6 +72,47 @@ export async function getPageBySlug(slug: string) {
   return data?.page;
 }
 
+// Lấy dữ liệu trang Giới thiệu (bao gồm ACF nếu có)
+export async function getAboutPageData() {
+  const query = `
+    query GetAboutPageData {
+      page(id: "gioi-thieu", idType: URI) {
+        title
+        content
+        featuredImage {
+          node {
+            sourceUrl
+          }
+        }
+        cauHinhTrangGioiThieu {
+          heroTitle
+          heroSubtitle
+          storyTitle
+          storyContent
+          visionTitle
+          visionContent
+          missionTitle
+          missionContent
+          stats {
+            number
+            label
+          }
+          benefits {
+            title
+            description
+          }
+          coreValues {
+            title
+            description
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query);
+  return data?.page;
+}
+
 // Lấy chi tiết bài viết theo Slug
 export async function getPostBySlug(slug: string) {
   const query = `

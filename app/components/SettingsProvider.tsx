@@ -34,6 +34,8 @@ export default function SettingsProvider({ children }: { children: React.ReactNo
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
 
   useEffect(() => {
+    if (!db) return;
+    
     const docRef = doc(db, 'settings', 'general');
     
     // Listen for real-time updates
