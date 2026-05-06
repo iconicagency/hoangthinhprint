@@ -2,18 +2,54 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
+import { getIndustryPageData } from '../../lib/wp';
 
 export default function YenSaoPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [pageData, setPageData] = useState<any>(null);
 
-  const faqs = [
-    { q: 'Có làm hộp yến sào set quà tặng không?', a: 'Có, chúng tôi chuyên thiết kế và sản xuất các set hộp yến sào quà tặng cao cấp, bao gồm hộp lớn, hộp nhỏ bên trong, túi giấy và thiệp đi kèm.' },
-    { q: 'Lót nhung bên trong có được không?', a: 'Chắc chắn rồi. Lót nhung, lót lụa hoặc mút xốp bế định hình là lựa chọn tuyệt vời để bảo vệ và tôn lên vẻ sang trọng cho các lọ yến.' },
-    { q: 'Đặt 500 hộp có nhận không?', a: 'Có, chúng tôi nhận sản xuất từ số lượng 500 hộp để hỗ trợ các doanh nghiệp vừa và nhỏ với mức chi phí tối ưu nhất.' },
-    { q: 'Thời gian sản xuất?', a: 'Thời gian sản xuất trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getIndustryPageData('nganh-hang/yen-sao');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang:", error);
+      }
+    }
+    loadData();
+  }, []);
+
+  const acf = pageData?.cauHinhChiTietNganhHang || {};
+
+  const defaultFaqs = [
+    { question: 'Có làm hộp yến sào set quà tặng không?', answer: 'Có, chúng tôi chuyên thiết kế và sản xuất các set hộp yến sào quà tặng cao cấp, bao gồm hộp lớn, hộp nhỏ bên trong, túi giấy và thiệp đi kèm.' },
+    { question: 'Lót nhung bên trong có được không?', answer: 'Chắc chắn rồi. Lót nhung, lót lụa hoặc mút xốp bế định hình là lựa chọn tuyệt vời để bảo vệ và tôn lên vẻ sang trọng cho các lọ yến.' },
+    { question: 'Đặt 500 hộp có nhận không?', answer: 'Có, chúng tôi nhận sản xuất từ số lượng 500 hộp để hỗ trợ các doanh nghiệp vừa và nhỏ với mức chi phí tối ưu nhất.' },
+    { question: 'Thời gian sản xuất?', answer: 'Thời gian sản xuất trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
   ];
+
+  const faqs = acf.faqs && acf.faqs.length > 0 ? acf.faqs : defaultFaqs;
+
+  const whyList = acf.whyList && acf.whyList.length > 0 
+    ? acf.whyList.map((w: any) => w.item) 
+    : [
+      'Sản phẩm giá trị cao — bao bì phải tương xứng',
+      'Hộp cứng bảo vệ lọ yến trong vận chuyển',
+      'Ép kim vàng tạo cảm giác sang trọng, quà tặng',
+      'Lót nhung, ngăn chia giữ cố định từng lọ',
+      'Chủ xưởng QC trực tiếp — đảm bảo hoàn hảo'
+    ];
+
+  const productsList = acf.productsList && acf.productsList.length > 0
+    ? acf.productsList
+    : [
+      { title: 'Hộp cứng âm dương', description: 'Ép kim vàng, lót nhung. Phổ biến nhất cho yến sào.' },
+      { title: 'Hộp cứng ngăn kéo', description: 'Sang trọng, kéo ra đẩy vào. Cho set quà tặng.' },
+      { title: 'Túi giấy kèm theo', description: 'Túi giấy ivory đi kèm hộp. Hoàn thiện bộ quà tặng.' }
+    ];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -29,10 +65,10 @@ export default function YenSaoPage() {
             <span className="text-white">Yến Sào</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">
-            Bao Bì Cho Ngành Yến Sào
+            {acf.heroTitle || 'Bao Bì Cho Ngành Yến Sào'}
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl">
-            Hộp cứng truyền thống, ép kim vàng — Xứng tầm sản vật quý
+            {acf.heroSubtitle || 'Hộp cứng truyền thống, ép kim vàng — Xứng tầm sản vật quý'}
           </p>
         </div>
       </section>
@@ -40,26 +76,24 @@ export default function YenSaoPage() {
       {/* Intro Section */}
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Bao Bì Cho Ngành Yến Sào</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bì Cho Ngành Yến Sào'}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
-          <p className="text-[var(--text-dim)] text-lg leading-relaxed">
-            Yến sào là sản vật quý — bao bì phải xứng tầm. Hộp cứng ép kim vàng, lót nhung bên trong, thiết kế truyền thống kết hợp hiện đại giúp sản phẩm yến sào trở thành món quà ý nghĩa.
-          </p>
+          {acf.introContent ? (
+            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none prose-p:mb-4" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
+          ) : (
+            <p className="text-[var(--text-dim)] text-lg leading-relaxed">
+              Yến sào là sản vật quý — bao bì phải xứng tầm. Hộp cứng ép kim vàng, lót nhung bên trong, thiết kế truyền thống kết hợp hiện đại giúp sản phẩm yến sào trở thành món quà ý nghĩa.
+            </p>
+          )}
         </div>
       </section>
 
       {/* Why Choose Us */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">Tại sao yến sào cần bao bì đặc biệt?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">{acf.whyTitle || 'Tại sao yến sào cần bao bì đặc biệt?'}</h2>
           <div className="space-y-6">
-            {[
-              'Sản phẩm giá trị cao — bao bì phải tương xứng',
-              'Hộp cứng bảo vệ lọ yến trong vận chuyển',
-              'Ép kim vàng tạo cảm giác sang trọng, quà tặng',
-              'Lót nhung, ngăn chia giữ cố định từng lọ',
-              'Chủ xưởng QC trực tiếp — đảm bảo hoàn hảo'
-            ].map((item, i) => (
+            {whyList.map((item: string, i: number) => (
               <div key={i} className="flex items-start gap-4">
                 <CheckCircle2 className="text-[var(--accent)] shrink-0 mt-1" size={24} />
                 <p className="text-lg text-[var(--text-main)]">{item}</p>
@@ -73,23 +107,19 @@ export default function YenSaoPage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Sản phẩm phù hợp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.productsTitle || 'Sản phẩm phù hợp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              { title: 'Hộp cứng âm dương', desc: 'Ép kim vàng, lót nhung. Phổ biến nhất cho yến sào.' },
-              { title: 'Hộp cứng ngăn kéo', desc: 'Sang trọng, kéo ra đẩy vào. Cho set quà tặng.' },
-              { title: 'Túi giấy kèm theo', desc: 'Túi giấy ivory đi kèm hộp. Hoàn thiện bộ quà tặng.' }
-            ].map((prod, i) => (
+            {productsList.map((prod: any, i: number) => (
               <div key={i} className="bg-white border border-[var(--border)] rounded-2xl p-8 text-center hover:shadow-xl transition-shadow group">
                 <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6 group-hover:scale-110 transition-transform">
                   <Package size={32} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">{prod.title}</h3>
-                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.desc}</p>
-                <Link href="/san-pham" className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
+                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.description}</p>
+                <Link href={prod.link || '/san-pham'} className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
                   Xem thêm <ArrowRight size={18} />
                 </Link>
               </div>
@@ -97,7 +127,7 @@ export default function YenSaoPage() {
           </div>
           
           <p className="text-center text-[var(--accent)] font-bold text-lg">
-            Hộp cứng yến sào từ 17.800đ/hộp. MOQ 500.
+            {acf.pricingText || 'Hộp cứng yến sào từ 17.800đ/hộp. MOQ 500.'}
           </p>
         </div>
       </section>
@@ -111,11 +141,19 @@ export default function YenSaoPage() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                <Image src={`https://picsum.photos/seed/yensao${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-              </div>
-            ))}
+            {acf.sampleImages?.nodes?.length > 0 ? (
+              acf.sampleImages.nodes.map((img: any, i: number) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={img.sourceUrl} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            ) : (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={`https://picsum.photos/seed/yensao${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -124,23 +162,23 @@ export default function YenSaoPage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Câu hỏi thường gặp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Câu hỏi thường gặp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
+            {faqs.map((faq: any, i: number) => (
               <div key={i} className="border border-[var(--border)] rounded-xl overflow-hidden bg-white">
                 <button 
                   className="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-[var(--text-main)] hover:bg-[var(--card-bg)] transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  {faq.q}
+                  {faq.question || faq.q}
                   {openFaq === i ? <ChevronUp size={20} className="text-[var(--accent)]" /> : <ChevronDown size={20} className="text-[var(--text-dim)]" />}
                 </button>
                 {openFaq === i && (
                   <div className="px-6 pb-4 text-[var(--text-dim)] leading-relaxed">
-                    {faq.a}
+                    {faq.answer || faq.a}
                   </div>
                 )}
               </div>

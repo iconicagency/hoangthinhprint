@@ -2,18 +2,54 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
+import { getIndustryPageData } from '../../lib/wp';
 
 export default function JewelryPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [pageData, setPageData] = useState<any>(null);
 
-  const faqs = [
-    { q: 'Có làm hộp kích thước tùy chỉnh không?', a: 'Có, chúng tôi nhận sản xuất hộp theo mọi kích thước yêu cầu của khách hàng để vừa vặn nhất với từng loại trang sức (nhẫn, dây chuyền, vòng tay...).' },
-    { q: 'Lót nhung có bao nhiêu màu?', a: 'Chúng tôi có sẵn nhiều màu lót nhung cơ bản như đen, đỏ, trắng, kem, xám. Ngoài ra có thể đặt màu theo yêu cầu với số lượng lớn để đồng bộ nhận diện thương hiệu.' },
-    { q: 'MOQ bao nhiêu?', a: 'Số lượng đặt hàng tối thiểu (MOQ) là 500 hộp để đảm bảo chi phí sản xuất và giá thành tốt nhất cho khách hàng.' },
-    { q: 'Có in logo ép kim không?', a: 'Có, ép kim logo (vàng, bạc, rose gold...) là thế mạnh của chúng tôi, giúp hộp trang sức thêm phần sang trọng và đẳng cấp.' },
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getIndustryPageData('nganh-hang/trang-suc-qua-tang');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang:", error);
+      }
+    }
+    loadData();
+  }, []);
+
+  const acf = pageData?.cauHinhChiTietNganhHang || {};
+
+  const defaultFaqs = [
+    { question: 'Có làm hộp kích thước tùy chỉnh không?', answer: 'Có, chúng tôi nhận sản xuất hộp theo mọi kích thước yêu cầu của khách hàng để vừa vặn nhất với từng loại trang sức (nhẫn, dây chuyền, vòng tay...).' },
+    { question: 'Lót nhung có bao nhiêu màu?', answer: 'Chúng tôi có sẵn nhiều màu lót nhung cơ bản như đen, đỏ, trắng, kem, xám. Ngoài ra có thể đặt màu theo yêu cầu với số lượng lớn để đồng bộ nhận diện thương hiệu.' },
+    { question: 'MOQ bao nhiêu?', answer: 'Số lượng đặt hàng tối thiểu (MOQ) là 500 hộp để đảm bảo chi phí sản xuất và giá thành tốt nhất cho khách hàng.' },
+    { question: 'Có in logo ép kim không?', answer: 'Có, ép kim logo (vàng, bạc, rose gold...) là thế mạnh của chúng tôi, giúp hộp trang sức thêm phần sang trọng và đẳng cấp.' },
   ];
+
+  const faqs = acf.faqs && acf.faqs.length > 0 ? acf.faqs : defaultFaqs;
+
+  const whyList = acf.whyList && acf.whyList.length > 0 
+    ? acf.whyList.map((w: any) => w.item) 
+    : [
+      'Kích thước nhỏ — cần bao bì tinh xảo',
+      'Nam châm đóng mở êm — tạo trải nghiệm premium',
+      'Lót nhung giữ cố định sản phẩm',
+      'Ép kim logo tạo nhận diện thương hiệu',
+      'Thiết kế miễn phí — duyệt 3D trước khi sản xuất'
+    ];
+
+  const productsList = acf.productsList && acf.productsList.length > 0
+    ? acf.productsList
+    : [
+      { title: 'Hộp cứng nam châm nhỏ', description: 'Kích thước vừa nhẫn, dây chuyền, bông tai.' },
+      { title: 'Hộp cứng bao diêm', description: 'Kéo ra đẩy vào, sang trọng.' },
+      { title: 'Túi giấy mini', description: 'Túi giấy nhỏ đi kèm. Hoàn thiện set quà.' }
+    ];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -29,10 +65,10 @@ export default function JewelryPage() {
             <span className="text-white">Trang Sức & Quà Tặng</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">
-            Bao Bì Cho Ngành Trang Sức & Quà Tặng
+            {acf.heroTitle || 'Bao Bì Cho Ngành Trang Sức & Quà Tặng'}
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl">
-            Hộp cứng nhỏ gọn, ép kim — Hoàn thiện trải nghiệm quà tặng
+            {acf.heroSubtitle || 'Hộp cứng nhỏ gọn, ép kim — Hoàn thiện trải nghiệm quà tặng'}
           </p>
         </div>
       </section>
@@ -40,26 +76,24 @@ export default function JewelryPage() {
       {/* Intro Section */}
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Bao Bì Cho Ngành Trang Sức & Quà Tặng</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bì Cho Ngành Trang Sức & Quà Tặng'}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
-          <p className="text-[var(--text-dim)] text-lg leading-relaxed">
-            Trang sức và quà tặng cần bao bì nhỏ gọn nhưng tinh tế. Hộp cứng ép kim, lót nhung mềm mại, đóng mở nam châm mang đến trải nghiệm unboxing đẳng cấp.
-          </p>
+          {acf.introContent ? (
+            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none prose-p:mb-4" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
+          ) : (
+            <p className="text-[var(--text-dim)] text-lg leading-relaxed">
+              Trang sức và quà tặng cần bao bì nhỏ gọn nhưng tinh tế. Hộp cứng ép kim, lót nhung mềm mại, đóng mở nam châm mang đến trải nghiệm unboxing đẳng cấp.
+            </p>
+          )}
         </div>
       </section>
 
       {/* Why Choose Us */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">Tại sao trang sức cần hộp riêng biệt?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">{acf.whyTitle || 'Tại sao trang sức cần hộp riêng biệt?'}</h2>
           <div className="space-y-6">
-            {[
-              'Kích thước nhỏ — cần bao bì tinh xảo',
-              'Nam châm đóng mở êm — tạo trải nghiệm premium',
-              'Lót nhung giữ cố định sản phẩm',
-              'Ép kim logo tạo nhận diện thương hiệu',
-              'Thiết kế miễn phí — duyệt 3D trước khi sản xuất'
-            ].map((item, i) => (
+            {whyList.map((item: string, i: number) => (
               <div key={i} className="flex items-start gap-4">
                 <CheckCircle2 className="text-[var(--accent)] shrink-0 mt-1" size={24} />
                 <p className="text-lg text-[var(--text-main)]">{item}</p>
@@ -73,23 +107,19 @@ export default function JewelryPage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Sản phẩm phù hợp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.productsTitle || 'Sản phẩm phù hợp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              { title: 'Hộp cứng nam châm nhỏ', desc: 'Kích thước vừa nhẫn, dây chuyền, bông tai.' },
-              { title: 'Hộp cứng bao diêm', desc: 'Kéo ra đẩy vào, sang trọng.' },
-              { title: 'Túi giấy mini', desc: 'Túi giấy nhỏ đi kèm. Hoàn thiện set quà.' }
-            ].map((prod, i) => (
+            {productsList.map((prod: any, i: number) => (
               <div key={i} className="bg-white border border-[var(--border)] rounded-2xl p-8 text-center hover:shadow-xl transition-shadow group">
                 <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6 group-hover:scale-110 transition-transform">
                   <Package size={32} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">{prod.title}</h3>
-                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.desc}</p>
-                <Link href="/san-pham" className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
+                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.description}</p>
+                <Link href={prod.link || '/san-pham'} className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
                   Xem thêm <ArrowRight size={18} />
                 </Link>
               </div>
@@ -97,7 +127,7 @@ export default function JewelryPage() {
           </div>
           
           <p className="text-center text-[var(--accent)] font-bold text-lg">
-            Hộp nhỏ từ 10.200đ. MOQ 500.
+            {acf.pricingText || 'Hộp nhỏ từ 10.200đ. MOQ 500.'}
           </p>
         </div>
       </section>
@@ -111,11 +141,19 @@ export default function JewelryPage() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                <Image src={`https://picsum.photos/seed/jewelry${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-              </div>
-            ))}
+            {acf.sampleImages?.nodes?.length > 0 ? (
+              acf.sampleImages.nodes.map((img: any, i: number) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={img.sourceUrl} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            ) : (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={`https://picsum.photos/seed/jewelry${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -124,23 +162,23 @@ export default function JewelryPage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Câu hỏi thường gặp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Câu hỏi thường gặp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
+            {faqs.map((faq: any, i: number) => (
               <div key={i} className="border border-[var(--border)] rounded-xl overflow-hidden bg-white">
                 <button 
                   className="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-[var(--text-main)] hover:bg-[var(--card-bg)] transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  {faq.q}
+                  {faq.question || faq.q}
                   {openFaq === i ? <ChevronUp size={20} className="text-[var(--accent)]" /> : <ChevronDown size={20} className="text-[var(--text-dim)]" />}
                 </button>
                 {openFaq === i && (
                   <div className="px-6 pb-4 text-[var(--text-dim)] leading-relaxed">
-                    {faq.a}
+                    {faq.answer || faq.a}
                   </div>
                 )}
               </div>

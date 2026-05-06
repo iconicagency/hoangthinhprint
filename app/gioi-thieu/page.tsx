@@ -5,11 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Target, Eye, TrendingUp, Users, Award, Package, Printer, Sparkles, Shield, Settings, Box, UserCheck, ShieldCheck, Gem, Truck, Wand2, RefreshCcw, Factory, ArrowRight, Lightbulb, HeartHandshake, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
-import { getAboutPageData, getPageBySlug } from '../lib/wp';
+import { getAboutPageData, getPageBySlug, getProjects } from '../lib/wp';
 
 export default function About() {
   const settings = useSettings();
   const [pageData, setPageData] = useState<any>(null);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,6 +23,9 @@ export default function About() {
           if (basicData) data = basicData;
         }
         if (data) setPageData(data);
+
+        const projectData = await getProjects();
+        setProjects(projectData || []);
       } catch (error) {
         console.error("Lỗi khi tải trang giới thiệu:", error);
       } finally {
@@ -56,7 +60,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
           <div className="md:w-1/2">
             <div className="relative h-[500px] w-full rounded-2xl overflow-hidden border border-[var(--border)]">
-              <Image src={pageData?.featuredImage?.node?.sourceUrl || "https://picsum.photos/seed/factory/800/1000"} alt="Xưởng in Hoàng Thịnh" fill className="object-cover" referrerPolicy="no-referrer" />
+              <Image src={acf?.storyImage?.node?.sourceUrl || pageData?.featuredImage?.node?.sourceUrl || "https://picsum.photos/seed/factory/800/1000"} alt="Xưởng in Hoàng Thịnh" fill className="object-cover" referrerPolicy="no-referrer" />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-transparent to-transparent"></div>
               <div className="absolute bottom-8 left-8 right-8">
                 <div className="bg-[var(--bg)]/90 backdrop-blur-md border border-[var(--border)] p-6 rounded-xl">
@@ -144,26 +148,37 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-            <div className="flex flex-col items-center">
-              <TrendingUp size={32} className="text-[var(--accent)] mb-6" />
-              <div className="text-5xl font-bold text-[var(--accent)] mb-2">17+</div>
-              <div className="text-sm text-[var(--text-dim)]">Năm kinh nghiệm</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Users size={32} className="text-[var(--accent)] mb-6" />
-              <div className="text-5xl font-bold text-[var(--accent)] mb-2">500+</div>
-              <div className="text-sm text-[var(--text-dim)]">Doanh nghiệp đã đặt in</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Award size={32} className="text-[var(--accent)] mb-6" />
-              <div className="text-5xl font-bold text-[var(--accent)] mb-2">300tr</div>
-              <div className="text-sm text-[var(--text-dim)]">Đơn hàng lớn nhất (VNĐ)</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Package size={32} className="text-[var(--accent)] mb-6" />
-              <div className="text-5xl font-bold text-[var(--accent)] mb-2">500</div>
-              <div className="text-sm text-[var(--text-dim)]">MOQ tối thiểu (sản phẩm)</div>
-            </div>
+            {acf?.stats ? (
+              acf.stats.map((stat: any, i: number) => (
+                <div key={i} className="flex flex-col items-center">
+                   <div className="text-5xl font-bold text-[var(--accent)] mb-2 mt-4">{stat.number}</div>
+                   <div className="text-sm text-[var(--text-dim)]">{stat.label}</div>
+                </div>
+              ))
+            ) : (
+            <>
+              <div className="flex flex-col items-center">
+                <TrendingUp size={32} className="text-[var(--accent)] mb-6" />
+                <div className="text-5xl font-bold text-[var(--accent)] mb-2">17+</div>
+                <div className="text-sm text-[var(--text-dim)]">Năm kinh nghiệm</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <Users size={32} className="text-[var(--accent)] mb-6" />
+                <div className="text-5xl font-bold text-[var(--accent)] mb-2">500+</div>
+                <div className="text-sm text-[var(--text-dim)]">Doanh nghiệp đã đặt in</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <Award size={32} className="text-[var(--accent)] mb-6" />
+                <div className="text-5xl font-bold text-[var(--accent)] mb-2">300tr</div>
+                <div className="text-sm text-[var(--text-dim)]">Đơn hàng lớn nhất (VNĐ)</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <Package size={32} className="text-[var(--accent)] mb-6" />
+                <div className="text-5xl font-bold text-[var(--accent)] mb-2">500</div>
+                <div className="text-sm text-[var(--text-dim)]">MOQ tối thiểu (sản phẩm)</div>
+              </div>
+            </>
+            )}
           </div>
         </div>
       </section>
@@ -175,40 +190,59 @@ export default function About() {
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               XƯỞNG SẢN XUẤT
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Năng lực sản xuất</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{acf?.productionCapacityTitle || 'Năng lực sản xuất'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
             <p className="text-[var(--text-dim)] max-w-3xl mx-auto leading-relaxed">
-              Xưởng sản xuất đặt tại KCN Tân Triều, Thanh Trì, Hà Nội — trang bị đầy đủ hệ thống máy móc từ in offset, ép kim vàng, cán màng đến bế tự động và dán hộp. Toàn bộ quy trình sản xuất khép kín ngay tại xưởng.
+              {acf?.productionCapacityDescription || 'Xưởng sản xuất đặt tại KCN Tân Triều, Thanh Trì, Hà Nội — trang bị đầy đủ hệ thống máy móc từ in offset, ép kim vàng, cán màng đến bế tự động và dán hộp. Toàn bộ quy trình sản xuất khép kín ngay tại xưởng.'}
             </p>
           </div>
 
           {/* Image Gallery */}
           <div className="flex gap-4 overflow-x-auto pb-6 mb-12 snap-x scrollbar-hide">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="min-w-[280px] h-[280px] relative rounded-xl overflow-hidden shrink-0 snap-center">
-                <Image src={`https://picsum.photos/seed/factory${i}/400/400`} alt={`Xưởng sản xuất ${i}`} fill className="object-cover" referrerPolicy="no-referrer" />
-              </div>
-            ))}
+            {acf?.productionImages?.nodes?.length > 0 ? (
+              acf.productionImages.nodes.map((img: any, i: number) => (
+                <div key={i} className="min-w-[280px] h-[280px] relative rounded-xl overflow-hidden shrink-0 snap-center">
+                  <Image src={img.sourceUrl} alt={`Xưởng sản xuất ${i}`} fill className="object-cover" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            ) : (
+              [1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="min-w-[280px] h-[280px] relative rounded-xl overflow-hidden shrink-0 snap-center">
+                  <Image src={`https://picsum.photos/seed/factory${i}/400/400`} alt={`Xưởng sản xuất ${i}`} fill className="object-cover" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            )}
           </div>
 
           {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: Printer, title: 'Máy In Offset', desc: 'In 4 màu CMYK, chuẩn quốc tế. Công suất cao, màu sắc sắc nét.' },
-              { icon: Sparkles, title: 'Máy Ép Kim Vàng', desc: 'Ép foil vàng, bạc, rose gold. Máy tại xưởng — không outsource.' },
-              { icon: Shield, title: 'Máy Cán Màng', desc: 'Cán mờ, cán bóng. Bảo vệ bề mặt, tăng độ sang trọng cho sản phẩm.' },
-              { icon: Settings, title: 'Máy Bế Tự Động', desc: 'Bế hình chính xác. Đường cắt sắc nét, không bavia.' },
-              { icon: Box, title: 'Máy Dán Hộp', desc: 'Dán cạnh, dán đáy tự động. Năng suất cao, đều đẹp.' },
-              { icon: UserCheck, title: 'Khu Kiểm Tra QC', desc: 'Bàn QC chuyên dụng. Bảng Pantone chuẩn. Chủ xưởng kiểm tra trực tiếp.' }
-            ].map((feature, i) => (
+            {(acf?.productionFacilities || [
+              { icon: 'Printer', title: 'Máy In Offset', desc: 'In 4 màu CMYK, chuẩn quốc tế. Công suất cao, màu sắc sắc nét.' },
+              { icon: 'Sparkles', title: 'Máy Ép Kim Vàng', desc: 'Ép foil vàng, bạc, rose gold. Máy tại xưởng — không outsource.' },
+              { icon: 'Shield', title: 'Máy Cán Màng', desc: 'Cán mờ, cán bóng. Bảo vệ bề mặt, tăng độ sang trọng cho sản phẩm.' },
+              { icon: 'Settings', title: 'Máy Bế Tự Động', desc: 'Bế hình chính xác. Đường cắt sắc nét, không bavia.' },
+              { icon: 'Box', title: 'Máy Dán Hộp', desc: 'Dán cạnh, dán đáy tự động. Năng suất cao, đều đẹp.' },
+              { icon: 'UserCheck', title: 'Khu Kiểm Tra QC', desc: 'Bàn QC chuyên dụng. Bảng Pantone chuẩn. Chủ xưởng kiểm tra trực tiếp.' }
+            ]).map((feature: any, i: number) => {
+              // Map icon string to Lucide component if possible, otherwise use Factory
+              let IconComp = Factory;
+              if (feature.icon === 'Printer') IconComp = Printer;
+              if (feature.icon === 'Sparkles') IconComp = Sparkles;
+              if (feature.icon === 'Shield') IconComp = Shield;
+              if (feature.icon === 'Settings') IconComp = Settings;
+              if (feature.icon === 'Box') IconComp = Box;
+              if (feature.icon === 'UserCheck') IconComp = UserCheck;
+              
+              return (
               <div key={i} className="bg-[var(--card-bg)] p-8 rounded-2xl border border-[var(--border)]">
                 <div className="w-12 h-12 bg-[var(--accent)]/10 rounded-xl flex items-center justify-center text-[var(--accent)] mb-6">
-                  <feature.icon size={24} />
+                  <IconComp size={24} />
                 </div>
                 <h3 className="text-lg font-bold text-[var(--text-main)] mb-3">{feature.title}</h3>
-                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{feature.desc}</p>
+                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{feature.description || feature.desc}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -225,23 +259,31 @@ export default function About() {
           </div>
 
           <div className="space-y-6">
-            {[
-              { icon: ShieldCheck, title: 'Chất lượng sản phẩm luôn đảm bảo', desc: 'Nguyên liệu được kiểm duyệt chặt chẽ trước khi đưa vào sản xuất. Chính chủ xưởng kiểm tra từng lô hàng trước khi giao. Cam kết bằng hợp đồng: sai màu — in lại miễn phí, không điều kiện.' },
-              { icon: Gem, title: 'Giá thành cạnh tranh — Giá xưởng trực tiếp', desc: 'Sở hữu máy in offset và máy ép kim vàng riêng — không thuê ngoài, không qua trung gian. Chi phí sản xuất được tối ưu, khách hàng hưởng giá xưởng trực tiếp.' },
-              { icon: Truck, title: 'Cam kết đúng tiến độ giao hàng', desc: 'Toàn bộ quy trình sản xuất khép kín tại xưởng — từ in, ép kim, cán màng đến bế và dán hộp. Không phụ thuộc bên ngoài, chủ động hoàn toàn về tiến độ. Ship toàn quốc.' },
-              { icon: Users, title: 'Đội ngũ tận tâm, kinh nghiệm 17 năm', desc: 'Từ tư vấn, thiết kế đến sản xuất — đội ngũ In Hoàng Thịnh có hơn 17 năm kinh nghiệm trong ngành in bao bì. Thiết kế 3D miễn phí, duyệt mẫu trước khi in.' },
-              { icon: Wand2, title: 'Thiết kế miễn phí — Duyệt trước khi in', desc: 'Đội ngũ thiết kế tạo mẫu 3D trực quan, khách hàng duyệt mẫu cho đến khi ưng ý. Không giới hạn số lần chỉnh sửa. Hoàn toàn miễn phí.' }
-            ].map((benefit, i) => (
+            {(acf?.benefits || [
+              { icon: 'ShieldCheck', title: 'Chất lượng sản phẩm luôn đảm bảo', description: 'Nguyên liệu được kiểm duyệt chặt chẽ trước khi đưa vào sản xuất. Chính chủ xưởng kiểm tra từng lô hàng trước khi giao. Cam kết bằng hợp đồng: sai màu — in lại miễn phí, không điều kiện.' },
+              { icon: 'Gem', title: 'Giá thành cạnh tranh — Giá xưởng trực tiếp', description: 'Sở hữu máy in offset và máy ép kim vàng riêng — không thuê ngoài, không qua trung gian. Chi phí sản xuất được tối ưu, khách hàng hưởng giá xưởng trực tiếp.' },
+              { icon: 'Truck', title: 'Cam kết đúng tiến độ giao hàng', description: 'Toàn bộ quy trình sản xuất khép kín tại xưởng — từ in, ép kim, cán màng đến bế và dán hộp. Không phụ thuộc bên ngoài, chủ động hoàn toàn về tiến độ. Ship toàn quốc.' },
+              { icon: 'Users', title: 'Đội ngũ tận tâm, kinh nghiệm 17 năm', description: 'Từ tư vấn, thiết kế đến sản xuất — đội ngũ In Hoàng Thịnh có hơn 17 năm kinh nghiệm trong ngành in bao bì. Thiết kế 3D miễn phí, duyệt mẫu trước khi in.' },
+              { icon: 'Wanc2', title: 'Thiết kế miễn phí — Duyệt trước khi in', description: 'Đội ngũ thiết kế tạo mẫu 3D trực quan, khách hàng duyệt mẫu cho đến khi ưng ý. Không giới hạn số lần chỉnh sửa. Hoàn toàn miễn phí.' }
+            ]).map((benefit: any, i: number) => {
+              let IconComp = ShieldCheck;
+              if (benefit.icon === 'Gem') IconComp = Gem;
+              if (benefit.icon === 'Truck') IconComp = Truck;
+              if (benefit.icon === 'Users') IconComp = Users;
+              if (benefit.icon === 'Wand2') IconComp = Wand2;
+
+              return (
               <div key={i} className="bg-[var(--bg)] p-8 rounded-2xl border border-[var(--border)] flex flex-col md:flex-row gap-6 items-start shadow-sm">
                 <div className="w-14 h-14 shrink-0 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)]">
-                  <benefit.icon size={28} />
+                  <IconComp size={28} />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[var(--text-main)] mb-3">{benefit.title}</h3>
-                  <p className="text-[var(--text-dim)] leading-relaxed">{benefit.desc}</p>
+                  <p className="text-[var(--text-dim)] leading-relaxed">{benefit.description || benefit.desc}</p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -258,20 +300,27 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Settings, title: 'Máy ép kim tại xưởng', desc: 'Sở hữu máy in offset và máy ép kim vàng riêng. Không thuê ngoài, không outsource.' },
-              { icon: UserCheck, title: 'Chủ xưởng QC trực tiếp', desc: 'Chính chủ xưởng kiểm tra từng lô hàng trước khi giao. 17 năm vẫn giữ nguyên nguyên tắc.' },
-              { icon: RefreshCcw, title: 'Sai màu = In lại miễn phí', desc: 'Cam kết bằng hợp đồng. Không đạt chuẩn màu — in lại toàn bộ, miễn phí.' },
-              { icon: Factory, title: 'Xưởng riêng tại Hà Nội', desc: 'Xưởng sản xuất tại KCN Tân Triều, Thanh Trì, Hà Nội. Đáp ứng đơn từ 500 sản phẩm.' }
-            ].map((item, i) => (
+            {(acf?.coreValues || [
+              { icon: 'Settings', title: 'Máy ép kim tại xưởng', description: 'Sở hữu máy in offset và máy ép kim vàng riêng. Không thuê ngoài, không outsource.' },
+              { icon: 'UserCheck', title: 'Chủ xưởng QC trực tiếp', description: 'Chính chủ xưởng kiểm tra từng lô hàng trước khi giao. 17 năm vẫn giữ nguyên nguyên tắc.' },
+              { icon: 'RefreshCcw', title: 'Sai màu = In lại miễn phí', description: 'Cam kết bằng hợp đồng. Không đạt chuẩn màu — in lại toàn bộ, miễn phí.' },
+              { icon: 'Factory', title: 'Xưởng riêng tại Hà Nội', description: 'Xưởng sản xuất tại KCN Tân Triều, Thanh Trì, Hà Nội. Đáp ứng đơn từ 500 sản phẩm.' }
+            ]).map((item: any, i: number) => {
+              let IconComp = Factory;
+              if (item.icon === 'Settings') IconComp = Settings;
+              if (item.icon === 'UserCheck') IconComp = UserCheck;
+              if (item.icon === 'RefreshCcw') IconComp = RefreshCcw;
+
+              return (
               <div key={i} className="bg-[var(--card-bg)] p-8 rounded-2xl border border-[var(--border)] text-center hover:border-[var(--accent)]/50 transition-colors">
                 <div className="w-14 h-14 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6">
-                  <item.icon size={28} />
+                  <IconComp size={28} />
                 </div>
                 <h3 className="text-lg font-bold text-[var(--text-main)] mb-4">{item.title}</h3>
-                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{item.description || item.desc}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -288,11 +337,22 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
-              <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
-                <Image src={`https://picsum.photos/seed/portfolio${i}/400/400`} alt={`Sản phẩm ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-              </div>
-            ))}
+            {projects.length > 0 ? (
+              projects.slice(0, 8).map((proj: any, i: number) => (
+                <div key={i} className="relative aspect-square rounded-xl overflow-hidden group border border-[var(--border)]">
+                  <Image src={proj.featuredImage?.node?.sourceUrl || `https://picsum.photos/seed/portfolio${i}/400/400`} alt={proj.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 text-center">
+                    <span className="text-white font-medium">{proj.title}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
+                  <Image src={`https://picsum.photos/seed/portfolio${i}/400/400`} alt={`Sản phẩm ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -304,33 +364,33 @@ export default function About() {
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               DỊCH VỤ
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Dịch vụ tiêu biểu</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{acf?.servicesTitle || 'Dịch vụ tiêu biểu'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { title: 'Hộp Cứng Cao Cấp', desc: 'Âm dương - Nam châm - Ngăn kéo', img: 'https://picsum.photos/seed/srv1/400/300' },
-              { title: 'Túi Giấy In Logo', desc: 'Ivory - Couche - Kraft', img: 'https://picsum.photos/seed/srv2/400/300' },
-              { title: 'Hộp Sóng Carton', desc: 'In logo brand - Ship không méo', img: 'https://picsum.photos/seed/srv3/400/300' },
-              { title: 'Hộp Giấy', desc: 'Đa kích thước - In offset', img: 'https://picsum.photos/seed/srv4/400/300' },
-              { title: 'Tem Nhãn Decal', desc: 'Tem decal - Tem bạc - Tem vỡ', img: null },
-              { title: 'Thiết Kế Bao Bì', desc: 'Thiết kế 3D miễn phí', img: null }
-            ].map((srv, i) => (
+            {(acf?.servicesList || [
+              { title: 'Hộp Cứng Cao Cấp', description: 'Âm dương - Nam châm - Ngăn kéo', image: { node: { sourceUrl: 'https://picsum.photos/seed/srv1/400/300' } } },
+              { title: 'Túi Giấy In Logo', description: 'Ivory - Couche - Kraft', image: { node: { sourceUrl: 'https://picsum.photos/seed/srv2/400/300' } } },
+              { title: 'Hộp Sóng Carton', description: 'In logo brand - Ship không méo', image: { node: { sourceUrl: 'https://picsum.photos/seed/srv3/400/300' } } },
+              { title: 'Hộp Giấy', description: 'Đa kích thước - In offset', image: { node: { sourceUrl: 'https://picsum.photos/seed/srv4/400/300' } } },
+              { title: 'Tem Nhãn Decal', description: 'Tem decal - Tem bạc - Tem vỡ', image: null },
+              { title: 'Thiết Kế Bao Bì', description: 'Thiết kế 3D miễn phí', image: null }
+            ]).map((srv: any, i: number) => (
               <Link href="/san-pham" key={i} className="group cursor-pointer flex flex-col">
-                {srv.img && (
+                {srv.image?.node?.sourceUrl && (
                   <div className="relative h-48 rounded-t-2xl overflow-hidden shrink-0">
-                    <Image src={srv.img} alt={srv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                    <Image src={srv.image.node.sourceUrl} alt={srv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                   </div>
                 )}
-                <div className={`bg-[var(--card-bg)] p-6 border border-[var(--border)] flex items-center justify-between hover:border-[var(--accent)] transition-colors flex-1 ${srv.img ? 'rounded-b-2xl border-t-0' : 'rounded-2xl'}`}>
+                <div className={`bg-[var(--card-bg)] p-6 border border-[var(--border)] flex items-center justify-between hover:border-[var(--accent)] transition-colors flex-1 ${srv.image?.node?.sourceUrl ? 'rounded-b-2xl border-t-0' : 'rounded-2xl'}`}>
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-[var(--bg)] rounded-full flex items-center justify-center text-[var(--accent)] shadow-sm shrink-0">
                       <ArrowRight size={18} />
                     </div>
                     <div>
                       <h3 className="font-bold text-[var(--text-main)] group-hover:text-[var(--accent)] transition-colors">{srv.title}</h3>
-                      <p className="text-sm text-[var(--text-dim)]">{srv.desc}</p>
+                      <p className="text-sm text-[var(--text-dim)]">{srv.description || srv.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -347,26 +407,34 @@ export default function About() {
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               CAM KẾT
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif mb-6 tracking-tight">5 cam kết với đối tác</h2>
+            <h2 className="text-4xl md:text-5xl font-serif mb-6 tracking-tight">{acf?.commitmentsTitle || '5 cam kết với đối tác'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {[
-              { icon: Award, title: 'Chất lượng ưu việt', desc: 'Cam kết chuẩn màu Pantone, kiểm soát chất lượng nghiêm ngặt từng công đoạn.' },
-              { icon: Lightbulb, title: 'Sáng tạo không giới hạn', desc: 'Đội ngũ thiết kế chuyên nghiệp, luôn cập nhật xu hướng mới nhất.' },
-              { icon: HeartHandshake, title: 'Dịch vụ tận tâm', desc: 'Tư vấn nhiệt tình từ ý tưởng đến sản phẩm hoàn thiện.' },
-              { icon: Handshake, title: 'Đối tác đáng tin cậy', desc: '17+ năm hoạt động, 500+ đối tác tin tưởng trên toàn quốc.' },
-              { icon: Gem, title: 'Giá trị thực', desc: 'Giá cạnh tranh, không phát sinh chi phí, minh bạch trong mọi giao dịch.' }
-            ].map((item, i) => (
+            {(acf?.commitmentsList || [
+              { icon: 'Award', title: 'Chất lượng ưu việt', description: 'Cam kết chuẩn màu Pantone, kiểm soát chất lượng nghiêm ngặt từng công đoạn.' },
+              { icon: 'Lightbulb', title: 'Sáng tạo không giới hạn', description: 'Đội ngũ thiết kế chuyên nghiệp, luôn cập nhật xu hướng mới nhất.' },
+              { icon: 'HeartHandshake', title: 'Dịch vụ tận tâm', description: 'Tư vấn nhiệt tình từ ý tưởng đến sản phẩm hoàn thiện.' },
+              { icon: 'Handshake', title: 'Đối tác đáng tin cậy', description: '17+ năm hoạt động, 500+ đối tác tin tưởng trên toàn quốc.' },
+              { icon: 'Gem', title: 'Giá trị thực', description: 'Giá cạnh tranh, không phát sinh chi phí, minh bạch trong mọi giao dịch.' }
+            ]).map((item: any, i: number) => {
+              let IconComp = Award;
+              if (item.icon === 'Lightbulb') IconComp = Lightbulb;
+              if (item.icon === 'HeartHandshake') IconComp = HeartHandshake;
+              if (item.icon === 'Handshake') IconComp = Handshake;
+              if (item.icon === 'Gem') IconComp = Gem;
+
+              return (
               <div key={i} className="bg-[var(--bg)] p-8 rounded-2xl border border-[var(--border)] text-center hover:border-[var(--accent)] transition-colors shadow-sm">
                 <div className="w-12 h-12 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6">
-                  <item.icon size={24} />
+                  <IconComp size={24} />
                 </div>
                 <h3 className="text-lg font-bold mb-3">{item.title}</h3>
-                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-[var(--text-dim)] text-sm leading-relaxed">{item.description || item.desc}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -378,9 +446,9 @@ export default function About() {
             <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
               LIÊN HỆ
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Sẵn sàng hợp tác?</h2>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{acf?.ctaTitle || 'Sẵn sàng hợp tác?'}</h2>
             <p className="text-[var(--text-dim)] mb-10 leading-relaxed">
-              Liên hệ ngay với In Hoàng Thịnh để được tư vấn miễn phí và nhận báo giá nhanh trong 5 phút. Chúng tôi sẵn sàng phục vụ mọi nhu cầu in bao bì — từ 500 sản phẩm trở lên.
+              {acf?.ctaDescription || 'Liên hệ ngay với In Hoàng Thịnh để được tư vấn miễn phí và nhận báo giá nhanh trong 5 phút. Chúng tôi sẵn sàng phục vụ mọi nhu cầu in bao bì — từ 500 sản phẩm trở lên.'}
             </p>
 
             <div className="space-y-6 mb-10">
@@ -390,7 +458,7 @@ export default function About() {
                 </div>
                 <div>
                   <div className="font-bold text-[var(--text-main)]">Địa chỉ xưởng</div>
-                  <div className="text-[var(--text-dim)]">{settings.contactAddress}</div>
+                  <div className="text-[var(--text-dim)]">{acf?.contactAddress || settings.contactAddress}</div>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -399,7 +467,7 @@ export default function About() {
                 </div>
                 <div>
                   <div className="font-bold text-[var(--text-main)]">Hotline</div>
-                  <div className="text-[var(--accent)] font-bold">{settings.contactPhone}</div>
+                  <div className="text-[var(--accent)] font-bold">{acf?.contactHotline || settings.contactPhone}</div>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -408,21 +476,31 @@ export default function About() {
                 </div>
                 <div>
                   <div className="font-bold text-[var(--text-main)]">Email</div>
-                  <div className="text-[var(--accent)]">{settings.contactEmail}</div>
+                  <div className="text-[var(--accent)]">{acf?.contactEmail || settings.contactEmail}</div>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="relative aspect-square rounded-xl overflow-hidden">
-                <Image src="https://picsum.photos/seed/contact1/200/200" alt="Contact 1" fill className="object-cover" referrerPolicy="no-referrer" />
-              </div>
-              <div className="relative aspect-square rounded-xl overflow-hidden">
-                <Image src="https://picsum.photos/seed/contact2/200/200" alt="Contact 2" fill className="object-cover" referrerPolicy="no-referrer" />
-              </div>
-              <div className="relative aspect-square rounded-xl overflow-hidden">
-                <Image src="https://picsum.photos/seed/contact3/200/200" alt="Contact 3" fill className="object-cover" referrerPolicy="no-referrer" />
-              </div>
+              {acf?.contactImages?.nodes?.length > 0 ? (
+                acf.contactImages.nodes.slice(0, 3).map((img: any, i: number) => (
+                  <div key={i} className="relative aspect-square rounded-xl overflow-hidden">
+                    <Image src={img.sourceUrl} alt={`Contact ${i + 1}`} fill className="object-cover" referrerPolicy="no-referrer" />
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="relative aspect-square rounded-xl overflow-hidden">
+                    <Image src="https://picsum.photos/seed/contact1/200/200" alt="Contact 1" fill className="object-cover" referrerPolicy="no-referrer" />
+                  </div>
+                  <div className="relative aspect-square rounded-xl overflow-hidden">
+                    <Image src="https://picsum.photos/seed/contact2/200/200" alt="Contact 2" fill className="object-cover" referrerPolicy="no-referrer" />
+                  </div>
+                  <div className="relative aspect-square rounded-xl overflow-hidden">
+                    <Image src="https://picsum.photos/seed/contact3/200/200" alt="Contact 3" fill className="object-cover" referrerPolicy="no-referrer" />
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

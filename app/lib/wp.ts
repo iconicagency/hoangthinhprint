@@ -89,6 +89,11 @@ export async function getAboutPageData() {
           heroSubtitle
           storyTitle
           storyContent
+          storyImage {
+            node {
+              sourceUrl
+            }
+          }
           visionTitle
           visionContent
           missionTitle
@@ -96,6 +101,18 @@ export async function getAboutPageData() {
           stats {
             number
             label
+          }
+          productionCapacityTitle
+          productionCapacityDescription
+          productionImages {
+            nodes {
+              sourceUrl
+            }
+          }
+          productionFacilities {
+            title
+            description
+            icon
           }
           benefits {
             title
@@ -105,11 +122,112 @@ export async function getAboutPageData() {
             title
             description
           }
+          servicesTitle
+          servicesList {
+            title
+            description
+            image {
+              node {
+                sourceUrl
+              }
+            }
+          }
+          commitmentsTitle
+          commitmentsList {
+            title
+            description
+            icon
+          }
+          ctaTitle
+          ctaDescription
+          contactAddress
+          contactHotline
+          contactEmail
+          contactImages {
+            nodes {
+              sourceUrl
+            }
+          }
         }
       }
     }
   `;
   const data = await fetchWP(query);
+  return data?.page;
+}
+
+// Lấy dữ liệu trang Ngành hàng
+export async function getNganhHangPageData() {
+  const query = `
+    query GetNganhHangPageData {
+      page(id: "nganh-hang", idType: URI) {
+        title
+        content
+        featuredImage {
+          node {
+            sourceUrl
+          }
+        }
+        cauHinhTrangNganhHang {
+          heroTitle
+          heroSubtitle
+          danhSachNganhHang {
+            title
+            description
+            icon
+            link
+            image {
+              node {
+                sourceUrl
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query);
+  return data?.page;
+}
+
+// Lấy dữ liệu trang chi tiết Ngành hàng (VD: tpcn-duoc-pham)
+export async function getIndustryPageData(uri: string) {
+  const query = `
+    query GetIndustryPageData($uri: ID!) {
+      page(id: $uri, idType: URI) {
+        title
+        content
+        cauHinhChiTietNganhHang {
+          heroTitle
+          heroSubtitle
+          introTitle
+          introContent
+          whyTitle
+          whyList {
+            item
+          }
+          productsTitle
+          productsList {
+            title
+            description
+            link
+          }
+          pricingText
+          sampleImages {
+            nodes {
+              sourceUrl
+            }
+          }
+          faqTitle
+          faqs {
+            question
+            answer
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query, { variables: { uri } });
   return data?.page;
 }
 
@@ -409,6 +527,7 @@ export async function getHomePageData() {
             position
             rating
           }
+          baoGiaHotline
         }
       }
     }

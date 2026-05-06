@@ -2,18 +2,54 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
+import { getIndustryPageData } from '../../lib/wp';
 
 export default function CosmeticsPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [pageData, setPageData] = useState<any>(null);
 
-  const faqs = [
-    { q: 'Có in số lượng nhỏ cho startup mỹ phẩm không?', a: 'Chúng tôi nhận in từ 500 hộp/túi để đảm bảo chi phí sản xuất tối ưu nhất cho khách hàng, rất phù hợp cho các startup.' },
-    { q: 'Có hỗ trợ thiết kế không?', a: 'Có, In Hoàng Thịnh hỗ trợ thiết kế 3D miễn phí khi khách hàng đặt in, giúp bạn hình dung rõ nhất về sản phẩm trước khi sản xuất hàng loạt.' },
-    { q: 'Bao lâu nhận hàng?', a: 'Thời gian sản xuất trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
-    { q: 'Chất liệu nào phù hợp mỹ phẩm?', a: 'Với mỹ phẩm, khách hàng thường ưa chuộng giấy Ivory cán mờ kết hợp ép kim, UV spot hoặc hộp cứng bồi giấy mỹ thuật để tăng vẻ sang trọng.' },
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getIndustryPageData('nganh-hang/my-pham-skincare');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang:", error);
+      }
+    }
+    loadData();
+  }, []);
+
+  const acf = pageData?.cauHinhChiTietNganhHang || {};
+
+  const defaultFaqs = [
+    { question: 'Có in số lượng nhỏ cho startup mỹ phẩm không?', answer: 'Chúng tôi nhận in từ 500 hộp/túi để đảm bảo chi phí sản xuất tối ưu nhất cho khách hàng, rất phù hợp cho các startup.' },
+    { question: 'Có hỗ trợ thiết kế không?', answer: 'Có, In Hoàng Thịnh hỗ trợ thiết kế 3D miễn phí khi khách hàng đặt in, giúp bạn hình dung rõ nhất về sản phẩm trước khi sản xuất hàng loạt.' },
+    { question: 'Bao lâu nhận hàng?', answer: 'Thời gian sản xuất trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
+    { question: 'Chất liệu nào phù hợp mỹ phẩm?', answer: 'Với mỹ phẩm, khách hàng thường ưa chuộng giấy Ivory cán mờ kết hợp ép kim, UV spot hoặc hộp cứng bồi giấy mỹ thuật để tăng vẻ sang trọng.' },
   ];
+
+  const faqs = acf.faqs && acf.faqs.length > 0 ? acf.faqs : defaultFaqs;
+
+  const whyList = acf.whyList && acf.whyList.length > 0 
+    ? acf.whyList.map((w: any) => w.item) 
+    : [
+      'Khách hàng mua mỹ phẩm bằng mắt — bao bì đẹp tăng tỷ lệ chuyển đổi',
+      'Trải nghiệm unboxing — khách cảm thấy đang \'mở quà\'',
+      'Ép kim, cán mờ, UV spot tạo hiệu ứng sang trọng',
+      'Túi giấy đi kèm giúp branding hoàn thiện',
+      'Thiết kế 3D miễn phí — duyệt trước khi in'
+    ];
+
+  const productsList = acf.productsList && acf.productsList.length > 0
+    ? acf.productsList
+    : [
+      { title: 'Hộp cứng nam châm', description: 'Đóng mở từ tính, lót nhung. Cho set mỹ phẩm.' },
+      { title: 'Hộp giấy mỹ phẩm', description: 'In offset 4 màu, cán mờ. Cho sản phẩm đơn lẻ.' },
+      { title: 'Túi giấy ivory', description: 'Cao cấp, dây xách cotton. Cho cửa hàng, spa.' }
+    ];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -29,10 +65,10 @@ export default function CosmeticsPage() {
             <span className="text-white">Mỹ Phẩm & Skincare</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">
-            Bao Bì Cho Ngành Mỹ Phẩm
+            {acf.heroTitle || 'Bao Bì Cho Ngành Mỹ Phẩm'}
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl">
-            Hộp cứng, túi giấy cao cấp — Nâng tầm thương hiệu mỹ phẩm
+            {acf.heroSubtitle || 'Hộp cứng, túi giấy cao cấp — Nâng tầm thương hiệu mỹ phẩm'}
           </p>
         </div>
       </section>
@@ -40,26 +76,24 @@ export default function CosmeticsPage() {
       {/* Intro Section */}
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Bao Bì Cho Ngành Mỹ Phẩm</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bì Cho Ngành Mỹ Phẩm'}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
-          <p className="text-[var(--text-dim)] text-lg leading-relaxed">
-            Bao bì mỹ phẩm là yếu tố quyết định ấn tượng đầu tiên của khách hàng. Từ hộp cứng ép kim sang trọng đến túi giấy ivory cao cấp, In Hoàng Thịnh giúp thương hiệu mỹ phẩm của bạn nổi bật và chuyên nghiệp.
-          </p>
+          {acf.introContent ? (
+            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none prose-p:mb-4" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
+          ) : (
+            <p className="text-[var(--text-dim)] text-lg leading-relaxed">
+              Bao bì mỹ phẩm là yếu tố quyết định ấn tượng đầu tiên của khách hàng. Từ hộp cứng ép kim sang trọng đến túi giấy ivory cao cấp, In Hoàng Thịnh giúp thương hiệu mỹ phẩm của bạn nổi bật và chuyên nghiệp.
+            </p>
+          )}
         </div>
       </section>
 
       {/* Why Choose Us */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">Tại sao mỹ phẩm cần bao bì cao cấp?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">{acf.whyTitle || 'Tại sao mỹ phẩm cần bao bì cao cấp?'}</h2>
           <div className="space-y-6">
-            {[
-              'Khách hàng mua mỹ phẩm bằng mắt — bao bì đẹp tăng tỷ lệ chuyển đổi',
-              'Trải nghiệm unboxing — khách cảm thấy đang \'mở quà\'',
-              'Ép kim, cán mờ, UV spot tạo hiệu ứng sang trọng',
-              'Túi giấy đi kèm giúp branding hoàn thiện',
-              'Thiết kế 3D miễn phí — duyệt trước khi in'
-            ].map((item, i) => (
+            {whyList.map((item: string, i: number) => (
               <div key={i} className="flex items-start gap-4">
                 <CheckCircle2 className="text-[var(--accent)] shrink-0 mt-1" size={24} />
                 <p className="text-lg text-[var(--text-main)]">{item}</p>
@@ -73,23 +107,19 @@ export default function CosmeticsPage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Sản phẩm phù hợp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.productsTitle || 'Sản phẩm phù hợp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              { title: 'Hộp cứng nam châm', desc: 'Đóng mở từ tính, lót nhung. Cho set mỹ phẩm.' },
-              { title: 'Hộp giấy mỹ phẩm', desc: 'In offset 4 màu, cán mờ. Cho sản phẩm đơn lẻ.' },
-              { title: 'Túi giấy ivory', desc: 'Cao cấp, dây xách cotton. Cho cửa hàng, spa.' }
-            ].map((prod, i) => (
+            {productsList.map((prod: any, i: number) => (
               <div key={i} className="bg-white border border-[var(--border)] rounded-2xl p-8 text-center hover:shadow-xl transition-shadow group">
                 <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6 group-hover:scale-110 transition-transform">
                   <Package size={32} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">{prod.title}</h3>
-                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.desc}</p>
-                <Link href="/san-pham" className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
+                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.description}</p>
+                <Link href={prod.link || '/san-pham'} className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
                   Xem thêm <ArrowRight size={18} />
                 </Link>
               </div>
@@ -97,7 +127,7 @@ export default function CosmeticsPage() {
           </div>
           
           <p className="text-center text-[var(--accent)] font-bold text-lg">
-            Hộp cứng từ 10.200đ. Túi giấy ivory từ 8.500đ. MOQ 500.
+            {acf.pricingText || 'Hộp cứng từ 10.200đ. Túi giấy ivory từ 8.500đ. MOQ 500.'}
           </p>
         </div>
       </section>
@@ -111,11 +141,19 @@ export default function CosmeticsPage() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                <Image src={`https://picsum.photos/seed/cosmetic${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-              </div>
-            ))}
+            {acf.sampleImages?.nodes?.length > 0 ? (
+              acf.sampleImages.nodes.map((img: any, i: number) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={img.sourceUrl} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            ) : (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={`https://picsum.photos/seed/cosmetic${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -124,23 +162,23 @@ export default function CosmeticsPage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Câu hỏi thường gặp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Câu hỏi thường gặp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
+            {faqs.map((faq: any, i: number) => (
               <div key={i} className="border border-[var(--border)] rounded-xl overflow-hidden bg-white">
                 <button 
                   className="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-[var(--text-main)] hover:bg-[var(--card-bg)] transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  {faq.q}
+                  {faq.question || faq.q}
                   {openFaq === i ? <ChevronUp size={20} className="text-[var(--accent)]" /> : <ChevronDown size={20} className="text-[var(--text-dim)]" />}
                 </button>
                 {openFaq === i && (
                   <div className="px-6 pb-4 text-[var(--text-dim)] leading-relaxed">
-                    {faq.a}
+                    {faq.answer || faq.a}
                   </div>
                 )}
               </div>

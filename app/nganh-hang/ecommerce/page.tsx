@@ -2,18 +2,54 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
+import { getIndustryPageData } from '../../lib/wp';
 
 export default function EcommercePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [pageData, setPageData] = useState<any>(null);
 
-  const faqs = [
-    { q: 'In logo mấy màu?', a: 'Để tối ưu chi phí cho hộp ship hàng, chúng tôi khuyên dùng in 1-2 màu (thường là đen, đỏ hoặc xanh). Tuy nhiên, xưởng vẫn có thể in offset nhiều màu nếu khách hàng có yêu cầu đặc biệt.' },
-    { q: 'Giao hàng bao lâu?', a: 'Thời gian sản xuất hộp sóng in logo trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
-    { q: 'MOQ bao nhiêu?', a: 'Số lượng đặt hàng tối thiểu (MOQ) là 500 hộp. Đặt số lượng càng lớn (từ 3.000 - 5.000 hộp), giá thành sẽ càng rẻ, tối ưu lợi nhuận cho seller.' },
-    { q: 'Có thiết kế giúp không?', a: 'Có, In Hoàng Thịnh hỗ trợ thiết kế layout, sắp xếp logo và thông tin lên hộp hoàn toàn miễn phí trước khi tiến hành in ấn hàng loạt.' },
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getIndustryPageData('nganh-hang/ecommerce');
+        if (data) setPageData(data);
+      } catch (error) {
+        console.error("Lỗi khi tải trang:", error);
+      }
+    }
+    loadData();
+  }, []);
+
+  const acf = pageData?.cauHinhChiTietNganhHang || {};
+
+  const defaultFaqs = [
+    { question: 'In logo mấy màu?', answer: 'Để tối ưu chi phí cho hộp ship hàng, chúng tôi khuyên dùng in 1-2 màu (thường là đen, đỏ hoặc xanh). Tuy nhiên, xưởng vẫn có thể in offset nhiều màu nếu khách hàng có yêu cầu đặc biệt.' },
+    { question: 'Giao hàng bao lâu?', answer: 'Thời gian sản xuất hộp sóng in logo trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
+    { question: 'MOQ bao nhiêu?', answer: 'Số lượng đặt hàng tối thiểu (MOQ) là 500 hộp. Đặt số lượng càng lớn (từ 3.000 - 5.000 hộp), giá thành sẽ càng rẻ, tối ưu lợi nhuận cho seller.' },
+    { question: 'Có thiết kế giúp không?', answer: 'Có, In Hoàng Thịnh hỗ trợ thiết kế layout, sắp xếp logo và thông tin lên hộp hoàn toàn miễn phí trước khi tiến hành in ấn hàng loạt.' },
   ];
+
+  const faqs = acf.faqs && acf.faqs.length > 0 ? acf.faqs : defaultFaqs;
+
+  const whyList = acf.whyList && acf.whyList.length > 0 
+    ? acf.whyList.map((w: any) => w.item) 
+    : [
+      'Hộp in logo giúp khách nhớ thương hiệu',
+      'Tăng trải nghiệm unboxing — tăng review tốt',
+      'Hộp sóng chắc chắn — ship không méo',
+      'Giá chỉ từ 3.000đ/hộp — MOQ 500',
+      'In 1-2 màu nhanh — giao trong 7-10 ngày'
+    ];
+
+  const productsList = acf.productsList && acf.productsList.length > 0
+    ? acf.productsList
+    : [
+      { title: 'Hộp sóng nắp gài', description: 'Phổ biến nhất. In logo 1-2 màu. Từ 3.000đ.' },
+      { title: 'Hộp sóng cuộn', description: 'Cuộn quanh sản phẩm. Tiết kiệm không gian.' },
+      { title: 'Túi giấy kraft', description: 'Thay thế túi nilon. Eco-friendly. Từ 1.500đ.' }
+    ];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -29,10 +65,10 @@ export default function EcommercePage() {
             <span className="text-white">Ecommerce</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">
-            Hộp Ship Hàng Cho Ecommerce
+            {acf.heroTitle || 'Hộp Ship Hàng Cho Ecommerce'}
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl">
-            Hộp sóng in logo brand — Ship không méo — Giá từ 3.000đ
+            {acf.heroSubtitle || 'Hộp sóng in logo brand — Ship không méo — Giá từ 3.000đ'}
           </p>
         </div>
       </section>
@@ -40,26 +76,24 @@ export default function EcommercePage() {
       {/* Intro Section */}
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Hộp Ship Hàng Cho Ecommerce</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Hộp Ship Hàng Cho Ecommerce'}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
-          <p className="text-[var(--text-dim)] text-lg leading-relaxed">
-            Seller Shopee, TikTok Shop, Lazada cần hộp ship hàng có logo riêng để xây dựng thương hiệu. Hộp sóng carton in 1-2 màu, chắc chắn, bảo vệ hàng hóa trong vận chuyển với giá cực rẻ.
-          </p>
+          {acf.introContent ? (
+            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none prose-p:mb-4" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
+          ) : (
+            <p className="text-[var(--text-dim)] text-lg leading-relaxed">
+              Seller Shopee, TikTok Shop, Lazada cần hộp ship hàng có logo riêng để xây dựng thương hiệu. Hộp sóng carton in 1-2 màu, chắc chắn, bảo vệ hàng hóa trong vận chuyển với giá cực rẻ.
+            </p>
+          )}
         </div>
       </section>
 
       {/* Why Choose Us */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">Tại sao ecommerce cần hộp riêng?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">{acf.whyTitle || 'Tại sao ecommerce cần hộp riêng?'}</h2>
           <div className="space-y-6">
-            {[
-              'Hộp in logo giúp khách nhớ thương hiệu',
-              'Tăng trải nghiệm unboxing — tăng review tốt',
-              'Hộp sóng chắc chắn — ship không méo',
-              'Giá chỉ từ 3.000đ/hộp — MOQ 500',
-              'In 1-2 màu nhanh — giao trong 7-10 ngày'
-            ].map((item, i) => (
+            {whyList.map((item: string, i: number) => (
               <div key={i} className="flex items-start gap-4">
                 <CheckCircle2 className="text-[var(--accent)] shrink-0 mt-1" size={24} />
                 <p className="text-lg text-[var(--text-main)]">{item}</p>
@@ -73,23 +107,19 @@ export default function EcommercePage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Sản phẩm phù hợp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.productsTitle || 'Sản phẩm phù hợp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              { title: 'Hộp sóng nắp gài', desc: 'Phổ biến nhất. In logo 1-2 màu. Từ 3.000đ.' },
-              { title: 'Hộp sóng cuộn', desc: 'Cuộn quanh sản phẩm. Tiết kiệm không gian.' },
-              { title: 'Túi giấy kraft', desc: 'Thay thế túi nilon. Eco-friendly. Từ 1.500đ.' }
-            ].map((prod, i) => (
+            {productsList.map((prod: any, i: number) => (
               <div key={i} className="bg-white border border-[var(--border)] rounded-2xl p-8 text-center hover:shadow-xl transition-shadow group">
                 <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center text-[var(--accent)] mx-auto mb-6 group-hover:scale-110 transition-transform">
                   <Package size={32} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">{prod.title}</h3>
-                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.desc}</p>
-                <Link href="/san-pham" className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
+                <p className="text-[var(--text-dim)] mb-8 h-12">{prod.description}</p>
+                <Link href={prod.link || '/san-pham'} className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
                   Xem thêm <ArrowRight size={18} />
                 </Link>
               </div>
@@ -97,7 +127,7 @@ export default function EcommercePage() {
           </div>
           
           <p className="text-center text-[var(--accent)] font-bold text-lg">
-            Hộp sóng từ 3.000đ/hộp. Túi kraft từ 1.500đ. MOQ 500.
+            {acf.pricingText || 'Hộp sóng từ 3.000đ/hộp. Túi kraft từ 1.500đ. MOQ 500.'}
           </p>
         </div>
       </section>
@@ -111,11 +141,19 @@ export default function EcommercePage() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                <Image src={`https://picsum.photos/seed/ecommerce${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-              </div>
-            ))}
+            {acf.sampleImages?.nodes?.length > 0 ? (
+              acf.sampleImages.nodes.map((img: any, i: number) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={img.sourceUrl} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            ) : (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                  <Image src={`https://picsum.photos/seed/ecommerce${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -124,23 +162,23 @@ export default function EcommercePage() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Câu hỏi thường gặp</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Câu hỏi thường gặp'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
+            {faqs.map((faq: any, i: number) => (
               <div key={i} className="border border-[var(--border)] rounded-xl overflow-hidden bg-white">
                 <button 
                   className="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-[var(--text-main)] hover:bg-[var(--card-bg)] transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  {faq.q}
+                  {faq.question || faq.q}
                   {openFaq === i ? <ChevronUp size={20} className="text-[var(--accent)]" /> : <ChevronDown size={20} className="text-[var(--text-dim)]" />}
                 </button>
                 {openFaq === i && (
                   <div className="px-6 pb-4 text-[var(--text-dim)] leading-relaxed">
-                    {faq.a}
+                    {faq.answer || faq.a}
                   </div>
                 )}
               </div>
