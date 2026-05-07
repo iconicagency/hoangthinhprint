@@ -11,7 +11,7 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
         method: 'POST',
         headers,
         body: JSON.stringify({ query, variables }),
-        next: { revalidate: 60 },
+        cache: 'no-store',
       });
       if (!res.ok) return null;
       const json = await res.json();
@@ -26,8 +26,8 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
         query,
         variables,
       }),
-      // Revalidate thay vì no-store
-      next: { revalidate: 60 },
+      // Revert về cache: no-store để cập nhật tức thì
+      cache: 'no-store',
     });
 
     if (!res.ok) {
