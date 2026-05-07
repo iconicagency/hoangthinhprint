@@ -11,7 +11,7 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
         method: 'POST',
         headers,
         body: JSON.stringify({ query, variables }),
-        cache: 'no-store',
+        next: { revalidate: 60 },
       });
       if (!res.ok) return null;
       const json = await res.json();
@@ -26,8 +26,8 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
         query,
         variables,
       }),
-      // Bỏ cache khi đang test
-      cache: 'no-store',
+      // Revalidate thay vì no-store
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -544,4 +544,37 @@ export async function getHomePageData() {
     newClients: data.page.clientsSection,
     newFactoryTour: data.page.factoryTour
   };
+}
+
+// Lấy dữ liệu Cấu hình Header và Footer
+export async function getHeaderFooterSettings() {
+  const query = `
+    query GetHeaderFooterSettings {
+      options {
+        headerSetup {
+          logo {
+            node {
+              sourceUrl
+            }
+          }
+          phoneNumber
+          email
+          address
+          facebook
+          zalo
+          youtube
+          footerDescription
+          mapUrl
+          mapImage {
+            node {
+              sourceUrl
+            }
+          }
+          copyrightText
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query);
+  return data?.options?.headerSetup;
 }

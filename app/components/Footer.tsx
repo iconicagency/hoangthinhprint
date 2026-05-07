@@ -16,10 +16,10 @@ export default function Footer() {
             <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">{settings.logoText}</div>
             IN HOÀNG THỊNH
           </div>
-          <p className="text-sm leading-relaxed mb-6">Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.</p>
+          <p className="text-sm leading-relaxed mb-6">{settings.footerDescription || 'Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.'}</p>
           <div className="flex gap-4">
              <a href={settings.facebookLink} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">FB</a>
-             <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">YT</div>
+             <a href={settings.youtubeLink || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">YT</a>
              <a href={settings.zaloLink} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:border-[var(--accent)] transition-colors cursor-pointer text-[var(--text-main)]">ZL</a>
           </div>
         </div>
@@ -55,17 +55,21 @@ export default function Footer() {
 
         <div>
           <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Bản Đồ</h4>
-          <div className="w-full h-40 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg overflow-hidden relative">
-             <Image src="https://picsum.photos/seed/map/400/300" alt="Map" fill className="object-cover opacity-50" referrerPolicy="no-referrer" />
-             <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-[var(--text-main)] bg-[var(--bg)]/80 px-3 py-1 rounded border border-[var(--border)]">Xem trên Google Maps</span>
+          <a href={settings.mapUrl || '#'} target="_blank" rel="noopener noreferrer" className="block w-full h-40 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg overflow-hidden relative group">
+             {settings.mapImage ? (
+                <Image src={settings.mapImage} alt="Map" fill className="object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
+             ) : (
+                <div className="w-full h-full flex items-center justify-center text-xs text-[var(--text-dim)]">Chưa có bản đồ</div>
+             )}
+             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-xs font-bold text-white bg-[var(--accent)] px-3 py-1 rounded">Xem trên Google Maps</span>
              </div>
-          </div>
+          </a>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-[var(--border)] text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm">
-        <p>&copy; 2024 In Hoàng Thịnh. All rights reserved.</p>
+        <p>{settings.copyrightText || `© ${new Date().getFullYear()} In Hoàng Thịnh. All rights reserved.`}</p>
         <div className="flex gap-6 mt-4 md:mt-0">
           <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Chính sách bảo mật</span>
           <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Điều khoản dịch vụ</span>

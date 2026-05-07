@@ -1,8 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { getHeaderFooterSettings } from '@/app/lib/wp';
 
 interface SiteSettings {
   logoText: string;
@@ -11,6 +10,11 @@ interface SiteSettings {
   contactAddress: string;
   facebookLink: string;
   zaloLink: string;
+  youtubeLink?: string;
+  footerDescription?: string;
+  mapUrl?: string;
+  mapImage?: string;
+  copyrightText?: string;
   heroTitle: string;
   heroSubtitle: string;
 }
@@ -34,20 +38,26 @@ export default function SettingsProvider({ children }: { children: React.ReactNo
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
 
   useEffect(() => {
-    if (!db) return;
-    
-    const docRef = doc(db, 'settings', 'general');
-    
-    // Listen for real-time updates
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setSettings({ ...defaultSettings, ...(docSnap.data() as SiteSettings) });
+    async function loadSettings() {
+      const data = await getHeaderFooterSettings();
+      if (data) {
+        setSettings({
+          ...defaultSettings,
+          logoText: 'IHT', 
+          contactPhone: data.phoneNumber || defaultSettings.contactPhone,
+          contactEmail: data.email || defaultSettings.contactEmail,
+          contactAddress: data.address || defaultSettings.contactAddress,
+          facebookLink: data.facebook || defaultSettings.facebookLink,
+          zaloLink: data.zalo || defaultSettings.zaloLink,
+          youtubeLink: data.youtube,
+          footerDescription: data.footerDescription,
+          mapUrl: data.mapUrl,
+          mapImage: data.mapImage?.node?.sourceUrl,
+          copyrightText: data.copyrightText,
+        });
       }
-    }, (error) => {
-      console.error("Error fetching settings:", error);
-    });
-
-    return () => unsubscribe();
+    }
+    loadSettings();
   }, []);
 
   return (

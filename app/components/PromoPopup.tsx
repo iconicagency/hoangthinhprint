@@ -1,13 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Gift, Sparkles } from 'lucide-react';
 
 export default function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  const handleClose = () => {
+    localStorage.setItem('promo_popup_dismissed_at', Date.now().toString());
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
+    
+    // Check if clicked outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     
     const checkPopup = () => {
       if (typeof window === 'undefined') return;
@@ -28,19 +45,21 @@ export default function PromoPopup() {
     
     return () => {
       if (timer) clearTimeout(timer);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
-
-  const handleClose = () => {
-    localStorage.setItem('promo_popup_dismissed_at', Date.now().toString());
-    setIsOpen(false);
-  };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-300">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+    >
+      <div 
+        ref={popupRef}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-300"
+      >
         {/* Header with gradient */}
         <div className="bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] p-6 text-white relative">
           <button 
