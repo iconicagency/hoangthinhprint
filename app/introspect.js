@@ -3,9 +3,11 @@ const wpUrl = "https://cms.inhoangthinh.com.vn/graphql";
 async function run() {
   const query = `
     {
-      __type(name: "Thongtinduan") {
-        fields {
-          name
+      __schema {
+        queryType {
+          fields {
+            name
+          }
         }
       }
     }

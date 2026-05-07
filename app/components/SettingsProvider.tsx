@@ -40,6 +40,7 @@ export default function SettingsProvider({ children }: { children: React.ReactNo
   useEffect(() => {
     async function loadSettings() {
       const data = await getHeaderFooterSettings();
+      console.log('DEBUG: Settings data from wp:', data);
       if (data) {
         setSettings({
           ...defaultSettings,
