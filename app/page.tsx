@@ -5,6 +5,8 @@ import {
   Package, Layout, Printer, Layers, Settings, Truck, Search, PenTool, Lightbulb, Zap, Award, Users, Heart
 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 import PromoPopup from './components/PromoPopup';
 import HeroSlider from './components/HeroSlider';
 import WPRecentPosts from './components/WPRecentPosts';
