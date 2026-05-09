@@ -447,19 +447,19 @@ export async function getHomePageData() {
           }
         }
         cauHinhTrangChu {
-          heroTagline
-          heroTitle
-          heroSubtitle
-          heroSlides {
+          herotagline
+          herotitle
+          herosubtitle
+          heroslides {
             nodes {
               sourceUrl
             }
           }
-          heroBenefits {
+          herobenefits {
             title
             subtitle
           }
-          heroButtons {
+          herobuttons {
             label
             link
           }
@@ -477,12 +477,12 @@ export async function getHomePageData() {
   
   return {
     ...data.page.cauHinhTrangChu,
-    heroTagline: data.page.cauHinhTrangChu?.heroTagline,
-    heroTitle: data.page.cauHinhTrangChu?.heroTitle,
-    heroSubtitle: data.page.cauHinhTrangChu?.heroSubtitle,
-    heroSlides: data.page.cauHinhTrangChu?.heroSlides,
-    heroBenefits: data.page.cauHinhTrangChu?.heroBenefits,
-    heroButtons: data.page.cauHinhTrangChu?.heroButtons,
+    heroTagline: data.page.cauHinhTrangChu?.herotagline,
+    heroTitle: data.page.cauHinhTrangChu?.herotitle,
+    heroSubtitle: data.page.cauHinhTrangChu?.herosubtitle,
+    heroSlides: data.page.cauHinhTrangChu?.heroslides,
+    heroBenefits: data.page.cauHinhTrangChu?.herobenefits,
+    heroButtons: data.page.cauHinhTrangChu?.herobuttons,
     stats: data.page.cauHinhTrangChu?.stats,
     newWhyChooseUs: {
         ...data.page.whychooseus,
