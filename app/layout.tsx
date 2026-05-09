@@ -4,6 +4,7 @@ import './globals.css'; // Global styles
 import SettingsProvider from './components/SettingsProvider';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import BackToTop from './components/BackToTop';
 
 const inter = Inter({
   subsets: ["vietnamese"],
@@ -32,7 +33,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <main className="flex-1">
             {children}
           </main>
-          <Footer />
+          <BackToTop />
+           <Footer />
         </SettingsProvider>
       </body>
     </html>
