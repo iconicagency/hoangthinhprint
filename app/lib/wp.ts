@@ -393,49 +393,49 @@ export async function getHomePageData() {
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
-        workingprocess {
+        workingProcess {
           tagline
           title
           steps {
-            steptitle
-            stepdescription
-            stepicon
+            stepTitle
+            stepDescription
+            stepIcon
           }
         }
-        printingservices {
+        printingServices {
           tagline
           tieuD
           services {
-            servicetitle
-            servicedescription
-            serviceimage {
+            serviceTitle
+            serviceDescription
+            serviceImage {
               node {
                 sourceUrl
               }
             }
           }
         }
-        whychooseus {
+        whyChooseUs {
           whyTagline
           whyTitle
         }
-        machinerysection {
+        machinerySection {
           tagline
           title
         }
-        clientssection {
+        clientsSection {
           tagline
           title
           clients {
-            clientname
-            clientlogo {
+            clientName
+            clientLogo {
               node {
                 sourceUrl
               }
             }
           }
         }
-        factorytour {
+        factoryTour {
           tagline
           title
           description
@@ -485,27 +485,27 @@ export async function getHomePageData() {
     heroButtons: data.page.cauHinhTrangChu?.herobuttons,
     stats: data.page.cauHinhTrangChu?.stats,
     newWhyChooseUs: {
-        ...data.page.whychooseus,
-        tagline: data.page.whychooseus?.whyTagline,
-        title: data.page.whychooseus?.whyTitle
+        ...data.page.whyChooseUs,
+        tagline: data.page.whyChooseUs?.whyTagline,
+        title: data.page.whyChooseUs?.whyTitle
     },
     newWorkingProcess: {
-        ...data.page.workingprocess,
-        steps: data.page.workingprocess?.steps?.map((s: any) => ({ stepTitle: s.steptitle, stepDescription: s.stepdescription, stepIcon: s.stepicon }))
+        ...data.page.workingProcess,
+        steps: data.page.workingProcess?.steps?.map((s: any) => ({ stepTitle: s.stepTitle, stepDescription: s.stepDescription, stepIcon: s.stepIcon }))
     },
     newPrintingServices: {
-        ...data.page.printingservices,
-        title: data.page.printingservices?.tieuD,
-        services: data.page.printingservices?.services?.map((s: any) => ({ serviceTitle: s.servicetitle, serviceDescription: s.servicedescription, serviceImage: s.serviceimage }))
+        ...data.page.printingServices,
+        title: data.page.printingServices?.tieuD,
+        services: data.page.printingServices?.services?.map((s: any) => ({ serviceTitle: s.serviceTitle, serviceDescription: s.serviceDescription, serviceImage: s.serviceImage }))
     },
     newMachinery: {
-       ...data.page.machinerysection
+       ...data.page.machinerySection
     },
     newClients: {
-       ...data.page.clientssection,
-       clients: data.page.clientssection?.clients?.map((c: any) => ({ clientName: c.clientname, clientLogo: c.clientlogo }))
+       ...data.page.clientsSection,
+       clients: data.page.clientsSection?.clients?.map((c: any) => ({ clientName: c.clientName, clientLogo: c.clientLogo }))
     },
-    newFactoryTour: data.page.factorytour
+    newFactoryTour: data.page.factoryTour
   };
 }
 

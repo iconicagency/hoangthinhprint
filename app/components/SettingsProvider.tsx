@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getHeaderFooterSettings } from '@/app/lib/wp';
 
 interface SiteSettings {
+  logoUrl: string | null;
   logoText: string;
   contactPhone: string;
   contactEmail: string;
@@ -20,6 +21,7 @@ interface SiteSettings {
 }
 
 const defaultSettings: SiteSettings = {
+  logoUrl: null,
   logoText: 'IHT',
   contactPhone: '090.XXX.XXXX',
   contactEmail: 'admin@inhoangthinh.com',
@@ -44,6 +46,7 @@ export default function SettingsProvider({ children }: { children: React.ReactNo
       if (data) {
         setSettings({
           ...defaultSettings,
+          logoUrl: data.logo?.node?.sourceUrl || null,
           logoText: 'IHT', 
           contactPhone: data.phoneNumber || defaultSettings.contactPhone,
           contactEmail: data.email || defaultSettings.contactEmail,
