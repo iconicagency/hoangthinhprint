@@ -1,16 +1,8 @@
-
 const query = `
-    query GetHeaderFooterSettings {
-      options {
-        headerSetup {
-          logo {
-            node {
-              sourceUrl
-            }
-          }
-          phoneNumber
-          email
-          address
+    query {
+      __type(name: "Page") {
+        fields {
+          name
         }
       }
     }

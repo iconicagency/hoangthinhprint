@@ -37,12 +37,14 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
 
     const json = await res.json();
     if (json.errors) {
-      // Ẩn log lỗi GraphQL "Cannot query field" để giảm spam console khi đang cài đặt ACF bên WordPress
-      const isSchemaError = json.errors.some((err: any) => err.message.includes('Cannot query field'));
-      if (!isSchemaError) {
-        console.error("Lỗi từ WordPress API:", JSON.stringify(json.errors, null, 2));
-      }
+      console.error("Lỗi từ WordPress API:", JSON.stringify(json.errors, null, 2));
       return null;
+    }
+
+    // DEBUG: Log the full data structure
+    console.log('DEBUG: Full GraphQL Data structure:', JSON.stringify(json.data, null, 2));
+    if (json.data && json.data.page) {
+       console.log('DEBUG: Page fields available:', Object.keys(json.data.page));
     }
 
     return json.data;
@@ -402,7 +404,7 @@ export async function getHomePageData() {
         }
         printingServices {
           tagline
-          title
+          tieuD
           services {
             serviceTitle
             serviceDescription
@@ -414,26 +416,12 @@ export async function getHomePageData() {
           }
         }
         whyChooseUs {
-          tagline
-          title
-          features {
-            iconName
-            featureTitle
-            featureDescription
-          }
+          whyTagline
+          whyTitle
         }
         machinerySection {
           tagline
           title
-          machines {
-            machineName
-            machineDescription
-            machineImage {
-              node {
-                sourceUrl
-              }
-            }
-          }
         }
         clientsSection {
           tagline
@@ -480,54 +468,6 @@ export async function getHomePageData() {
             suffix
             label
           }
-          partners {
-            partnerName
-          }
-          services {
-            title
-            description
-            image {
-              node {
-                sourceUrl
-              }
-            }
-            price
-          }
-          whyChooseUs {
-            title
-            description
-            iconName
-          }
-          processSteps {
-            stepNumber
-            title
-          }
-          machinery {
-            title
-            description
-            image {
-              node {
-                sourceUrl
-              }
-            }
-          }
-          videoSection {
-            title
-            description
-            videoUrl
-            backgroundImage {
-              node {
-                sourceUrl
-              }
-            }
-          }
-          testimonials {
-            content
-            author
-            position
-            rating
-          }
-          baoGiaHotline
         }
       }
     }
@@ -537,11 +477,34 @@ export async function getHomePageData() {
   
   return {
     ...data.page.cauHinhTrangChu,
-    newWhyChooseUs: data.page.whyChooseUs,
-    newWorkingProcess: data.page.workingProcess,
-    newPrintingServices: data.page.printingServices,
-    newMachinery: data.page.machinerySection,
-    newClients: data.page.clientsSection,
+    heroTagline: data.page.cauHinhTrangChu?.heroTagline,
+    heroTitle: data.page.cauHinhTrangChu?.heroTitle,
+    heroSubtitle: data.page.cauHinhTrangChu?.heroSubtitle,
+    heroSlides: data.page.cauHinhTrangChu?.heroSlides,
+    heroBenefits: data.page.cauHinhTrangChu?.heroBenefits,
+    heroButtons: data.page.cauHinhTrangChu?.heroButtons,
+    stats: data.page.cauHinhTrangChu?.stats,
+    newWhyChooseUs: {
+        ...data.page.whyChooseUs,
+        tagline: data.page.whyChooseUs?.whyTagline,
+        title: data.page.whyChooseUs?.whyTitle
+    },
+    newWorkingProcess: {
+        ...data.page.workingProcess,
+        steps: data.page.workingProcess?.steps?.map((s: any) => ({ stepTitle: s.stepTitle, stepDescription: s.stepDescription, stepIcon: s.stepIcon }))
+    },
+    newPrintingServices: {
+        ...data.page.printingServices,
+        title: data.page.printingServices?.tieuD,
+        services: data.page.printingServices?.services?.map((s: any) => ({ serviceTitle: s.serviceTitle, serviceDescription: s.serviceDescription, serviceImage: s.serviceImage }))
+    },
+    newMachinery: {
+       ...data.page.machinerySection
+    },
+    newClients: {
+       ...data.page.clientsSection,
+       clients: data.page.clientsSection?.clients?.map((c: any) => ({ clientName: c.clientName, clientLogo: c.clientLogo }))
+    },
     newFactoryTour: data.page.factoryTour
   };
 }
@@ -576,5 +539,6 @@ export async function getHeaderFooterSettings() {
     }
   `;
   const data = await fetchWP(query);
+  console.log('DEBUG: Full data from WP:', JSON.stringify(data, null, 2));
   return data?.options?.headerSetup;
 }
