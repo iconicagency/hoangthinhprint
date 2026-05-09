@@ -397,18 +397,18 @@ export async function getHomePageData() {
           tagline
           title
           steps {
-            stepTitle
-            stepDescription
-            stepIcon
+            steptitle
+            stepdescription
+            stepicon
           }
         }
         printingServices {
           tagline
           tieuD
           services {
-            serviceTitle
-            serviceDescription
-            serviceImage {
+            servicetitle
+            servicedescription
+            serviceimage {
               node {
                 sourceUrl
               }
@@ -419,7 +419,7 @@ export async function getHomePageData() {
           whyTagline
           whyTitle
         }
-        machinerySection {
+        machinerysection {
           tagline
           title
         }
@@ -427,15 +427,15 @@ export async function getHomePageData() {
           tagline
           title
           clients {
-            clientName
-            clientLogo {
+            clientname
+            clientlogo {
               node {
                 sourceUrl
               }
             }
           }
         }
-        factoryTour {
+        factoryTourSection {
           tagline
           title
           description
@@ -491,21 +491,21 @@ export async function getHomePageData() {
     },
     newWorkingProcess: {
         ...data.page.workingProcess,
-        steps: data.page.workingProcess?.steps?.map((s: any) => ({ stepTitle: s.stepTitle, stepDescription: s.stepDescription, stepIcon: s.stepIcon }))
+        steps: data.page.workingProcess?.steps?.map((s: any) => ({ stepTitle: s.steptitle, stepDescription: s.stepdescription, stepIcon: s.stepicon }))
     },
     newPrintingServices: {
         ...data.page.printingServices,
         title: data.page.printingServices?.tieuD,
-        services: data.page.printingServices?.services?.map((s: any) => ({ serviceTitle: s.serviceTitle, serviceDescription: s.serviceDescription, serviceImage: s.serviceImage }))
+        services: data.page.printingServices?.services?.map((s: any) => ({ serviceTitle: s.servicetitle, serviceDescription: s.servicedescription, serviceImage: s.serviceimage }))
     },
     newMachinery: {
-       ...data.page.machinerySection
+       ...data.page.machinerysection
     },
     newClients: {
        ...data.page.clientsSection,
-       clients: data.page.clientsSection?.clients?.map((c: any) => ({ clientName: c.clientName, clientLogo: c.clientLogo }))
+       clients: data.page.clientsSection?.clients?.map((c: any) => ({ clientName: c.clientname, clientLogo: c.clientlogo }))
     },
-    newFactoryTour: data.page.factoryTour
+    newFactoryTour: data.page.factoryTourSection
   };
 }
 
