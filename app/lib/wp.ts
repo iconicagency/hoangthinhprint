@@ -513,7 +513,7 @@ export async function getHomePageData() {
 export async function getHeaderFooterSettings() {
   const query = `
     query GetHeaderFooterSettings {
-      acfOptionsPage {
+      headerSettings {
         headerSetup {
           logo {
             node {
@@ -539,6 +539,6 @@ export async function getHeaderFooterSettings() {
     }
   `;
   const data = await fetchWP(query);
-  console.log('DEBUG: Full data from WP (acfOptionsPage):', JSON.stringify(data, null, 2));
-  return data?.acfOptionsPage?.headerSetup;
+  console.log('DEBUG: Full data from WP (headerSettings):', JSON.stringify(data, null, 2));
+  return data?.headerSettings?.headerSetup;
 }
