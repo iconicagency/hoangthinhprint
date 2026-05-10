@@ -22,14 +22,14 @@ interface SiteSettings {
 
 const defaultSettings: SiteSettings = {
   logoUrl: null,
-  logoText: 'IHT',
-  contactPhone: '090.XXX.XXXX',
-  contactEmail: 'admin@inhoangthinh.com',
-  contactAddress: 'Số 12, Đường số 5, KDC CityLand, Phường 10, Quận Gò Vấp, TP.HCM',
-  facebookLink: '#',
-  zaloLink: '#',
-  heroTitle: 'Giải pháp bao bì toàn diện cho doanh nghiệp',
-  heroSubtitle: 'Thiết kế sáng tạo - In ấn chất lượng - Giao hàng đúng hẹn. Đối tác tin cậy của hơn 500+ thương hiệu.'
+  logoText: '',
+  contactPhone: '',
+  contactEmail: '',
+  contactAddress: '',
+  facebookLink: '',
+  zaloLink: '',
+  heroTitle: '',
+  heroSubtitle: ''
 };
 
 const SettingsContext = createContext<SiteSettings>(defaultSettings);
@@ -47,7 +47,7 @@ export default function SettingsProvider({ children }: { children: React.ReactNo
         setSettings({
           ...defaultSettings,
           logoUrl: data.logo?.node?.sourceUrl || null,
-          logoText: 'IHT', 
+          logoText: data.siteTitle || '', 
           contactPhone: data.phoneNumber || defaultSettings.contactPhone,
           contactEmail: data.email || defaultSettings.contactEmail,
           contactAddress: data.address || defaultSettings.contactAddress,

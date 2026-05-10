@@ -12,9 +12,22 @@ export default function Footer() {
     <footer className="bg-[var(--bg)] text-[var(--text-dim)] pt-24 pb-12 px-8 relative z-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         <div>
-          <div className="text-3xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">{settings.logoText}</div>
-            IN HOÀNG THỊNH
+          <div className="mb-6">
+            {settings.logoUrl ? (
+              <div className="relative h-16 w-56">
+                <Image 
+                  src={settings.logoUrl} 
+                  alt="Logo" 
+                  fill 
+                  className="object-contain object-left"
+                />
+              </div>
+            ) : (
+              <div className="text-3xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
+                <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">{settings.logoText}</div>
+                {settings.logoText || ''}
+              </div>
+            )}
           </div>
           <p className="text-sm leading-relaxed mb-6">{settings.footerDescription || 'Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.'}</p>
           <div className="flex gap-4">

@@ -513,6 +513,9 @@ export async function getHomePageData() {
 export async function getHeaderFooterSettings() {
   const query = `
     query GetHeaderFooterSettings {
+      generalSettings {
+        title
+      }
       headerSettings {
         headerSetup {
           logo {
@@ -540,5 +543,8 @@ export async function getHeaderFooterSettings() {
   `;
   const data = await fetchWP(query);
   console.log('DEBUG: Full data from WP (headerSettings):', JSON.stringify(data, null, 2));
-  return data?.headerSettings?.headerSetup;
+  return {
+    ...data?.headerSettings?.headerSetup,
+    siteTitle: data?.generalSettings?.title
+  };
 }

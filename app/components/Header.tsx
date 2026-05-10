@@ -24,13 +24,23 @@ export default function Header() {
 
       {/* Header */}
       <header className="bg-[var(--bg)] py-4 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
-        <Link href="/" className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
+        <Link href="/" className="flex items-center">
           {settings.logoUrl ? (
-            <Image src={settings.logoUrl} alt="Logo" width={32} height={32} />
+            <div className="relative h-12 w-48">
+              <Image 
+                src={settings.logoUrl} 
+                alt="Logo" 
+                fill 
+                className="object-contain object-left"
+                priority
+              />
+            </div>
           ) : (
-            <div className="w-8 h-8 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-xs">{settings.logoText}</div>
+            <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
+              <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">{settings.logoText}</div>
+              {settings.logoText || ''}
+            </div>
           )}
-          IN HOÀNG THỊNH
         </Link>
         <nav className="hidden lg:block">
           <ul className="flex gap-8 text-sm font-bold text-[var(--text-main)] uppercase tracking-wide items-center">
