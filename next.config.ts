@@ -23,6 +23,18 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'web.archive.org',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'hoangthinhprint.com.vn',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   output: 'standalone',

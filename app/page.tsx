@@ -318,7 +318,7 @@ export default async function Home() {
             <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-4 tracking-tight">
               {machinerySectionData?.title || 'MÁY MÓC & CÔNG NGHỆ'}
             </h2>
-            <p className="text-[var(--text-dim)] mb-6">Toàn bộ máy móc tại xưởng — không thuê ngoài</p>
+          <p className="text-[var(--text-dim)] mb-6">Chất lượng hàng đầu · Công nghệ tiên phong · Dịch vụ chuyên nghiệp · In ấn mọi lúc mọi nơi</p>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">

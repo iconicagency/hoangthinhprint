@@ -10,4 +10,4 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // Only initialize Firestore & Auth on the client side to prevent Next.js SSR hangs
 export const db = (typeof window !== 'undefined' ? getFirestore(app, firebaseConfig.firestoreDatabaseId) : null) as Firestore;
-export const auth = (typeof window !== 'undefined' ? getAuth() : null) as any;
+export const auth = (typeof window !== 'undefined' ? getAuth(app) : null) as any;

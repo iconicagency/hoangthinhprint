@@ -10,11 +10,11 @@
 @layer base {
   :root {
     --bg: #ffffff;
-    --card-bg: #f1f5f9;
-    --accent: #DA2128;
-    --accent-secondary: #F15922;
-    --text-main: #0f172a;
-    --text-dim: #64748b;
+    --card-bg: #f8f9fa;
+    --accent: #9B2720;
+    --accent-secondary: #feda4a;
+    --text-main: #1a1a1a;
+    --text-dim: #4b5563;
     --border: #e2e8f0;
   }
 

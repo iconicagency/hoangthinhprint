@@ -36,7 +36,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
       setCurrentSlide((prev) => (prev + 1) % slideUrls.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [slideUrls?.length]);
+  }, [slideUrls]);
 
   return (
     <section className="relative h-[750px] bg-slate-900 text-white overflow-hidden flex items-center justify-center">

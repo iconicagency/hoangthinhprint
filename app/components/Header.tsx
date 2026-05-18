@@ -60,8 +60,21 @@ export default function Header() {
               </div>
             </li>
 
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] transition-colors">Sản phẩm</Link></li>
-            <li><Link href="/du-an" className="hover:text-[var(--accent)] transition-colors">Dự án</Link></li>
+            <li className="relative group py-4 -my-4">
+              <Link href="/san-pham" className="hover:text-[var(--accent)] transition-colors flex items-center gap-1">
+                Sản phẩm <ChevronDown size={14} />
+              </Link>
+              <div className="absolute top-full left-0 mt-0 w-60 bg-[var(--bg)] border border-[var(--border)] shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
+                <Link href="/san-pham?cat=catalogue" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0 uppercase">Catalogue</Link>
+                <Link href="/san-pham?cat=tui-giay" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0 uppercase">Túi giấy</Link>
+                <Link href="/san-pham?cat=hop-giay" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0 uppercase">Hộp giấy</Link>
+                <Link href="/san-pham?cat=hop-carton-lanh" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0 uppercase">Hộp carton lạnh</Link>
+                <Link href="/san-pham?cat=hop-carton-song" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0 uppercase">Hộp carton sóng</Link>
+                <Link href="/san-pham?cat=in-nhan-tem-decal" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0 uppercase">In nhãn - Tem decal</Link>
+              </div>
+            </li>
+
+            <li><Link href="/du-an" className="hover:text-[var(--accent)] transition-colors">Dự dự án tiêu biểu</Link></li>
             <li><Link href="/bao-gia" className="hover:text-[var(--accent)] transition-colors">Báo giá</Link></li>
             <li><Link href="/quy-trinh" className="hover:text-[var(--accent)] transition-colors">Quy trình</Link></li>
             <li><Link href="/blog" className="hover:text-[var(--accent)] transition-colors">Blog</Link></li>
