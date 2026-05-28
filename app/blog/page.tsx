@@ -7,91 +7,11 @@ import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 import { getPosts, getCategories } from '../lib/wp';
 
-const categories = [
-  'Tất cả',
-  'Kiến thức in ấn',
-  'Mẫu đẹp',
-  'Bảng giá',
-  'Ngành hàng',
-  'Tin tức',
-  'Hướng dẫn'
-];
-
-const blogPosts = [
-  {
-    id: 1,
-    title: 'In Túi Giấy In Logo 2026: 3 Phân Khúc Giá Từ 1.500đ [Hướng Dẫn]',
-    excerpt: 'Hướng dẫn chọn túi giấy in logo năm 2026. Phân tích 3 phân khúc giá từ 1.500đ, ưu nhược điểm các loại giấy Ivory, Couch...',
-    date: '13/4/2026',
-    readTime: '4 phút đọc',
-    category: 'Kiến Thức In Ấn',
-    categoryColor: 'bg-[#e88b1e]',
-    img: 'https://picsum.photos/seed/blog1/600/400'
-  },
-  {
-    id: 2,
-    title: 'Giá In Hộp Cứng 2026: Bảng Giá Chi Tiết Theo Loại + Số Lượng',
-    excerpt: 'Trong bối cảnh thị trường bao bì năm 2026, việc tối ưu chi phí sản xuất là ưu tiên hàng đầu của mọi doanh nghiệp. Việc tìm...',
-    date: '8/4/2026',
-    readTime: '5 phút đọc',
-    category: 'Bảng Giá In Ấn',
-    categoryColor: 'bg-[#22c55e]',
-    img: 'https://picsum.photos/seed/blog2/600/400'
-  },
-  {
-    id: 3,
-    title: 'In Hộp Cứng Cao Cấp 2026: Báo Giá & 50+ Mẫu Sang Trọng',
-    excerpt: 'Hướng dẫn toàn diện về dịch vụ in hộp cứng cao cấp năm 2026. Cập nhật báo giá tại xưởng, các loại hộp nam châm, â...',
-    date: '7/4/2026',
-    readTime: '6 phút đọc',
-    category: 'Bao Bì Theo Ngành',
-    categoryColor: 'bg-[#6366f1]',
-    img: 'https://picsum.photos/seed/blog3/600/400'
-  }
-];
-
-const popularPosts = [
-  {
-    id: 3,
-    title: 'In Hộp Cứng Cao Cấp 2026: Báo Giá & 50+ Mẫu Sang Trọng',
-    date: '7/4/2026',
-    img: 'https://picsum.photos/seed/blog3/100/100'
-  },
-  {
-    id: 2,
-    title: 'Giá In Hộp Cứng 2026: Bảng Giá Chi Tiết Theo Loại + Số Lượng',
-    date: '8/4/2026',
-    img: 'https://picsum.photos/seed/blog2/100/100'
-  },
-  {
-    id: 1,
-    title: 'In Túi Giấy In Logo 2026: 3 Phân Khúc Giá Từ 1.500đ [Hướng Dẫn]',
-    date: '13/4/2026',
-    img: 'https://picsum.photos/seed/blog1/100/100'
-  }
-];
-
-const sidebarCategories = [
-  { name: 'Mẫu Bao Bì Đẹp', count: 0, color: 'bg-pink-500' },
-  { name: 'Tin Tức Công Ty', count: 0, color: 'bg-blue-500' },
-  { name: 'Hướng Dẫn', count: 0, color: 'bg-purple-500' },
-  { name: 'Kiến Thức In Ấn', count: 0, color: 'bg-orange-500' },
-  { name: 'Bao Bì Theo Ngành', count: 1, color: 'bg-indigo-500' },
-  { name: 'Bảng Giá In Ấn', count: 1, color: 'bg-green-500' }
-];
-
-const tags = [
-  'in túi giấy', 'túi giấy in logo', 'in túi giấy giá rẻ',
-  'in gia đức', 'giá in hộp cứng 2026', 'in hộp cứng giá rẻ',
-  'in bao bì', 'xưởng in gia đức', 'in hộp cứng',
-  'in hộp cứng cao cấp', 'xưởng in bao bì', 'báo giá in hộp cứng',
-  'in hộp quà tặng'
-];
-
 export default function Blog() {
-  const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const [activeCategory, setActiveCategory] = useState('tat-ca');
+  const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState<any[]>([]);
-  const [categoriesData, setCategoriesData] = useState<any[]>([]);
+  const [wpCategories, setWpCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const settings = useSettings();
 
@@ -102,10 +22,10 @@ export default function Blog() {
           getPosts(20),
           getCategories()
         ]);
-        setPosts(postsData);
-        setCategoriesData(catsData);
+        if (postsData) setPosts(postsData);
+        if (catsData) setWpCategories(catsData.filter((c: any) => c.slug !== 'uncategorized'));
       } catch (error) {
-        console.error("Lỗi khi tải dữ liệu blog:", error);
+        console.error('Lỗi khi tải dữ liệu blog:', error);
       } finally {
         setLoading(false);
       }
@@ -113,18 +33,23 @@ export default function Blog() {
     loadData();
   }, []);
 
-  const categories = ['Tất cả', ...categoriesData.map(c => c.name)];
+  const byCat = activeCategory === 'tat-ca'
+    ? posts
+    : posts.filter(post =>
+        post.categories?.nodes?.some((cat: any) => cat.slug === activeCategory)
+      );
 
-  const filteredPosts = activeCategory === 'Tất cả' 
-    ? posts 
-    : posts.filter(post => post.categories?.nodes?.some((cat: any) => cat.name === activeCategory));
+  const filteredPosts = searchQuery.trim()
+    ? byCat.filter(post =>
+        post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : byCat;
 
-  // Lấy các bài nổi bật (giả sử chọn 3 bài đầu)
-  const popularPostsData = posts.slice(0, 3);
+  const popularPosts = posts.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
-      {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/blog-hero/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
@@ -140,24 +65,31 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Main Content */}
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row gap-10">
-        
-        {/* Left Column: Blog Posts */}
         <div className="lg:w-2/3">
-          {/* Categories Filter */}
           <div className="flex flex-wrap gap-2 mb-10">
-            {categories.map((cat) => (
+            <button
+              onClick={() => setActiveCategory('tat-ca')}
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                activeCategory === 'tat-ca'
+                  ? 'bg-[var(--accent)] text-[var(--bg)]'
+                  : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'
+              }`}
+            >
+              Tất cả
+            </button>
+            {wpCategories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
+                key={cat.slug}
+                onClick={() => setActiveCategory(cat.slug)}
                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
-                  activeCategory === cat 
-                    ? 'bg-[var(--accent)] text-[var(--bg)]' 
+                  activeCategory === cat.slug
+                    ? 'bg-[var(--accent)] text-[var(--bg)]'
                     : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'
                 }`}
               >
-                {cat}
+                {cat.name}
+                {cat.count > 0 && <span className="ml-1 opacity-60 text-xs">({cat.count})</span>}
               </button>
             ))}
           </div>
@@ -173,24 +105,31 @@ export default function Blog() {
               {filteredPosts.map((post) => (
                 <div key={post.id} className="bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow flex flex-col">
                   <div className="relative h-60 overflow-hidden bg-slate-200">
-                    {post.featuredImage?.node?.sourceUrl && (
-                      <Image 
-                        src={post.featuredImage.node.sourceUrl} 
-                        alt={post.title} 
-                        fill 
+                    {post.featuredImage?.node?.sourceUrl ? (
+                      <Image
+                        src={post.featuredImage.node.sourceUrl}
+                        alt={post.title}
+                        fill
                         className="object-cover hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
                       />
+                    ) : (
+                      <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+                        <span className="text-slate-400 text-sm">Chưa có ảnh</span>
+                      </div>
                     )}
                     <div className="absolute top-4 left-4 bg-[var(--accent)] text-[var(--bg)] text-xs font-bold px-3 py-1.5 rounded-full">
-                      {post.categories?.nodes[0]?.name || 'Tin tức'}
+                      {post.categories?.nodes?.[0]?.name || 'Tin tức'}
                     </div>
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <h3 className="font-bold text-xl text-[var(--text-main)] mb-3 line-clamp-2 hover:text-[var(--accent)] transition-colors cursor-pointer">
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
-                    <div className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1" dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+                    <div
+                      className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1"
+                      dangerouslySetInnerHTML={{ __html: post.excerpt || '' }}
+                    />
                     <div className="flex items-center justify-between text-sm text-[var(--text-dim)] pt-4 border-t border-[var(--border)] mt-auto">
                       <span>{new Date(post.date).toLocaleDateString('vi-VN')}</span>
                       <span className="flex items-center gap-1"><Clock size={14} /> 5 phút đọc</span>
@@ -206,88 +145,88 @@ export default function Blog() {
             </div>
           ) : (
             <div className="text-center py-20 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
-              <p className="text-slate-400">Không tìm thấy bài viết nào trong danh mục này.</p>
+              <p className="text-slate-400">
+                {searchQuery ? `Không tìm thấy bài viết nào với từ khóa "${searchQuery}".` : 'Không có bài viết nào trong danh mục này.'}
+              </p>
             </div>
           )}
         </div>
 
-        {/* Right Column: Sidebar */}
         <div className="lg:w-1/3 space-y-8">
-          
-          {/* Search */}
           <div className="relative">
-            <input 
-              type="text" 
-              placeholder="Tìm kiếm bài viết..." 
+            <input
+              type="text"
+              placeholder="Tìm kiếm bài viết..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[var(--text-main)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-dim)]" size={20} />
           </div>
 
-          {/* Popular Posts */}
-          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
-            <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Bài viết nổi bật</h3>
-            <div className="space-y-6">
-              {popularPostsData.map((post) => (
-                <div key={post.id} className="flex gap-4 group cursor-pointer">
-                  <Link href={`/blog/${post.slug}`} className="flex gap-4 w-full">
+          {popularPosts.length > 0 && (
+            <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
+              <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Bài viết nổi bật</h3>
+              <div className="space-y-6">
+                {popularPosts.map((post) => (
+                  <Link key={post.id} href={`/blog/${post.slug}`} className="flex gap-4 group">
                     <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-100">
-                      {post.featuredImage?.node?.sourceUrl && (
-                        <Image src={post.featuredImage.node.sourceUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+                      {post.featuredImage?.node?.sourceUrl ? (
+                        <Image
+                          src={post.featuredImage.node.sourceUrl}
+                          alt={post.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-slate-200" />
                       )}
                     </div>
                     <div className="flex flex-col justify-center">
                       <h4 className="font-bold text-sm text-[var(--text-main)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors mb-1">
                         {post.title}
                       </h4>
-                      <span className="text-xs text-[var(--text-dim)]">{new Date(post.date).toLocaleDateString('vi-VN')}</span>
+                      <span className="text-xs text-[var(--text-dim)]">
+                        {new Date(post.date).toLocaleDateString('vi-VN')}
+                      </span>
                     </div>
                   </Link>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Categories */}
-          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
-            <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Danh mục</h3>
-            <ul className="space-y-4">
-              {categoriesData.map((cat, index) => (
-                <li key={index} className="flex items-center justify-between group cursor-pointer" onClick={() => setActiveCategory(cat.name)}>
-                  <div className="flex items-center gap-3">
-                    <span className={`w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[var(--accent)]`}></span>
-                    <span className="text-[var(--text-dim)] group-hover:text-[var(--accent)] transition-colors text-sm">{cat.name}</span>
-                  </div>
-                  <span className="text-[var(--text-dim)] text-sm">({cat.count})</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Tags */}
-          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
-            <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Tags phổ biến</h3>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag, index) => (
-                <span key={index} className="px-3 py-1.5 bg-[var(--bg)] text-[var(--text-dim)] border border-[var(--border)] rounded-full text-xs hover:bg-[var(--accent)] hover:text-[var(--bg)] transition-colors cursor-pointer">
-                  {tag}
-                </span>
-              ))}
+          {wpCategories.length > 0 && (
+            <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
+              <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Danh mục</h3>
+              <ul className="space-y-4">
+                {wpCategories.map((cat) => (
+                  <li
+                    key={cat.slug}
+                    className="flex items-center justify-between group cursor-pointer"
+                    onClick={() => setActiveCategory(cat.slug)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[var(--accent)] transition-colors"></span>
+                      <span className="text-[var(--text-dim)] group-hover:text-[var(--accent)] transition-colors text-sm">{cat.name}</span>
+                    </div>
+                    <span className="text-[var(--text-dim)] text-sm">({cat.count})</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
 
-          {/* CTA Box */}
           <div className="bg-[var(--accent)] rounded-2xl p-8 text-[var(--bg)]">
             <h3 className="font-bold text-xl mb-2">Cần báo giá?</h3>
             <p className="text-[var(--bg)]/90 text-sm mb-6">Liên hệ ngay để nhận báo giá miễn phí.</p>
-            <div className="flex items-center gap-2 font-bold text-xl">
+            <a href={`tel:${settings.contactPhone.replace(/\D/g, '')}`} className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition-opacity">
               <Phone size={24} />
               {settings.contactPhone}
-            </div>
+            </a>
           </div>
-
         </div>
-
       </section>
     </div>
   );

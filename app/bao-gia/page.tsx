@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { getPageBySlug } from '../lib/wp';
+import QuoteForm from '../components/QuoteForm';
 
 export default function Pricing() {
   const [pageData, setPageData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -15,9 +15,7 @@ export default function Pricing() {
         const data = await getPageBySlug('bao-gia');
         if (data) setPageData(data);
       } catch (error) {
-        console.error("Lỗi khi tải trang báo giá:", error);
-      } finally {
-        setLoading(false);
+        console.error('Lỗi khi tải trang báo giá:', error);
       }
     }
     loadData();
@@ -25,37 +23,37 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-[var(--text-main)] font-sans">
-      {/* Hero Section */}
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center">
-          {pageData?.featuredImage?.node?.sourceUrl && (
-            <img src={pageData.featuredImage.node.sourceUrl} className="w-full h-full object-cover" alt="" />
-          )}
-        </div>
+        {pageData?.featuredImage?.node?.sourceUrl ? (
+          <div className="absolute inset-0">
+            <Image src={pageData.featuredImage.node.sourceUrl} alt="" fill className="object-cover opacity-10" referrerPolicy="no-referrer" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/calculator/1920/1080')] bg-cover bg-center"></div>
+        )}
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
             <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
             <span>/</span>
             <span className="text-[var(--text-main)] font-medium">{pageData?.title || 'Bảng giá'}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">{pageData?.title || 'Bảng giá sản phẩm'}</h1>
+          <h1 className="text-4xl md:text-5xl font-serif tracking-tight mb-4">
+            {pageData?.title || 'Bảng giá sản phẩm'}
+          </h1>
           <p className="text-[var(--text-dim)] text-lg max-w-2xl">
             Giá tham khảo — Liên hệ để nhận báo giá chính xác cho đơn hàng của bạn.
           </p>
         </div>
       </section>
 
-      {/* Main Content From CMS */}
       {pageData?.content && (
         <section className="py-12 px-4 md:px-8 max-w-4xl mx-auto">
-           <div className="prose max-w-none bg-white p-8 rounded-2xl border border-[var(--border)] shadow-sm" dangerouslySetInnerHTML={{ __html: pageData.content }} />
+          <div className="prose max-w-none bg-white p-8 rounded-2xl border border-[var(--border)] shadow-sm"
+            dangerouslySetInnerHTML={{ __html: pageData.content }} />
         </section>
       )}
 
-      {/* Default Static Tables if no CMS content replaces them */}
       <section className="py-16 px-4 md:px-8 max-w-4xl mx-auto space-y-12">
-        
-        {/* Table 1: Hộp cứng cao cấp */}
         <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
           <div className="p-6 md:p-8 border-b border-[var(--border)]">
             <h2 className="text-xl font-bold text-[var(--text-main)]">Hộp cứng cao cấp</h2>
@@ -64,53 +62,32 @@ export default function Pricing() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider w-1/2">Sản phẩm</th>
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider text-right">Giá gốc</th>
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--accent)] uppercase tracking-wider text-right">Giá ưu đãi</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider w-1/2">Sản phẩm</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider text-right">Giá gốc</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--accent)] uppercase tracking-wider text-right">Giá ưu đãi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Âm dương thanh quay</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">53.200đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">39.200đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Âm dương 25x33</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">28.000đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">17.800đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Âm dương 15x15</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">17.000đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">10.200đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Nam châm 20x15</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">27.200đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">18.000đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Nam châm 24x32</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">39.800đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">30.400đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Bao diêm 20x24</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">33.200đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">21.500đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Bao diêm 12x8.5</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-dim)] line-through text-right">20.000đ</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">11.900đ</td>
-                </tr>
+                {[
+                  ['Âm dương thanh quay', '53.200đ', '39.200đ'],
+                  ['Âm dương 25x33', '28.000đ', '17.800đ'],
+                  ['Âm dương 15x15', '17.000đ', '10.200đ'],
+                  ['Nam châm 20x15', '27.200đ', '18.000đ'],
+                  ['Nam châm 24x32', '39.800đ', '30.400đ'],
+                  ['Bao diêm 20x24', '33.200đ', '21.500đ'],
+                  ['Bao diêm 12x8.5', '20.000đ', '11.900đ'],
+                ].map(([name, old, sale]) => (
+                  <tr key={name} className="hover:bg-[var(--bg)] transition-colors">
+                    <td className="py-4 px-6 text-[var(--text-main)] font-medium">{name}</td>
+                    <td className="py-4 px-6 text-[var(--text-dim)] line-through text-right">{old}</td>
+                    <td className="py-4 px-6 text-[var(--accent)] font-bold text-right">{sale}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Table 2: Túi giấy thương hiệu */}
         <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
           <div className="p-6 md:p-8 border-b border-[var(--border)]">
             <h2 className="text-xl font-bold text-[var(--text-main)]">Túi giấy thương hiệu</h2>
@@ -119,29 +96,26 @@ export default function Pricing() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider w-2/3">Sản phẩm</th>
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--accent)] uppercase tracking-wider text-right">Giá ưu đãi</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider w-2/3">Sản phẩm</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--accent)] uppercase tracking-wider text-right">Giá ưu đãi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Cao cấp Ivory</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">8.500đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Trung cấp Couche</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">4.200đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Giá rẻ Kraft</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">1.500đ</td>
-                </tr>
+                {[
+                  ['Cao cấp Ivory', '8.500đ'],
+                  ['Trung cấp Couche', '4.200đ'],
+                  ['Giá rẻ Kraft', '1.500đ'],
+                ].map(([name, price]) => (
+                  <tr key={name} className="hover:bg-[var(--bg)] transition-colors">
+                    <td className="py-4 px-6 text-[var(--text-main)] font-medium">{name}</td>
+                    <td className="py-4 px-6 text-[var(--accent)] font-bold text-right">{price}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Table 3: Hộp sóng carton */}
         <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
           <div className="p-6 md:p-8 border-b border-[var(--border)]">
             <h2 className="text-xl font-bold text-[var(--text-main)]">Hộp sóng carton</h2>
@@ -150,35 +124,33 @@ export default function Pricing() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider w-2/3">Sản phẩm</th>
-                  <th className="py-4 px-6 md:px-8 text-xs font-bold text-[var(--accent)] uppercase tracking-wider text-right">Giá ưu đãi</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider w-2/3">Sản phẩm</th>
+                  <th className="py-4 px-6 text-xs font-bold text-[var(--accent)] uppercase tracking-wider text-right">Giá ưu đãi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Nắp gài 30x20</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">3.000đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Nắp gài 40x30</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">4.500đ</td>
-                </tr>
-                <tr className="hover:bg-[var(--bg)] transition-colors">
-                  <td className="py-4 px-6 md:px-8 text-[var(--text-main)] font-medium">Cuộn</td>
-                  <td className="py-4 px-6 md:px-8 text-[var(--accent)] font-bold text-right">3.500đ</td>
-                </tr>
+                {[
+                  ['Nắp gài 30x20', '3.000đ'],
+                  ['Nắp gài 40x30', '4.500đ'],
+                  ['Cuộn', '3.500đ'],
+                ].map(([name, price]) => (
+                  <tr key={name} className="hover:bg-[var(--bg)] transition-colors">
+                    <td className="py-4 px-6 text-[var(--text-main)] font-medium">{name}</td>
+                    <td className="py-4 px-6 text-[var(--accent)] font-bold text-right">{price}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
+      </section>
 
-        {/* CTA Button */}
-        <div className="flex justify-center pt-8">
-          <Link href="/lien-he" className="bg-[var(--accent)] text-white font-bold py-4 px-8 rounded-lg hover:opacity-90 transition-opacity uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20">
-            NHẬN BÁO GIÁ CHI TIẾT <ArrowRight size={20} />
-          </Link>
+      <section className="py-16 px-4 md:px-8 max-w-4xl mx-auto">
+        <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] shadow-sm p-8 md:p-12">
+          <h2 className="text-3xl font-serif text-[var(--text-main)] mb-2 tracking-tight">Nhận báo giá chính xác</h2>
+          <p className="text-[var(--text-dim)] mb-8">Để lại thông tin, chuyên viên sẽ liên hệ và báo giá chi tiết trong vòng 5 phút.</p>
+          <QuoteForm />
         </div>
-
       </section>
     </div>
   );
