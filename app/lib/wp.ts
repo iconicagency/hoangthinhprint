@@ -1,5 +1,10 @@
+// ============================================================
+// WordPress GraphQL client
+// CMS: cms.inhoangthinh.com.vn
+// ============================================================
+
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
-  const wpUrl = process.env.NEXT_PUBLIC_WP_GRAPHQL_URL || "https://cms.inhoangthinh.com.vn/graphql";
+  const wpUrl = process.env.NEXT_PUBLIC_WP_GRAPHQL_URL || 'https://cms.inhoangthinh.com.vn/graphql';
   const headers = { 'Content-Type': 'application/json' };
 
   try {
@@ -24,33 +29,75 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
     });
 
     if (!res.ok) {
-      console.error("Kết nối WP lỗi. Status:", res.status);
+      console.error('Kết nối WP lỗi. Status:', res.status);
       return null;
     }
 
     const json = await res.json();
     if (json.errors) {
-      console.error("Lỗi từ WordPress GraphQL:", JSON.stringify(json.errors, null, 2));
+      console.error('Lỗi từ WordPress GraphQL:', JSON.stringify(json.errors, null, 2));
       return null;
     }
 
     return json.data;
   } catch (error) {
-    console.error("Lỗi kết nối WordPress:", error);
+    console.error('Lỗi kết nối WordPress:', error);
     return null;
   }
 }
+
+// ============================================================
+// SEO (RankMath via wp-graphql-rank-math plugin)
+// ============================================================
+
+export async function getSeoForPost(slug: string) {
+  const query = `
+    query GetSeoForPost($slug: ID!) {
+      post(id: $slug, idType: SLUG) {
+        seo {
+          title metaDesc canonical robots focuskw
+          opengraphTitle opengraphDescription
+          opengraphImage { sourceUrl }
+          twitterTitle twitterDescription
+          twitterImage { sourceUrl }
+          schema { raw }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query, { variables: { slug } });
+  return data?.post?.seo || null;
+}
+
+export async function getSeoForPage(slug: string) {
+  const query = `
+    query GetSeoForPage($slug: ID!) {
+      page(id: $slug, idType: URI) {
+        seo {
+          title metaDesc canonical robots focuskw
+          opengraphTitle opengraphDescription
+          opengraphImage { sourceUrl }
+          twitterTitle twitterDescription
+          twitterImage { sourceUrl }
+          schema { raw }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query, { variables: { slug } });
+  return data?.page?.seo || null;
+}
+
+// ============================================================
+// Pages
+// ============================================================
 
 export async function getPageBySlug(slug: string) {
   const query = `
     query GetPageBySlug($id: ID!) {
       page(id: $id, idType: URI) {
-        title
-        content
-        slug
-        featuredImage {
-          node { sourceUrl }
-        }
+        title content slug
+        featuredImage { node { sourceUrl } }
       }
     }
   `;
@@ -62,11 +109,8 @@ export async function getAboutPageData() {
   const query = `
     query GetAboutPageData {
       page(id: "gioi-thieu", idType: URI) {
-        title
-        content
-        featuredImage {
-          node { sourceUrl }
-        }
+        title content
+        featuredImage { node { sourceUrl } }
         cauHinhTrangGioiThieu {
           heroTitle heroSubtitle storyTitle storyContent
           storyImage { node { sourceUrl } }
@@ -78,10 +122,7 @@ export async function getAboutPageData() {
           benefits { title description }
           coreValues { title description }
           servicesTitle
-          servicesList {
-            title description
-            image { node { sourceUrl } }
-          }
+          servicesList { title description image { node { sourceUrl } } }
           commitmentsTitle
           commitmentsList { title description icon }
           ctaTitle ctaDescription
@@ -138,6 +179,10 @@ export async function getIndustryPageData(uri: string) {
   return data?.page || null;
 }
 
+// ============================================================
+// Posts / Blog
+// ============================================================
+
 export async function getPostBySlug(slug: string) {
   const query = `
     query GetPostBySlug($id: ID!) {
@@ -184,6 +229,10 @@ export async function getRecentPosts() {
   return getPosts(3);
 }
 
+// ============================================================
+// Dự án / Portfolio (CPT: du_an)
+// ============================================================
+
 export async function getProjects() {
   const query = `
     query GetProjects {
@@ -214,10 +263,14 @@ export async function getProjectBySlug(slug: string) {
   return data?.duAn || null;
 }
 
-// Lưu ý: khi cài WooCommerce sẽ cần đổi sang query products{}
-export async function getProductsByCategory(categorySlug = "san-pham", first = 100) {
+// ============================================================
+// Gallery sản phẩm (Posts + category, không cần WooCommerce)
+// Mỗi sản phẩm = 1 Post, gán category là loại sản phẩm
+// ============================================================
+
+export async function getGalleryByCategory(categorySlug = 'san-pham', first = 200) {
   const query = `
-    query GetProducts($first: Int!, $categorySlug: String!) {
+    query GetGallery($first: Int!, $categorySlug: String!) {
       posts(first: $first, where: {categoryName: $categorySlug, orderby: {field: DATE, order: DESC}}) {
         nodes {
           id title slug
@@ -230,6 +283,10 @@ export async function getProductsByCategory(categorySlug = "san-pham", first = 1
   const data = await fetchWP(query, { variables: { first, categorySlug } });
   return data?.posts?.nodes || [];
 }
+
+// ============================================================
+// Trang chủ (ACF)
+// ============================================================
 
 export async function getHomePageData() {
   const query = `
@@ -269,9 +326,7 @@ export async function getHomePageData() {
           tagline title description videoUrl
           coverImage { node { sourceUrl } }
         }
-        testimonials {
-          content author position rating
-        }
+        testimonials { content author position rating }
       }
     }
   `;
@@ -350,6 +405,10 @@ export async function getHomePageData() {
     testimonials: p.testimonials || [],
   };
 }
+
+// ============================================================
+// Header / Footer settings (ACF Options)
+// ============================================================
 
 export async function getHeaderFooterSettings() {
   const query = `

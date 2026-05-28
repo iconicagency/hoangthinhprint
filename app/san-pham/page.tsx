@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { getProductsByCategory, getCategories, getPageBySlug } from '../lib/wp';
+import { getGalleryByCategory, getCategories, getPageBySlug } from '../lib/wp';
 
 const CATEGORY_LABELS: Record<string, string> = {
   'catalogue': 'Catalogue',
@@ -31,7 +31,7 @@ function ProductsContent() {
     async function loadData() {
       try {
         const [productsData, catsData, pData] = await Promise.all([
-          getProductsByCategory("san-pham", 200),
+          getGalleryByCategory('san-pham', 200),
           getCategories(),
           getPageBySlug('san-pham'),
         ]);
@@ -39,7 +39,7 @@ function ProductsContent() {
         if (catsData) setWpCategories(catsData.filter((c: any) => c.slug !== 'uncategorized'));
         if (pData) setPageData(pData);
       } catch (error) {
-        console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
+        console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
       } finally {
         setLoading(false);
       }
