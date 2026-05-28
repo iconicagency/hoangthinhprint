@@ -2,8 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getHeaderFooterSettings } from '@/app/lib/wp';
-import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
 
 interface SiteSettings {
   logoUrl: string | null;
@@ -29,7 +27,7 @@ const defaultSettings: SiteSettings = {
   contactEmail: 'inhoangthinh.hanoi@gmail.com',
   contactAddress: 'Văn Phòng: Số 11 ngách 01/01 đường Võ Chí Công, Cầu Giấy, Hà Nội. Xưởng: Số 55 Ngõ 163 Phố Cầu Cốc, Tây Mỗ, Từ Liêm, Hà Nội.',
   facebookLink: 'https://www.facebook.com/intuigiayhoangthinh',
-  zaloLink: '0569849999',
+  zaloLink: 'https://zalo.me/0569849999',
   footerDescription: 'Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng. Hoàng Thịnh Print - In ấn mọi lúc mọi nơi.',
   heroTitle: 'Giải pháp bao bì toàn diện cho doanh nghiệp',
   heroSubtitle: 'Thiết kế sáng tạo - In ấn chất lượng - Giao hàng đúng hẹn. Đối tác tin cậy của hơn 500+ thương hiệu.'
@@ -44,44 +42,27 @@ export default function SettingsProvider({ children }: { children: React.ReactNo
 
   useEffect(() => {
     async function loadSettings() {
-      // 1. Try Firebase first
       try {
-        if (db) {
-          const docRef = doc(db, 'settings', 'general');
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const fbData = docSnap.data() as any;
-            setSettings({
-              ...defaultSettings,
-              ...fbData
-            });
-            console.log('DEBUG: Settings loaded from Firebase');
-            return; // Exit if found in Firebase
-          }
+        const data = await getHeaderFooterSettings();
+        if (data && (data.phoneNumber || data.logo || data.siteTitle)) {
+          setSettings({
+            ...defaultSettings,
+            logoUrl: data.logo?.node?.sourceUrl || defaultSettings.logoUrl,
+            logoText: data.siteTitle || defaultSettings.logoText,
+            contactPhone: data.phoneNumber || defaultSettings.contactPhone,
+            contactEmail: data.email || defaultSettings.contactEmail,
+            contactAddress: data.address || defaultSettings.contactAddress,
+            facebookLink: data.facebook || defaultSettings.facebookLink,
+            zaloLink: data.zalo ? `https://zalo.me/${data.zalo.replace(/\D/g, '')}` : defaultSettings.zaloLink,
+            youtubeLink: data.youtube || undefined,
+            footerDescription: data.footerDescription || defaultSettings.footerDescription,
+            mapUrl: data.mapUrl || undefined,
+            mapImage: data.mapImage?.node?.sourceUrl || undefined,
+            copyrightText: data.copyrightText || undefined,
+          });
         }
       } catch (err) {
-        console.error('Error loading settings from Firebase:', err);
-      }
-
-      // 2. Fallback to WP
-      const data = await getHeaderFooterSettings();
-      console.log('DEBUG: Settings data from wp:', data);
-      if (data) {
-        setSettings({
-          ...defaultSettings,
-          logoUrl: data.logo?.node?.sourceUrl || defaultSettings.logoUrl,
-          logoText: data.siteTitle || defaultSettings.logoText, 
-          contactPhone: data.phoneNumber || defaultSettings.contactPhone,
-          contactEmail: data.email || defaultSettings.contactEmail,
-          contactAddress: data.address || defaultSettings.contactAddress,
-          facebookLink: data.facebook || defaultSettings.facebookLink,
-          zaloLink: data.zalo || defaultSettings.zaloLink,
-          youtubeLink: data.youtube,
-          footerDescription: data.footerDescription || defaultSettings.footerDescription,
-          mapUrl: data.mapUrl,
-          mapImage: data.mapImage?.node?.sourceUrl,
-          copyrightText: data.copyrightText,
-        });
+        console.warn('Không thể tải settings từ WordPress, dùng giá trị mặc định.');
       }
     }
     loadSettings();

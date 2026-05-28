@@ -1,11 +1,8 @@
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
-  // Biến môi trường hoặc fix cứng khi đang test
   const wpUrl = process.env.NEXT_PUBLIC_WP_GRAPHQL_URL || "https://cms.inhoangthinh.com.vn/graphql";
-
   const headers = { 'Content-Type': 'application/json' };
 
   try {
-    // [QUAN TRỌNG] Xử lý lỗi CORS: Nếu đang chạy trên Trình duyệt, kết nối phải đi đường vòng qua Next.js Server (Proxy)
     if (typeof window !== 'undefined') {
       const res = await fetch('/api/graphql-proxy', {
         method: 'POST',
@@ -15,46 +12,35 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       });
       if (!res.ok) return null;
       const json = await res.json();
+      if (json.errors) return null;
       return json.data;
     }
 
-    // Nếu đang chạy trên Server Next.js, kết nối thẳng tới WordPress siêu nhanh
     const res = await fetch(wpUrl, {
       method: 'POST',
       headers,
-      body: JSON.stringify({
-        query,
-        variables,
-      }),
-      // Revert về cache: no-store để cập nhật tức thì
+      body: JSON.stringify({ query, variables }),
       cache: 'no-store',
     });
 
     if (!res.ok) {
-       console.error("Mạng kết nối tới WP lỗi. Status:", res.status);
-       return null;
+      console.error("Kết nối WP lỗi. Status:", res.status);
+      return null;
     }
 
     const json = await res.json();
     if (json.errors) {
-      console.error("Lỗi từ WordPress API:", JSON.stringify(json.errors, null, 2));
+      console.error("Lỗi từ WordPress GraphQL:", JSON.stringify(json.errors, null, 2));
       return null;
-    }
-
-    // DEBUG: Log the full data structure
-    console.log('DEBUG: Full GraphQL Data structure:', JSON.stringify(json.data, null, 2));
-    if (json.data && json.data.page) {
-       console.log('DEBUG: Page fields available:', Object.keys(json.data.page));
     }
 
     return json.data;
   } catch (error) {
-    console.error("Lỗi kết nối tới WordPress hoặc Proxy:", error);
+    console.error("Lỗi kết nối WordPress:", error);
     return null;
   }
 }
 
-// Lấy nội dung chi tiết của một trang theo Slug/URI
 export async function getPageBySlug(slug: string) {
   const query = `
     query GetPageBySlug($id: ID!) {
@@ -63,18 +49,15 @@ export async function getPageBySlug(slug: string) {
         content
         slug
         featuredImage {
-          node {
-            sourceUrl
-          }
+          node { sourceUrl }
         }
       }
     }
   `;
   const data = await fetchWP(query, { variables: { id: slug } });
-  return data?.page;
+  return data?.page || null;
 }
 
-// Lấy dữ liệu trang Giới thiệu (bao gồm ACF nếu có)
 export async function getAboutPageData() {
   const query = `
     query GetAboutPageData {
@@ -82,194 +65,98 @@ export async function getAboutPageData() {
         title
         content
         featuredImage {
-          node {
-            sourceUrl
-          }
+          node { sourceUrl }
         }
         cauHinhTrangGioiThieu {
-          heroTitle
-          heroSubtitle
-          storyTitle
-          storyContent
-          storyImage {
-            node {
-              sourceUrl
-            }
-          }
-          visionTitle
-          visionContent
-          missionTitle
-          missionContent
-          stats {
-            number
-            label
-          }
-          productionCapacityTitle
-          productionCapacityDescription
-          productionImages {
-            nodes {
-              sourceUrl
-            }
-          }
-          productionFacilities {
-            title
-            description
-            icon
-          }
-          benefits {
-            title
-            description
-          }
-          coreValues {
-            title
-            description
-          }
+          heroTitle heroSubtitle storyTitle storyContent
+          storyImage { node { sourceUrl } }
+          visionTitle visionContent missionTitle missionContent
+          stats { number label }
+          productionCapacityTitle productionCapacityDescription
+          productionImages { nodes { sourceUrl } }
+          productionFacilities { title description icon }
+          benefits { title description }
+          coreValues { title description }
           servicesTitle
           servicesList {
-            title
-            description
-            image {
-              node {
-                sourceUrl
-              }
-            }
+            title description
+            image { node { sourceUrl } }
           }
           commitmentsTitle
-          commitmentsList {
-            title
-            description
-            icon
-          }
-          ctaTitle
-          ctaDescription
-          contactAddress
-          contactHotline
-          contactEmail
-          contactImages {
-            nodes {
-              sourceUrl
-            }
-          }
+          commitmentsList { title description icon }
+          ctaTitle ctaDescription
+          contactAddress contactHotline contactEmail
+          contactImages { nodes { sourceUrl } }
         }
       }
     }
   `;
   const data = await fetchWP(query);
-  return data?.page;
+  return data?.page || null;
 }
 
-// Lấy dữ liệu trang Ngành hàng
 export async function getNganhHangPageData() {
   const query = `
     query GetNganhHangPageData {
       page(id: "nganh-hang", idType: URI) {
-        title
-        content
-        featuredImage {
-          node {
-            sourceUrl
-          }
-        }
+        title content
+        featuredImage { node { sourceUrl } }
         cauHinhTrangNganhHang {
-          heroTitle
-          heroSubtitle
+          heroTitle heroSubtitle
           danhSachNganhHang {
-            title
-            description
-            icon
-            link
-            image {
-              node {
-                sourceUrl
-              }
-            }
+            title description icon link
+            image { node { sourceUrl } }
           }
         }
       }
     }
   `;
   const data = await fetchWP(query);
-  return data?.page;
+  return data?.page || null;
 }
 
-// Lấy dữ liệu trang chi tiết Ngành hàng (VD: tpcn-duoc-pham)
 export async function getIndustryPageData(uri: string) {
   const query = `
     query GetIndustryPageData($uri: ID!) {
       page(id: $uri, idType: URI) {
-        title
-        content
+        title content
         cauHinhChiTietNganhHang {
-          heroTitle
-          heroSubtitle
-          introTitle
-          introContent
+          heroTitle heroSubtitle introTitle introContent
           whyTitle
-          whyList {
-            item
-          }
+          whyList { item }
           productsTitle
-          productsList {
-            title
-            description
-            link
-          }
+          productsList { title description link }
           pricingText
-          sampleImages {
-            nodes {
-              sourceUrl
-            }
-          }
+          sampleImages { nodes { sourceUrl } }
           faqTitle
-          faqs {
-            question
-            answer
-          }
+          faqs { question answer }
         }
       }
     }
   `;
   const data = await fetchWP(query, { variables: { uri } });
-  return data?.page;
+  return data?.page || null;
 }
 
-// Lấy chi tiết bài viết theo Slug
 export async function getPostBySlug(slug: string) {
   const query = `
     query GetPostBySlug($id: ID!) {
       post(id: $id, idType: SLUG) {
-        title
-        content
-        date
-        slug
-        featuredImage {
-          node {
-            sourceUrl
-          }
-        }
-        categories {
-          nodes {
-            name
-            slug
-          }
-        }
+        title content date slug
+        featuredImage { node { sourceUrl } }
+        categories { nodes { name slug } }
       }
     }
   `;
   const data = await fetchWP(query, { variables: { id: slug } });
-  return data?.post;
+  return data?.post || null;
 }
 
-// Lấy danh sách chuyên mục (Categories)
 export async function getCategories() {
   const query = `
     query GetCategories {
-      categories(first: 20) {
-        nodes {
-          name
-          slug
-          count
-        }
+      categories(first: 50) {
+        nodes { name slug count }
       }
     }
   `;
@@ -277,28 +164,14 @@ export async function getCategories() {
   return data?.categories?.nodes || [];
 }
 
-// Lấy danh sách bài viết (Tin Tức) với số lượng tùy chỉnh
 export async function getPosts(first = 10) {
   const query = `
     query GetPosts($first: Int!) {
       posts(first: $first, where: {orderby: {field: DATE, order: DESC}}) {
         nodes {
-          id
-          title
-          excerpt
-          date
-          slug
-          featuredImage {
-            node {
-              sourceUrl
-            }
-          }
-          categories {
-            nodes {
-              name
-              slug
-            }
-          }
+          id title excerpt date slug
+          featuredImage { node { sourceUrl } }
+          categories { nodes { name slug } }
         }
       }
     }
@@ -307,28 +180,18 @@ export async function getPosts(first = 10) {
   return data?.posts?.nodes || [];
 }
 
-// Lấy 3 bài viết mới nhất phục vụ cho Block Tin tức (Blog)
 export async function getRecentPosts() {
   return getPosts(3);
 }
 
-// Lấy danh sách Dự Án (Post Type: du_an)
 export async function getProjects() {
   const query = `
     query GetProjects {
       cacDuAn(first: 8, where: {orderby: {field: DATE, order: DESC}}) {
         nodes {
-          id
-          title
-          slug
-          featuredImage {
-            node {
-              sourceUrl
-            }
-          }
-          thongtinduan {
-            nhanHienThi
-          }
+          id title slug
+          featuredImage { node { sourceUrl } }
+          thongtinduan { nhanHienThi }
         }
       }
     }
@@ -337,214 +200,178 @@ export async function getProjects() {
   return data?.cacDuAn?.nodes || [];
 }
 
-// Lấy chi tiết bài viết theo Slug (Consolidated)
-
-// Lấy Chi Tiết Dự Án
 export async function getProjectBySlug(slug: string) {
   const query = `
     query GetProjectBySlug($id: ID!) {
       duAn(id: $id, idType: SLUG) {
-        title
-        content
-        featuredImage {
-          node {
-            sourceUrl
-          }
-        }
-        thongtinduan {
-          nhanHienThi
-        }
+        title content
+        featuredImage { node { sourceUrl } }
+        thongtinduan { nhanHienThi }
       }
     }
   `;
   const data = await fetchWP(query, { variables: { id: slug } });
-  return data?.duAn;
+  return data?.duAn || null;
 }
 
-// Lấy danh sách Sản phẩm theo danh mục (Sử dụng Category 'san-pham' hoặc CPT)
-export async function getProductsByCategory(categoryName = "san-pham", first = 100) {
+// Lưu ý: khi cài WooCommerce sẽ cần đổi sang query products{}
+export async function getProductsByCategory(categorySlug = "san-pham", first = 100) {
   const query = `
-    query GetProducts($first: Int!, $categoryName: String!) {
-      posts(first: $first, where: {categoryName: $categoryName, orderby: {field: DATE, order: DESC}}) {
+    query GetProducts($first: Int!, $categorySlug: String!) {
+      posts(first: $first, where: {categoryName: $categorySlug, orderby: {field: DATE, order: DESC}}) {
         nodes {
-          id
-          title
-          slug
-          featuredImage {
-            node {
-              sourceUrl
-            }
-          }
-          categories {
-            nodes {
-              name
-              slug
-            }
-          }
+          id title slug
+          featuredImage { node { sourceUrl } }
+          categories { nodes { name slug } }
         }
       }
     }
   `;
-  const data = await fetchWP(query, { variables: { first, categoryName } });
+  const data = await fetchWP(query, { variables: { first, categorySlug } });
   return data?.posts?.nodes || [];
 }
-// Lấy Dữ liệu Trang Chủ (ACF Option trang chủ)
+
 export async function getHomePageData() {
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
+        cauHinhTrangChu {
+          herotagline herotitle herosubtitle
+          heroslides { nodes { sourceUrl } }
+          herobenefits { title subtitle }
+          herobuttons { label link }
+          stats { number suffix label }
+        }
         workingProcess {
-          tagline
-          title
-          steps {
-            steptitle
-            stepdescription
-            stepicon
-          }
+          tagline title
+          steps { steptitle stepdescription stepicon }
         }
         printingServices {
-          tagline
-          tieuD
+          tagline tieuD
           services {
-            servicetitle
-            servicedescription
-            serviceimage {
-              node {
-                sourceUrl
-              }
-            }
+            servicetitle servicedescription
+            serviceimage { node { sourceUrl } }
           }
         }
         whyChooseUs {
-          whyTagline
-          whyTitle
+          whyTagline whyTitle
+          features { iconName featureTitle featureDescription }
         }
         machinerysection {
-          tagline
-          title
+          tagline title
+          machines { machineName machineDescription machineImage { node { sourceUrl } } }
         }
         clientsSection {
-          tagline
-          title
-          clients {
-            clientname
-            clientlogo {
-              node {
-                sourceUrl
-              }
-            }
-          }
+          tagline title
+          clients { clientname clientlogo { node { sourceUrl } } }
         }
         factoryTourSection {
-          tagline
-          title
-          description
-          videoUrl
-          coverImage {
-            node {
-              sourceUrl
-            }
-          }
+          tagline title description videoUrl
+          coverImage { node { sourceUrl } }
         }
-        cauHinhTrangChu {
-          herotagline
-          herotitle
-          herosubtitle
-          heroslides {
-            nodes {
-              sourceUrl
-            }
-          }
-          herobenefits {
-            title
-            subtitle
-          }
-          herobuttons {
-            label
-            link
-          }
-          stats {
-            number
-            suffix
-            label
-          }
+        testimonials {
+          content author position rating
         }
       }
     }
   `;
   const data = await fetchWP(query);
   if (!data?.page) return null;
-  
+
+  const p = data.page;
+  const hero = p.cauHinhTrangChu;
+  const process = p.workingProcess;
+  const services = p.printingServices;
+  const why = p.whyChooseUs;
+  const machinery = p.machinerysection;
+  const clients = p.clientsSection;
+  const factory = p.factoryTourSection;
+
   return {
-    ...data.page.cauHinhTrangChu,
-    heroTagline: data.page.cauHinhTrangChu?.herotagline,
-    heroTitle: data.page.cauHinhTrangChu?.herotitle,
-    heroSubtitle: data.page.cauHinhTrangChu?.herosubtitle,
-    heroSlides: data.page.cauHinhTrangChu?.heroslides,
-    heroBenefits: data.page.cauHinhTrangChu?.herobenefits,
-    heroButtons: data.page.cauHinhTrangChu?.herobuttons,
-    stats: data.page.cauHinhTrangChu?.stats,
-    newWhyChooseUs: {
-        ...data.page.whyChooseUs,
-        tagline: data.page.whyChooseUs?.whyTagline,
-        title: data.page.whyChooseUs?.whyTitle
+    heroTagline: hero?.herotagline,
+    heroTitle: hero?.herotitle,
+    heroSubtitle: hero?.herosubtitle,
+    heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
+    heroBenefits: hero?.herobenefits || [],
+    heroButtons: hero?.herobuttons || [],
+    stats: hero?.stats || [],
+    workingProcess: {
+      tagline: process?.tagline,
+      title: process?.title,
+      steps: (process?.steps || []).map((s: any, i: number) => ({
+        step: (i + 1).toString().padStart(2, '0'),
+        title: s.steptitle,
+        desc: s.stepdescription,
+        iconName: s.stepicon,
+      })),
     },
-    newWorkingProcess: {
-        ...data.page.workingProcess,
-        steps: data.page.workingProcess?.steps?.map((s: any) => ({ stepTitle: s.steptitle, stepDescription: s.stepdescription, stepIcon: s.stepicon }))
+    printingServices: {
+      tagline: services?.tagline,
+      title: services?.tieuD,
+      services: (services?.services || []).map((s: any) => ({
+        title: s.servicetitle,
+        desc: s.servicedescription,
+        img: s.serviceimage?.node?.sourceUrl || null,
+      })),
     },
-    newPrintingServices: {
-        ...data.page.printingServices,
-        title: data.page.printingServices?.tieuD,
-        services: data.page.printingServices?.services?.map((s: any) => ({ serviceTitle: s.servicetitle, serviceDescription: s.servicedescription, serviceImage: s.serviceimage }))
+    whyChooseUs: {
+      tagline: why?.whyTagline,
+      title: why?.whyTitle,
+      features: (why?.features || []).map((f: any) => ({
+        iconName: f.iconName,
+        title: f.featureTitle,
+        desc: f.featureDescription,
+      })),
     },
-    newMachinery: {
-       ...data.page.machinerysection
+    machinery: {
+      tagline: machinery?.tagline,
+      title: machinery?.title,
+      machines: (machinery?.machines || []).map((m: any) => ({
+        title: m.machineName,
+        desc: m.machineDescription,
+        img: m.machineImage?.node?.sourceUrl || null,
+      })),
     },
-    newClients: {
-       ...data.page.clientsSection,
-       clients: data.page.clientsSection?.clients?.map((c: any) => ({ clientName: c.clientname, clientLogo: c.clientlogo }))
+    clients: {
+      tagline: clients?.tagline,
+      title: clients?.title,
+      list: (clients?.clients || []).map((c: any) => ({
+        name: c.clientname,
+        logo: c.clientlogo?.node?.sourceUrl || null,
+      })),
     },
-    newFactoryTour: data.page.factoryTourSection
+    factoryTour: {
+      tagline: factory?.tagline,
+      title: factory?.title,
+      description: factory?.description,
+      videoUrl: factory?.videoUrl,
+      coverImage: factory?.coverImage?.node?.sourceUrl || null,
+    },
+    testimonials: p.testimonials || [],
   };
 }
 
-// Lấy dữ liệu Cấu hình Header và Footer
 export async function getHeaderFooterSettings() {
   const query = `
     query GetHeaderFooterSettings {
-      generalSettings {
-        title
-      }
+      generalSettings { title }
       headerSettings {
         headerSetup {
-          logo {
-            node {
-              sourceUrl
-            }
-          }
-          phoneNumber
-          email
-          address
-          facebook
-          zalo
-          youtube
-          footerDescription
-          mapUrl
-          mapImage {
-            node {
-              sourceUrl
-            }
-          }
+          logo { node { sourceUrl } }
+          phoneNumber email address
+          facebook zalo youtube
+          footerDescription mapUrl
+          mapImage { node { sourceUrl } }
           copyrightText
         }
       }
     }
   `;
   const data = await fetchWP(query);
-  console.log('DEBUG: Full data from WP (headerSettings):', JSON.stringify(data, null, 2));
+  if (!data) return null;
+
   return {
-    ...data?.headerSettings?.headerSetup,
-    siteTitle: data?.generalSettings?.title
+    siteTitle: data.generalSettings?.title,
+    ...data.headerSettings?.headerSetup,
   };
 }
