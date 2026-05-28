@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -17,7 +17,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   'hop-trung-thu': 'Hộp Trung Thu',
 };
 
-export default function Products() {
+function ProductsContent() {
   const searchParams = useSearchParams();
   const catFromUrl = searchParams.get('cat') || 'tat-ca';
 
@@ -154,5 +154,17 @@ export default function Products() {
         )}
       </section>
     </div>
+  );
+}
+
+export default function Products() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--accent)] border-t-transparent"></div>
+      </div>
+    }>
+      <ProductsContent />
+    </Suspense>
   );
 }
