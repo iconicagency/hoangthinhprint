@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getGalleryByCategory, getCategories, getPageBySlug } from '../lib/wp';
+import Lightbox from '../components/Lightbox';
 
 const CATEGORY_LABELS: Record<string, string> = {
   'catalogue': 'Catalogue',
@@ -26,6 +27,7 @@ function ProductsContent() {
   const [wpCategories, setWpCategories] = useState<any[]>([]);
   const [pageData, setPageData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -47,9 +49,7 @@ function ProductsContent() {
     loadData();
   }, []);
 
-  useEffect(() => {
-    setActiveSlug(catFromUrl);
-  }, [catFromUrl]);
+  useEffect(() => { setActiveSlug(catFromUrl); }, [catFromUrl]);
 
   const products = cmsProducts.map(p => {
     const subCat = p.categories?.nodes?.find((c: any) => c.slug !== 'san-pham');
@@ -75,9 +75,31 @@ function ProductsContent() {
         ...Object.entries(CATEGORY_LABELS).map(([slug, name]) => ({ slug, name, count: 0 })),
       ];
 
+  const openLightbox = useCallback((index: number) => setLightboxIndex(index), []);
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const prevImage = useCallback(() =>
+    setLightboxIndex(i => i !== null ? (i - 1 + filteredProducts.length) % filteredProducts.length : null),
+    [filteredProducts.length]
+  );
+  const nextImage = useCallback(() =>
+    setLightboxIndex(i => i !== null ? (i + 1) % filteredProducts.length : null),
+    [filteredProducts.length]
+  );
+
   return (
     <div className="min-h-screen bg-slate-50 text-[var(--text-main)] font-sans">
-      <section className="relative py-20 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
+
+      {lightboxIndex !== null && (
+        <Lightbox
+          items={filteredProducts}
+          currentIndex={lightboxIndex}
+          onClose={closeLightbox}
+          onPrev={prevImage}
+          onNext={nextImage}
+        />
+      )}
+
+      <section className="relative py-20 px-8 bg-[var(--bg)] overflow-hidden border-b border-[var(--border)]">
         <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/pattern/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
@@ -124,8 +146,12 @@ function ProductsContent() {
           </div>
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div key={product.id} className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+            {filteredProducts.map((product, index) => (
+              <div
+                key={product.id}
+                className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
+                onClick={() => openLightbox(index)}
+              >
                 <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
                   <Image
                     src={product.img}
@@ -134,6 +160,11 @@ function ProductsContent() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+                    <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-4 py-2 rounded-full">
+                      Xem ảnh
+                    </span>
+                  </div>
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold text-[var(--text-main)] text-sm mb-1.5 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
