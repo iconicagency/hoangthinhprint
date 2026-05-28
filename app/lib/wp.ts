@@ -47,7 +47,11 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
 }
 
 // ============================================================
-// SEO (RankMath via wp-graphql-rank-math plugin)
+// SEO — wp-graphql-rank-math (AxeWP)
+// Schema: title, description, robots, canonicalUrl,
+//         openGraph { title, description, image { url } }
+//         twitter { title, description, image { url } }
+//         jsonLd { raw }
 // ============================================================
 
 export async function getSeoForPost(slug: string) {
@@ -55,12 +59,21 @@ export async function getSeoForPost(slug: string) {
     query GetSeoForPost($slug: ID!) {
       post(id: $slug, idType: SLUG) {
         seo {
-          title metaDesc canonical robots focuskw
-          opengraphTitle opengraphDescription
-          opengraphImage { sourceUrl }
-          twitterTitle twitterDescription
-          twitterImage { sourceUrl }
-          schema { raw }
+          title
+          description
+          robots
+          canonicalUrl
+          openGraph {
+            title
+            description
+            image { url width height }
+          }
+          twitter {
+            title
+            description
+            image { url }
+          }
+          jsonLd { raw }
         }
       }
     }
@@ -74,12 +87,21 @@ export async function getSeoForPage(slug: string) {
     query GetSeoForPage($slug: ID!) {
       page(id: $slug, idType: URI) {
         seo {
-          title metaDesc canonical robots focuskw
-          opengraphTitle opengraphDescription
-          opengraphImage { sourceUrl }
-          twitterTitle twitterDescription
-          twitterImage { sourceUrl }
-          schema { raw }
+          title
+          description
+          robots
+          canonicalUrl
+          openGraph {
+            title
+            description
+            image { url width height }
+          }
+          twitter {
+            title
+            description
+            image { url }
+          }
+          jsonLd { raw }
         }
       }
     }

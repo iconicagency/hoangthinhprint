@@ -1,6 +1,9 @@
 // ============================================================
-// SEO helpers - tích hợp RankMath qua wp-graphql-rank-math
-// Cài plugin: https://github.com/AxeWP/wp-graphql-rank-math/releases
+// SEO helpers — wp-graphql-rank-math (AxeWP) schema
+// Fields: title, description, robots, canonicalUrl,
+//         openGraph { title, description, image { url } }
+//         twitter { title, description, image { url } }
+//         jsonLd { raw }
 // ============================================================
 
 import { Metadata } from 'next';
@@ -18,11 +21,12 @@ export async function getPageMetadata(slug: string, fallback?: {
     const seo = await getSeoForPage(slug);
     if (seo) {
       return buildMetadata({
-        title: seo.title || seo.opengraphTitle || fallback?.title,
-        description: seo.metaDesc || seo.opengraphDescription || fallback?.description,
-        ogImage: seo.opengraphImage?.sourceUrl,
-        canonical: seo.canonical,
+        title: seo.title || seo.openGraph?.title || fallback?.title,
+        description: seo.description || seo.openGraph?.description || fallback?.description,
+        ogImage: seo.openGraph?.image?.url,
+        canonical: seo.canonicalUrl,
         robots: seo.robots,
+        jsonLd: seo.jsonLd?.raw,
       });
     }
   } catch {}
@@ -41,11 +45,12 @@ export async function getPostMetadata(slug: string, fallback?: {
     const seo = await getSeoForPost(slug);
     if (seo) {
       return buildMetadata({
-        title: seo.title || seo.opengraphTitle || fallback?.title,
-        description: seo.metaDesc || seo.opengraphDescription || fallback?.description,
-        ogImage: seo.opengraphImage?.sourceUrl,
-        canonical: seo.canonical,
+        title: seo.title || seo.openGraph?.title || fallback?.title,
+        description: seo.description || seo.openGraph?.description || fallback?.description,
+        ogImage: seo.openGraph?.image?.url,
+        canonical: seo.canonicalUrl,
         robots: seo.robots,
+        jsonLd: seo.jsonLd?.raw,
       });
     }
   } catch {}
@@ -56,12 +61,13 @@ export async function getPostMetadata(slug: string, fallback?: {
   });
 }
 
-function buildMetadata({ title, description, ogImage, canonical, robots }: {
+function buildMetadata({ title, description, ogImage, canonical, robots, jsonLd }: {
   title?: string;
   description?: string;
   ogImage?: string;
   canonical?: string;
   robots?: string;
+  jsonLd?: string;
 }): Metadata {
   const fullTitle = title
     ? title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`
@@ -90,5 +96,8 @@ function buildMetadata({ title, description, ogImage, canonical, robots }: {
       description: metaDescription,
       images: [ogImg],
     },
+    ...(jsonLd && {
+      other: { 'application/ld+json': jsonLd },
+    }),
   };
 }
