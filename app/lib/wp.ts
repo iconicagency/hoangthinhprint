@@ -48,10 +48,6 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
 
 // ============================================================
 // SEO — wp-graphql-rank-math (AxeWP)
-// Schema: title, description, robots, canonicalUrl,
-//         openGraph { title, description, image { url } }
-//         twitter { title, description, image { url } }
-//         jsonLd { raw }
 // ============================================================
 
 export async function getSeoForPost(slug: string) {
@@ -59,20 +55,9 @@ export async function getSeoForPost(slug: string) {
     query GetSeoForPost($slug: ID!) {
       post(id: $slug, idType: SLUG) {
         seo {
-          title
-          description
-          robots
-          canonicalUrl
-          openGraph {
-            title
-            description
-            image { url width height }
-          }
-          twitter {
-            title
-            description
-            image { url }
-          }
+          title description robots canonicalUrl
+          openGraph { title description image { url width height } }
+          twitter { title description image { url } }
           jsonLd { raw }
         }
       }
@@ -87,20 +72,9 @@ export async function getSeoForPage(slug: string) {
     query GetSeoForPage($slug: ID!) {
       page(id: $slug, idType: URI) {
         seo {
-          title
-          description
-          robots
-          canonicalUrl
-          openGraph {
-            title
-            description
-            image { url width height }
-          }
-          twitter {
-            title
-            description
-            image { url }
-          }
+          title description robots canonicalUrl
+          openGraph { title description image { url width height } }
+          twitter { title description image { url } }
           jsonLd { raw }
         }
       }
@@ -287,7 +261,6 @@ export async function getProjectBySlug(slug: string) {
 
 // ============================================================
 // Gallery sản phẩm (Posts + category, không cần WooCommerce)
-// Mỗi sản phẩm = 1 Post, gán category là loại sản phẩm
 // ============================================================
 
 export async function getGalleryByCategory(categorySlug = 'san-pham', first = 200) {
@@ -317,6 +290,10 @@ export async function getHomePageData() {
         cauHinhTrangChu {
           herotagline herotitle herosubtitle
           heroslides { nodes { sourceUrl } }
+          heroSlidesList {
+            slideImage { node { sourceUrl } }
+            slideTagline slideTitle slideSubtitle
+          }
           herobenefits { title subtitle }
           herobuttons { label link }
           stats { number suffix label }
@@ -369,6 +346,7 @@ export async function getHomePageData() {
     heroTitle: hero?.herotitle,
     heroSubtitle: hero?.herosubtitle,
     heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
+    heroSlidesList: hero?.heroSlidesList || [],
     heroBenefits: hero?.herobenefits || [],
     heroButtons: hero?.herobuttons || [],
     stats: hero?.stats || [],
