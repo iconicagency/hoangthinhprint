@@ -4,6 +4,7 @@ import {
   Mail, MapPin, Star, Play, CheckCircle2, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote,
   Package, Layout, Printer, Layers, Settings, Truck, Search, PenTool, Lightbulb, Zap, Award, Users, Heart
 } from 'lucide-react';
+import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,15 @@ import WPProjects from './components/WPProjects';
 import QuoteForm from './components/QuoteForm';
 import { homeConfig } from './lib/config';
 import { getHomePageData } from './lib/wp';
+import { getPageMetadata } from './lib/seo';
 import ClientLogoSlider from './components/ClientLogoSlider';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata('trang-chu', {
+    title: 'In Hoàng Thịnh — Giải Pháp Bao Bì Toàn Diện',
+    description: 'Xưởng in bao bì Hà Nội. Hộp cứng, túi giấy, hộp carton, tem nhãn. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.',
+  });
+}
 
 const pageData = {
   services: [
