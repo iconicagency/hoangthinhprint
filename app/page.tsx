@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  Mail, MapPin, Star, Play, CheckCircle2, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote,
+import {
+  Star, Play, CheckCircle2, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote,
   Package, Layout, Printer, Layers, Settings, Truck, Search, PenTool, Lightbulb, Zap, Award, Users, Heart
 } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -13,6 +13,7 @@ import HeroSlider from './components/HeroSlider';
 import WPRecentPosts from './components/WPRecentPosts';
 import WPProjects from './components/WPProjects';
 import QuoteForm from './components/QuoteForm';
+import ServiceLightbox from './components/ServiceLightbox';
 import { homeConfig } from './lib/config';
 import { getHomePageData } from './lib/wp';
 import { getPageMetadata } from './lib/seo';
@@ -27,13 +28,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const pageData = {
   services: [
-    { title: 'In Hộp Cứng Cao Cấp', desc: 'Hộp bánh Trung Thu · Hộp quà Tết', price: 'Liên hệ', img: 'box1' },
+    { title: 'In Hộp Cứng Chuyên Nghiệp', desc: 'Hộp cứng cao cấp · Ép kim · Đóng gáy sang trọng', price: 'Liên hệ', img: 'box1' },
+    { title: 'In Túi Giấy', desc: 'Túi giấy cao cấp Ivory · Couche · Kraft', price: 'Liên hệ', img: 'bag1' },
+    { title: 'Bao Bì Mỹ Phẩm', desc: 'Bảo vệ tính chất · Ép kim cao cấp', price: 'Liên hệ', img: 'cosmetic1' },
+    { title: 'Bao Bì Dược Phẩm', desc: 'Bảo quản thuốc · Chuẩn y tế', price: 'Liên hệ', img: 'health1' },
     { title: 'In Sách - Sổ Tay', desc: 'Bìa cứng · Bìa mềm · Đóng gáy', price: 'Liên hệ', img: 'book1' },
     { title: 'In Nhãn - Tem Decal', desc: 'Tem decal · Tem vỡ · Kraft', price: 'Liên hệ', img: 'label1' },
-    { title: 'Bao Bì Mỹ Phẩm', desc: 'Bảo vệ tính chất · Ép kim cao cấp', price: 'Liên hệ', img: 'cosmetic1' },
     { title: 'Bao Bì Nông Sản', desc: 'Chuẩn xuất khẩu · Độ bền cao', price: 'Liên hệ', img: 'farm1' },
-    { title: 'Bao Bì Dược Phẩm', desc: 'Bảo quản thuốc · Chuẩn y tế', price: 'Liên hệ', img: 'health1' },
-    { title: 'Túi Giấy In Logo', desc: 'Ivory · Couche · Kraft', price: 'Liên hệ', img: 'bag1' },
     { title: 'Thiết Kế Đồ Họa', desc: 'Cập nhật xu hướng thiết kế', price: 'Liên hệ', img: 'design1' },
   ],
   features: [
@@ -151,54 +152,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Services */}
-      <section className="py-24 px-8 bg-[var(--bg)]">
-        <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{printingServicesData?.tagline || 'DỊCH VỤ IN ẤN'}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{printingServicesData?.title || 'DỊCH VỤ IN ẤN CHUYÊN NGHIỆP'}</h2>
-          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
-        </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {finalServices.map((service: any, i: number) => (
-            <div key={i} className="bg-[var(--card-bg)] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[var(--border)] group">
-              <div className="h-56 bg-[var(--border)] relative overflow-hidden">
-                <Image src={(service.img && service.img.startsWith('http')) ? service.img : `https://picsum.photos/seed/${service.img || i}/400/300`} alt={service.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-bg)] to-transparent opacity-60"></div>
-              </div>
-              <div className="p-6">
-                <h3 className="font-bold text-lg text-[var(--text-main)] mb-2">{service.title}</h3>
-                <div className="text-sm text-[var(--text-dim)] mb-5">
-                  <p>{service.desc}</p>
-                  <p className="mt-1 text-[var(--accent)] underline">{service.price}</p>
-                </div>
-                <Link href="/san-pham" className="text-[var(--accent)] text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity">Xem chi tiết <ArrowRight size={16}/></Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
-        <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{whyChooseUsData?.tagline || 'LÝ DO CHỌN CHÚNG TÔI'}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{whyChooseUsData?.title || 'TẠI SAO CHỌN IN HOÀNG THỊNH?'}</h2>
-          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
-        </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-          {finalFeatures.map((item: any, i: number) => (
-            <div key={i} className="flex flex-col items-center group">
-              <div className="w-20 h-20 rounded-2xl bg-[var(--bg)] flex items-center justify-center text-[var(--accent)] mb-6 border border-[var(--border)] group-hover:bg-[var(--accent)] group-hover:text-[var(--bg)] transition-colors duration-300 shadow-sm">
-                <item.icon size={36} strokeWidth={1.5} />
-              </div>
-              <h3 className="font-bold text-xl text-[var(--text-main)] mb-4">{item.title}</h3>
-              <p className="text-base text-[var(--text-dim)] leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Process */}
+      {/* Quy Trình */}
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="text-center mb-16">
           <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{workingProcessData?.tagline || 'QUY TRÌNH LÀM VIỆC'}</div>
@@ -218,6 +172,36 @@ export default async function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Dịch Vụ In Ấn */}
+      <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
+        <div className="text-center mb-16">
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{printingServicesData?.tagline || 'DỊCH VỤ IN ẤN'}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{printingServicesData?.title || 'DỊCH VỤ IN ẤN CHUYÊN NGHIỆP'}</h2>
+          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+        </div>
+        <ServiceLightbox services={finalServices} />
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-24 px-8 bg-[var(--bg)]">
+        <div className="text-center mb-16">
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{whyChooseUsData?.tagline || 'LÝ DO CHỌN CHÚNG TÔI'}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{whyChooseUsData?.title || 'TẠI SAO CHỌN IN HOÀNG THỊNH?'}</h2>
+          <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+        </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+          {finalFeatures.map((item: any, i: number) => (
+            <div key={i} className="flex flex-col items-center group">
+              <div className="w-20 h-20 rounded-2xl bg-[var(--card-bg)] flex items-center justify-center text-[var(--accent)] mb-6 border border-[var(--border)] group-hover:bg-[var(--accent)] group-hover:text-[var(--bg)] transition-colors duration-300 shadow-sm">
+                <item.icon size={36} strokeWidth={1.5} />
+              </div>
+              <h3 className="font-bold text-xl text-[var(--text-main)] mb-4">{item.title}</h3>
+              <p className="text-base text-[var(--text-dim)] leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -277,22 +261,52 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Factory Tour */}
-      <section className="py-32 px-8 bg-[var(--bg)] border-y border-[var(--border)] relative overflow-hidden flex items-center justify-center min-h-[600px]">
-        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: `url(${videoData.coverImage || 'https://picsum.photos/seed/factory/1920/1080'})` }}></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg)] via-transparent to-[var(--bg)]"></div>
-        <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{factoryTourData?.tagline || 'VIDEO GIỚI THIỆU'}</div>
-          <Link href={videoData.videoUrl || '#'} target="_blank" className="w-24 h-24 bg-[var(--accent)] rounded-full flex items-center justify-center mx-auto mb-10 cursor-pointer hover:scale-110 transition-transform shadow-2xl shadow-[var(--accent)]/50 text-[var(--bg)] group relative">
-            <div className="absolute inset-0 bg-[var(--accent)] rounded-full animate-ping opacity-20"></div>
-            <Play size={40} fill="currentColor" className="ml-2 relative z-10" />
-          </Link>
-          <h2 className="text-4xl md:text-6xl font-serif mb-6 text-[var(--text-main)] tracking-tight leading-tight uppercase">{videoData.title}</h2>
-          <p className="text-[var(--text-dim)] text-xl max-w-2xl mx-auto mb-12 leading-relaxed">{videoData.description}</p>
-          <div className="flex flex-col items-center">
-            <div className="w-20 h-[1px] bg-[var(--accent)] mb-4"></div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--text-dim)] opacity-50">Click to explore our facility</p>
+      {/* Video */}
+      <section className="py-24 px-8 bg-[var(--bg)] border-y border-[var(--border)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{factoryTourData?.tagline || 'VIDEO GIỚI THIỆU'}</div>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{factoryTourData?.title || 'THAM QUAN XƯỞNG IN'}</h2>
+            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
+          {videoData.videoUrl && videoData.videoUrl !== '#' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[videoData].map((v: any, i: number) => (
+                <a key={i} href={v.videoUrl} target="_blank" rel="noopener noreferrer"
+                  className="group block bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-lg transition-all">
+                  <div className="relative aspect-video overflow-hidden bg-slate-800">
+                    {v.coverImage ? (
+                      <Image src={v.coverImage} alt={v.title || 'Video'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                        <div className="w-16 h-16 bg-[var(--accent)] rounded-full flex items-center justify-center">
+                          <Play size={32} fill="white" className="text-white ml-1" />
+                        </div>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <div className="w-16 h-16 bg-[var(--accent)]/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <Play size={28} fill="white" className="text-white ml-1" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-[var(--text-main)] mb-2 line-clamp-2">{v.title || videoData.title}</h3>
+                    <p className="text-[var(--text-dim)] text-sm line-clamp-2">{v.description || videoData.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-[var(--card-bg)] rounded-2xl border border-[var(--border)]">
+              <div className="w-20 h-20 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Play size={36} className="text-[var(--accent)] ml-1" />
+              </div>
+              <p className="text-[var(--text-dim)] mb-2 font-medium">{videoData.title}</p>
+              <p className="text-[var(--text-dim)] text-sm max-w-md mx-auto">{videoData.description}</p>
+              <p className="text-xs text-[var(--text-dim)] mt-4 opacity-60">Chưa có video — cập nhật URL video trong WordPress ACF</p>
+            </div>
+          )}
         </div>
       </section>
 
