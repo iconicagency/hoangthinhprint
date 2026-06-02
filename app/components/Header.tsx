@@ -23,10 +23,10 @@ export default function Header() {
       </div>
 
       {/* Header */}
-      <header className="bg-[var(--bg)] py-3 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
-        <Link href="/" className="flex items-center">
+      <header className="bg-[var(--bg)] py-2 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
+        <Link href="/" className="flex items-center shrink-0">
           {settings.logoUrl ? (
-            <div className="relative h-16 w-64">
+            <div className="relative" style={{ height: '68px', width: '240px' }}>
               <Image
                 src={settings.logoUrl}
                 alt="Logo"
@@ -37,13 +37,14 @@ export default function Header() {
             </div>
           ) : (
             <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
-              <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">{settings.logoText}</div>
-              {settings.logoText || ''}
+              <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">H</div>
+              {settings.logoText || 'Hoàng Thịnh Print'}
             </div>
           )}
         </Link>
+
         <nav className="hidden lg:block">
-          <ul className="flex gap-8 text-sm font-bold text-[var(--text-main)] uppercase tracking-wide items-center">
+          <ul className="flex gap-6 text-sm font-bold text-[var(--text-main)] uppercase tracking-wide items-center">
             <li><Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link></li>
             <li><Link href="/gioi-thieu" className="hover:text-[var(--accent)] transition-colors">Giới thiệu</Link></li>
 
@@ -81,7 +82,8 @@ export default function Header() {
             <li><Link href="/lien-he" className="hover:text-[var(--accent)] transition-colors">Liên hệ</Link></li>
           </ul>
         </nav>
-        <Link href="/bao-gia" className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20">
+
+        <Link href="/bao-gia" className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20 shrink-0">
           Báo Giá Ngay
         </Link>
       </header>
