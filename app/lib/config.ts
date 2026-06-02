@@ -3,11 +3,8 @@ export const homeConfig = {
     title: "Giải pháp bao bì toàn diện cho doanh nghiệp",
     subtitle: "Thiết kế sáng tạo - In ấn chất lượng - Giao hàng đúng hẹn. Đối tác tin cậy của hơn 500+ thương hiệu.",
     tagline: "GIẢI PHÁP IN ẤN BAO BÌ TRỌN GÓI",
-    slides: [
-      "https://picsum.photos/seed/printingpress/1920/1080",
-      "https://picsum.photos/seed/factory2/1920/1080",
-      "https://picsum.photos/seed/design3/1920/1080",
-    ],
+    // Xóa ảnh picsum cứng — chỉ dùng ảnh từ WordPress
+    slides: [] as string[],
     benefits: [
       "Thiết kế 3D miễn phí",
       "In mẫu test màu",
