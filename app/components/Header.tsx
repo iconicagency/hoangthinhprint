@@ -23,15 +23,16 @@ export default function Header() {
       </div>
 
       {/* Header */}
-      <header className="bg-[var(--bg)] py-2 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
+      <header className="bg-[var(--bg)] px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ height: '72px' }}>
         <Link href="/" className="flex items-center shrink-0">
           {settings.logoUrl ? (
             <Image
               src={settings.logoUrl}
               alt="Logo"
-              width={280}
-              height={158}
-              className="object-contain h-14 w-auto"
+              width={360}
+              height={90}
+              className="object-contain w-auto"
+              style={{ height: '60px' }}
               priority
               referrerPolicy="no-referrer"
             />
