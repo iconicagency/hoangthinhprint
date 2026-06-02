@@ -68,15 +68,14 @@ const iconMap: Record<string, any> = {
 };
 
 export default async function Home() {
-  // Fetch hero slides riêng — query nhỏ, nhanh
-  // Fetch trang chủ đầy đủ song song
-  const [heroData, wpHomeData] = await Promise.allSettled([
+  // Fetch song song — heroData (nhỏ, nhanh) + wpHomeData (lớn hơn)
+  const [heroResult, homeResult] = await Promise.allSettled([
     getHeroSlides(),
     getHomePageData(),
-  ]).then(results => [
-    results[0].status === 'fulfilled' ? results[0].value : null,
-    results[1].status === 'fulfilled' ? results[1].value : null,
   ]);
+
+  const heroData = heroResult.status === 'fulfilled' ? heroResult.value : null;
+  const wpHomeData = homeResult.status === 'fulfilled' ? homeResult.value as any : null;
 
   const finalStats = wpHomeData?.stats?.length ? wpHomeData.stats : homeConfig.stats;
 
@@ -140,7 +139,6 @@ export default async function Home() {
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
       <PromoPopup />
-      {/* HeroSlider dùng heroData riêng — không bị ảnh hưởng bởi timeout của wpHomeData */}
       <HeroSlider dynamicHero={heroData} />
 
       {/* Stats */}
