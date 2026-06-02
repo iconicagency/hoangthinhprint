@@ -15,7 +15,7 @@ import WPProjects from './components/WPProjects';
 import QuoteForm from './components/QuoteForm';
 import ServiceLightbox from './components/ServiceLightbox';
 import { homeConfig } from './lib/config';
-import { getHomePageData, getHeroSlides } from './lib/wp';
+import { getHomePageData, getAboveFoldData } from './lib/wp';
 import { getPageMetadata } from './lib/seo';
 import ClientLogoSlider from './components/ClientLogoSlider';
 
@@ -68,16 +68,28 @@ const iconMap: Record<string, any> = {
 };
 
 export default async function Home() {
-  // Fetch song song — heroData (nhỏ, nhanh) + wpHomeData (lớn hơn)
-  const [heroResult, homeResult] = await Promise.allSettled([
-    getHeroSlides(),
+  // 2 queries song song:
+  // aboveFold: nhỏ, nhanh — hero + stats + videos
+  // wpHomeData: lớn hơn — services, process, machinery...
+  const [aboveResult, homeResult] = await Promise.allSettled([
+    getAboveFoldData(),
     getHomePageData(),
   ]);
 
-  const heroData = heroResult.status === 'fulfilled' ? heroResult.value : null;
+  const aboveFold = aboveResult.status === 'fulfilled' ? aboveResult.value as any : null;
   const wpHomeData = homeResult.status === 'fulfilled' ? homeResult.value as any : null;
 
-  const finalStats = wpHomeData?.stats?.length ? wpHomeData.stats : homeConfig.stats;
+  // Stats ưu tiên từ aboveFold (luôn có), fallback homeConfig
+  const finalStats = (aboveFold?.stats?.length ? aboveFold.stats : wpHomeData?.stats?.length ? wpHomeData.stats : homeConfig.stats);
+
+  // Videos từ aboveFold
+  const videosList: any[] = aboveFold?.factoryTour?.videosList?.length
+    ? aboveFold.factoryTour.videosList
+    : wpHomeData?.factoryTour?.videosList?.length
+      ? wpHomeData.factoryTour.videosList
+      : [];
+
+  const factoryTourData = aboveFold?.factoryTour || wpHomeData?.factoryTour;
 
   const finalPartners = wpHomeData?.clients?.list?.length
     ? wpHomeData.clients.list
@@ -109,15 +121,6 @@ export default async function Home() {
       }))
     : pageData.machines;
 
-  const factory = wpHomeData?.factoryTour;
-  const videoData = {
-    tagline: factory?.tagline || 'VIDEO GIỚI THIỆU',
-    title: factory?.title || homeConfig.videoSection.title,
-    description: factory?.description || homeConfig.videoSection.description,
-    videoUrl: factory?.videoUrl || homeConfig.videoSection.videoUrl,
-    coverImage: factory?.coverImage || null,
-  };
-
   const finalTestimonials = wpHomeData?.testimonials?.length
     ? wpHomeData.testimonials.map((t: any, i: number) => ({
         content: t.content, author: t.author, position: t.position,
@@ -134,14 +137,13 @@ export default async function Home() {
   const whyChooseUsData = wpHomeData?.whyChooseUs;
   const workingProcessData = wpHomeData?.workingProcess;
   const machinerySectionData = wpHomeData?.machinery;
-  const factoryTourData = wpHomeData?.factoryTour;
 
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
       <PromoPopup />
-      <HeroSlider dynamicHero={heroData} />
+      <HeroSlider dynamicHero={aboveFold} />
 
-      {/* Stats */}
+      {/* Stats — từ aboveFold, luôn hiển thị đúng */}
       <section className="bg-[var(--card-bg)] py-12 border border-[var(--border)] shadow-xl relative z-20 mx-4 md:mx-12 rounded-xl -mt-[36px]">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-[var(--border)]">
           {finalStats.map((stat: any, i: number) => (
@@ -264,7 +266,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Video */}
+      {/* Video — hỗ trợ nhiều video từ videosList */}
       <section className="py-24 px-8 bg-[var(--bg)] border-y border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -272,14 +274,14 @@ export default async function Home() {
             <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{factoryTourData?.title || 'THAM QUAN XƯỞNG IN'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
-          {videoData.videoUrl && videoData.videoUrl !== '#' ? (
+          {videosList.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[videoData].map((v: any, i: number) => (
-                <a key={i} href={v.videoUrl} target="_blank" rel="noopener noreferrer"
+              {videosList.map((v: any, i: number) => (
+                <a key={i} href={v.url} target="_blank" rel="noopener noreferrer"
                   className="group block bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-lg transition-all">
                   <div className="relative aspect-video overflow-hidden bg-slate-800">
-                    {v.coverImage ? (
-                      <Image src={v.coverImage} alt={v.title || 'Video'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                    {v.cover ? (
+                      <Image src={v.cover} alt={v.title || 'Video'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                     ) : (
                       <div className="w-full h-full bg-slate-800 flex items-center justify-center">
                         <div className="w-16 h-16 bg-[var(--accent)] rounded-full flex items-center justify-center">
@@ -294,8 +296,7 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-[var(--text-main)] mb-2 line-clamp-2">{v.title || videoData.title}</h3>
-                    <p className="text-[var(--text-dim)] text-sm line-clamp-2">{v.description || videoData.description}</p>
+                    <h3 className="font-bold text-[var(--text-main)] mb-1 line-clamp-2">{v.title || 'Video giới thiệu'}</h3>
                   </div>
                 </a>
               ))}
@@ -305,8 +306,9 @@ export default async function Home() {
               <div className="w-20 h-20 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Play size={36} className="text-[var(--accent)] ml-1" />
               </div>
-              <p className="text-[var(--text-dim)] mb-2 font-medium">{videoData.title}</p>
-              <p className="text-[var(--text-dim)] text-sm max-w-md mx-auto">{videoData.description}</p>
+              <p className="text-[var(--text-dim)] mb-2 font-medium">{factoryTourData?.title || homeConfig.videoSection.title}</p>
+              <p className="text-[var(--text-dim)] text-sm max-w-md mx-auto">{factoryTourData?.description || homeConfig.videoSection.description}</p>
+              <p className="text-xs text-[var(--text-dim)] mt-4 opacity-60">Thêm video trong WordPress ACF → factoryTourSection → videosList</p>
             </div>
           )}
         </div>
