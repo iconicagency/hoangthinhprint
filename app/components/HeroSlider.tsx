@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { homeConfig } from '../lib/config';
 
 interface Slide {
   img: string;
@@ -15,47 +14,58 @@ interface Slide {
   benefits?: { title: string; subtitle?: string }[];
 }
 
+const DEFAULT_CONTENT = {
+  tagline: 'GIẢI PHÁP IN ẤN BAO BÌ TRỌN GÓI',
+  title: 'Giải pháp bao bì toàn diện cho doanh nghiệp',
+  subtitle: 'Thiết kế sáng tạo - In ấn chất lượng - Giao hàng đúng hẹn. Đối tác tin cậy của hơn 500+ thương hiệu.',
+  buttons: [
+    { label: 'Xem sản phẩm', link: '/san-pham' },
+    { label: 'Nhận báo giá miễn phí', link: '/bao-gia' },
+  ],
+  benefits: [
+    { title: 'Thiết kế 3D miễn phí', subtitle: '' },
+    { title: 'In mẫu test màu', subtitle: '' },
+    { title: 'Giao hàng tận nơi', subtitle: '' },
+    { title: 'Giá gốc tại xưởng', subtitle: '' },
+  ],
+};
+
 function buildSlides(dynamicHero: any): Slide[] {
-  // heroSlidesList — mỗi slide có nội dung riêng
-  // slideImage đã được map thành string URL trong wp.ts
-  if (dynamicHero?.heroSlidesList?.length) {
-    return dynamicHero.heroSlidesList
-      .filter((s: any) => s.slideImage) // bỏ qua slide không có ảnh
+  // Ưu tiên heroSlidesList — mỗi slide có ảnh riêng từ WP
+  const slidesList = dynamicHero?.heroSlidesList;
+  if (Array.isArray(slidesList) && slidesList.length > 0) {
+    const validSlides = slidesList
+      .filter((s: any) => s?.slideImage)
       .map((s: any) => ({
         img: s.slideImage,
-        tagline: s.slideTagline || dynamicHero.heroTagline,
-        title: s.slideTitle || dynamicHero.heroTitle,
-        subtitle: s.slideSubtitle || dynamicHero.heroSubtitle,
-        buttons: dynamicHero.heroButtons?.length ? dynamicHero.heroButtons : [
-          { label: 'Xem sản phẩm', link: '/san-pham' },
-          { label: 'Nhận báo giá miễn phí', link: '/bao-gia' },
-        ],
-        benefits: dynamicHero.heroBenefits?.map((b: any) =>
-          typeof b === 'string' ? { title: b, subtitle: '' } : b
-        ) || homeConfig.hero.benefits.map(b => ({ title: b, subtitle: '' })),
+        tagline: s.slideTagline || dynamicHero.heroTagline || DEFAULT_CONTENT.tagline,
+        title: s.slideTitle || dynamicHero.heroTitle || DEFAULT_CONTENT.title,
+        subtitle: s.slideSubtitle || dynamicHero.heroSubtitle || DEFAULT_CONTENT.subtitle,
+        buttons: dynamicHero.heroButtons?.length ? dynamicHero.heroButtons : DEFAULT_CONTENT.buttons,
+        benefits: dynamicHero.heroBenefits?.length
+          ? dynamicHero.heroBenefits.map((b: any) => typeof b === 'string' ? { title: b, subtitle: '' } : b)
+          : DEFAULT_CONTENT.benefits,
       }));
+    if (validSlides.length > 0) return validSlides;
   }
 
-  // Fallback: heroslides (Gallery)
-  const imgs: string[] =
-    dynamicHero?.heroSlides?.length ? dynamicHero.heroSlides :
-    homeConfig.hero.slides;
+  // Fallback: heroslides (Gallery field cũ)
+  const heroSlides = dynamicHero?.heroSlides;
+  if (Array.isArray(heroSlides) && heroSlides.length > 0) {
+    const sharedContent = {
+      tagline: dynamicHero.heroTagline || DEFAULT_CONTENT.tagline,
+      title: dynamicHero.heroTitle || DEFAULT_CONTENT.title,
+      subtitle: dynamicHero.heroSubtitle || DEFAULT_CONTENT.subtitle,
+      buttons: dynamicHero.heroButtons?.length ? dynamicHero.heroButtons : DEFAULT_CONTENT.buttons,
+      benefits: dynamicHero.heroBenefits?.length
+        ? dynamicHero.heroBenefits.map((b: any) => typeof b === 'string' ? { title: b, subtitle: '' } : b)
+        : DEFAULT_CONTENT.benefits,
+    };
+    return heroSlides.filter(Boolean).map((img: string) => ({ img, ...sharedContent }));
+  }
 
-  const sharedContent = {
-    tagline: dynamicHero?.heroTagline || homeConfig.hero.tagline,
-    title: dynamicHero?.heroTitle || homeConfig.hero.title,
-    subtitle: dynamicHero?.heroSubtitle || homeConfig.hero.subtitle,
-    buttons: dynamicHero?.heroButtons?.length ? dynamicHero.heroButtons : [
-      { label: 'Xem sản phẩm', link: '/san-pham' },
-      { label: 'Nhận báo giá miễn phí', link: '/bao-gia' },
-    ],
-    benefits: dynamicHero?.heroBenefits?.map((b: any) =>
-      typeof b === 'string' ? { title: b, subtitle: '' } : b
-    ) || homeConfig.hero.benefits.map(b => ({ title: b, subtitle: '' })),
-  };
-
-  const finalImgs = (Array.isArray(imgs) && imgs.length) ? imgs : homeConfig.hero.slides;
-  return finalImgs.map((img: string) => ({ img, ...sharedContent }));
+  // Không có ảnh — hiện nền gradient với nội dung mặc định
+  return [{ img: '', ...DEFAULT_CONTENT }];
 }
 
 export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
@@ -87,9 +97,17 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
           style={{ opacity: i === current ? 1 : 0, zIndex: 0 }}
         >
           {s.img ? (
-            <Image src={s.img} alt={s.title || ''} fill className="object-cover" priority={i === 0} referrerPolicy="no-referrer" />
+            <Image
+              src={s.img}
+              alt={s.title || ''}
+              fill
+              className="object-cover"
+              priority={i === 0}
+              referrerPolicy="no-referrer"
+              unoptimized
+            />
           ) : (
-            <div className="absolute inset-0 bg-slate-800" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950" />
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/80" />
         </div>
@@ -139,10 +157,10 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
 
       {slides.length > 1 && (
         <>
-          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm" aria-label="Slide trước">
+          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
             <ChevronLeft size={22} />
           </button>
-          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm" aria-label="Slide tiếp">
+          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
             <ChevronRight size={22} />
           </button>
         </>
@@ -151,8 +169,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
         <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)}
-              className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-6 h-3' : 'bg-white/50 hover:bg-white/80 w-3 h-3'}`}
-              aria-label={`Slide ${i + 1}`} />
+              className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-6 h-3' : 'bg-white/50 hover:bg-white/80 w-3 h-3'}`} />
           ))}
         </div>
       )}
