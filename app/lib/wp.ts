@@ -49,27 +49,31 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
 }
 
 // ============================================================
-// Hero Slides — query riêng, nhỏ gọn, ưu tiên load nhanh
+// Above-fold data — query nhỏ, load trước, không bị timeout
+// Bao gồm: hero slides + stats + videos
 // ============================================================
 
-export async function getHeroSlides() {
+export async function getAboveFoldData() {
   const query = `
-    query GetHeroSlides {
+    query GetAboveFoldData {
       page(id: "trang-chu", idType: URI) {
         cauHinhTrangChu {
-          herotagline
-          herotitle
-          herosubtitle
+          herotagline herotitle herosubtitle
           herobenefits { title subtitle }
           herobuttons { label link }
           heroslideslist {
             slideImage { node { sourceUrl } }
-            slideTagline
-            slideTitle
-            slidesubtitle
+            slideTagline slideTitle slidesubtitle
           }
-          heroslides {
-            nodes { sourceUrl }
+          heroslides { nodes { sourceUrl } }
+          stats { number suffix label }
+        }
+        factoryTourSection {
+          tagline title description
+          videosList {
+            videoTitle
+            videoUrl
+            coverImage { node { sourceUrl } }
           }
         }
       }
@@ -79,9 +83,9 @@ export async function getHeroSlides() {
   if (!data?.page) return null;
 
   const hero = data.page.cauHinhTrangChu;
-  if (!hero) return null;
+  const factory = data.page.factoryTourSection;
 
-  const slidesList = (hero.heroslideslist || []).map((s: any) => ({
+  const slidesList = (hero?.heroslideslist || []).map((s: any) => ({
     slideImage: s.slideImage?.node?.sourceUrl || null,
     slideTagline: s.slideTagline || null,
     slideTitle: s.slideTitle || null,
@@ -89,15 +93,29 @@ export async function getHeroSlides() {
   })).filter((s: any) => s.slideImage);
 
   return {
-    heroTagline: hero.herotagline || null,
-    heroTitle: hero.herotitle || null,
-    heroSubtitle: hero.herosubtitle || null,
-    heroBenefits: hero.herobenefits || [],
-    heroButtons: hero.herobuttons || [],
-    heroSlides: hero.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
+    heroTagline: hero?.herotagline || null,
+    heroTitle: hero?.herotitle || null,
+    heroSubtitle: hero?.herosubtitle || null,
+    heroBenefits: hero?.herobenefits || [],
+    heroButtons: hero?.herobuttons || [],
+    heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
     heroSlidesList: slidesList,
+    stats: hero?.stats || [],
+    factoryTour: {
+      tagline: factory?.tagline || null,
+      title: factory?.title || null,
+      description: factory?.description || null,
+      videosList: (factory?.videosList || []).map((v: any) => ({
+        title: v.videoTitle || null,
+        url: v.videoUrl || null,
+        cover: v.coverImage?.node?.sourceUrl || null,
+      })),
+    },
   };
 }
+
+// compat alias
+export const getHeroSlides = getAboveFoldData;
 
 // ============================================================
 // SEO — wp-graphql-rank-math (AxeWP)
@@ -313,10 +331,10 @@ export async function getProjectBySlug(slug: string) {
 }
 
 // ============================================================
-// Gallery sản phẩm (Posts + category, không cần WooCommerce)
+// Gallery sản phẩm (Posts + category)
 // ============================================================
 
-export async function getGalleryByCategory(categorySlug = 'san-pham', first = 200) {
+export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50) {
   const query = `
     query GetGallery($first: Int!, $categorySlug: String!) {
       posts(first: $first, where: {categoryName: $categorySlug, orderby: {field: DATE, order: DESC}}) {
@@ -333,7 +351,7 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 20
 }
 
 // ============================================================
-// Trang chủ (ACF) — tách thành 2 query để tránh timeout
+// Trang chủ (ACF) — query phần còn lại (below fold)
 // ============================================================
 
 export async function getHomePageData() {
@@ -341,14 +359,6 @@ export async function getHomePageData() {
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
         cauHinhTrangChu {
-          herotagline herotitle herosubtitle
-          heroslides { nodes { sourceUrl } }
-          heroslideslist {
-            slideImage { node { sourceUrl } }
-            slideTitle slideTagline slidesubtitle
-          }
-          herobenefits { title subtitle }
-          herobuttons { label link }
           stats { number suffix label }
         }
         workingProcess {
@@ -375,8 +385,11 @@ export async function getHomePageData() {
           clients { clientname clientlogo { node { sourceUrl } } }
         }
         factoryTourSection {
-          tagline title description videoUrl
-          coverImage { node { sourceUrl } }
+          tagline title description
+          videosList {
+            videoTitle videoUrl
+            coverImage { node { sourceUrl } }
+          }
         }
         testimonials { content author position rating }
       }
@@ -386,7 +399,6 @@ export async function getHomePageData() {
   if (!data?.page) return null;
 
   const p = data.page;
-  const hero = p.cauHinhTrangChu;
   const process = p.workingProcess;
   const services = p.printingServices;
   const why = p.whyChooseUs;
@@ -395,19 +407,7 @@ export async function getHomePageData() {
   const factory = p.factoryTourSection;
 
   return {
-    heroTagline: hero?.herotagline,
-    heroTitle: hero?.herotitle,
-    heroSubtitle: hero?.herosubtitle,
-    heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
-    heroSlidesList: (hero?.heroslideslist || []).map((s: any) => ({
-      slideImage: s.slideImage?.node?.sourceUrl || null,
-      slideTagline: s.slideTagline,
-      slideTitle: s.slideTitle,
-      slideSubtitle: s.slidesubtitle,
-    })),
-    heroBenefits: hero?.herobenefits || [],
-    heroButtons: hero?.herobuttons || [],
-    stats: hero?.stats || [],
+    stats: p.cauHinhTrangChu?.stats || [],
     workingProcess: {
       tagline: process?.tagline,
       title: process?.title,
@@ -457,8 +457,11 @@ export async function getHomePageData() {
       tagline: factory?.tagline,
       title: factory?.title,
       description: factory?.description,
-      videoUrl: factory?.videoUrl,
-      coverImage: factory?.coverImage?.node?.sourceUrl || null,
+      videosList: (factory?.videosList || []).map((v: any) => ({
+        title: v.videoTitle || null,
+        url: v.videoUrl || null,
+        cover: v.coverImage?.node?.sourceUrl || null,
+      })),
     },
     testimonials: p.testimonials || [],
   };
