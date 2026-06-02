@@ -5,6 +5,7 @@ import SettingsProvider from './components/SettingsProvider';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
+import FloatContact from './components/FloatContact';
 import { getHeaderFooterSettings } from './lib/wp';
 
 const inter = Inter({
@@ -21,12 +22,11 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'In Ho\u00e0ng Th\u1ecbnh',
-  description: 'Gi\u1ea3i Ph\u00e1p In \u1ea4n Bao B\u00ec Tr\u1ecdn G\u00f3i',
+  title: 'In Hoàng Thịnh',
+  description: 'Giải Pháp In Ấn Bao Bì Trọn Gói',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Fetch settings tr\u00ean server \u2014 kh\u00f4ng c\u00f3 flash data c\u0169
   const wpSettings = await getHeaderFooterSettings().catch(() => null);
 
   return (
@@ -38,6 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {children}
           </main>
           <BackToTop />
+          <FloatContact />
           <Footer />
         </SettingsProvider>
       </body>
