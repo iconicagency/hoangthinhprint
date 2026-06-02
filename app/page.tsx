@@ -15,7 +15,7 @@ import WPProjects from './components/WPProjects';
 import QuoteForm from './components/QuoteForm';
 import ServiceLightbox from './components/ServiceLightbox';
 import { homeConfig } from './lib/config';
-import { getHomePageData } from './lib/wp';
+import { getHomePageData, getHeroSlides } from './lib/wp';
 import { getPageMetadata } from './lib/seo';
 import ClientLogoSlider from './components/ClientLogoSlider';
 
@@ -44,14 +44,10 @@ const pageData = {
     { icon: ThumbsUp, title: 'MOQ 500 — Nhận Đơn Vừa', desc: 'Xưởng lớn từ chối đơn nhỏ. In Hoàng Thịnh nhận từ 500 sản phẩm. Startup hay doanh nghiệp lớn — đều phục vụ.' }
   ],
   process: [
-    { step: '01', title: 'Tiếp nhận' },
-    { step: '02', title: 'Tư vấn & Báo giá' },
-    { step: '03', title: 'Thiết kế 3D' },
-    { step: '04', title: 'In mẫu test' },
-    { step: '05', title: 'Ký hợp đồng' },
-    { step: '06', title: 'Sản xuất hàng loạt' },
-    { step: '07', title: 'Kiểm tra QC' },
-    { step: '08', title: 'Giao hàng' },
+    { step: '01', title: 'Tiếp nhận' }, { step: '02', title: 'Tư vấn & Báo giá' },
+    { step: '03', title: 'Thiết kế 3D' }, { step: '04', title: 'In mẫu test' },
+    { step: '05', title: 'Ký hợp đồng' }, { step: '06', title: 'Sản xuất hàng loạt' },
+    { step: '07', title: 'Kiểm tra QC' }, { step: '08', title: 'Giao hàng' },
   ],
   machines: [
     { title: 'Máy In Offset', desc: 'In 4 màu CMYK, chuẩn quốc tế. Công suất cao,...', img: 'machine1' },
@@ -72,7 +68,15 @@ const iconMap: Record<string, any> = {
 };
 
 export default async function Home() {
-  const wpHomeData = await getHomePageData();
+  // Fetch hero slides riêng — query nhỏ, nhanh
+  // Fetch trang chủ đầy đủ song song
+  const [heroData, wpHomeData] = await Promise.allSettled([
+    getHeroSlides(),
+    getHomePageData(),
+  ]).then(results => [
+    results[0].status === 'fulfilled' ? results[0].value : null,
+    results[1].status === 'fulfilled' ? results[1].value : null,
+  ]);
 
   const finalStats = wpHomeData?.stats?.length ? wpHomeData.stats : homeConfig.stats;
 
@@ -121,9 +125,9 @@ export default async function Home() {
         rating: t.rating || 5, img: `https://picsum.photos/seed/user${i+1}/100/100`,
       }))
     : [
-        { content: "Chúng tôi rất hài lòng với chất lượng hộp cứng ép kim của In Hoàng Thịnh. Màu sắc in chuẩn xác, đường bế sắc nét, đặc biệt là giao hàng rất đúng hẹn dù đơn hàng gấp.", author: "Nguyễn Văn A", position: "Giám đốc Marketing - Công ty ABC", rating: 5, img: "https://picsum.photos/seed/user1/100/100" },
-        { content: "Đội ngũ tư vấn nhiệt tình, xưởng sản xuất trực tiếp nên giá thành rất cạnh tranh. Đây là đối tác tin cậy của chúng tôi trong 5 năm qua.", author: "Trần Thị B", position: "Quản lý thu mua - Tập đoàn G-Group", rating: 5, img: "https://picsum.photos/seed/user2/100/100" },
-        { content: "Sản phẩm in mẫu test rất nhanh, giống hệt hàng sản xuất hàng loạt. Hoàng Thịnh xử lý các đơn hàng khó rất chuyên nghiệp.", author: "Lê Văn C", position: "CEO - Startup PASHANCHA", rating: 5, img: "https://picsum.photos/seed/user3/100/100" },
+        { content: "Chúng tôi rất hài lòng với chất lượng hộp cứng ép kim của In Hoàng Thịnh.", author: "Nguyễn Văn A", position: "Giám đốc Marketing - Công ty ABC", rating: 5, img: "https://picsum.photos/seed/user1/100/100" },
+        { content: "Đội ngũ tư vấn nhiệt tình, xưởng sản xuất trực tiếp nên giá thành rất cạnh tranh.", author: "Trần Thị B", position: "Quản lý thu mua - Tập đoàn G-Group", rating: 5, img: "https://picsum.photos/seed/user2/100/100" },
+        { content: "Sản phẩm in mẫu test rất nhanh, giống hệt hàng sản xuất hàng loạt.", author: "Lê Văn C", position: "CEO - Startup PASHANCHA", rating: 5, img: "https://picsum.photos/seed/user3/100/100" },
       ];
 
   const clientsSectionData = wpHomeData?.clients;
@@ -136,7 +140,8 @@ export default async function Home() {
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
       <PromoPopup />
-      <HeroSlider dynamicHero={wpHomeData} />
+      {/* HeroSlider dùng heroData riêng — không bị ảnh hưởng bởi timeout của wpHomeData */}
+      <HeroSlider dynamicHero={heroData} />
 
       {/* Stats */}
       <section className="bg-[var(--card-bg)] py-12 border border-[var(--border)] shadow-xl relative z-20 mx-4 md:mx-12 rounded-xl -mt-[36px]">
@@ -304,7 +309,6 @@ export default async function Home() {
               </div>
               <p className="text-[var(--text-dim)] mb-2 font-medium">{videoData.title}</p>
               <p className="text-[var(--text-dim)] text-sm max-w-md mx-auto">{videoData.description}</p>
-              <p className="text-xs text-[var(--text-dim)] mt-4 opacity-60">Chưa có video — cập nhật URL video trong WordPress ACF</p>
             </div>
           )}
         </div>
