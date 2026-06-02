@@ -49,8 +49,9 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
 }
 
 // ============================================================
-// Above-fold data — query nhỏ, load trước, không bị timeout
-// Bao gồm: hero slides + stats + videos
+// Above-fold data — query NHỎ NHẤT có thể
+// Chỉ: hero slides + stats (hiển thị ngay khi load)
+// Video, services, machinery... → getHomePageData() below-fold
 // ============================================================
 
 export async function getAboveFoldData() {
@@ -68,14 +69,6 @@ export async function getAboveFoldData() {
           heroslides { nodes { sourceUrl } }
           stats { number suffix label }
         }
-        factoryTourSection {
-          tagline title description
-          videosList {
-            videoTitle
-            videoUrl
-            coverImage { node { sourceUrl } }
-          }
-        }
       }
     }
   `;
@@ -83,9 +76,9 @@ export async function getAboveFoldData() {
   if (!data?.page) return null;
 
   const hero = data.page.cauHinhTrangChu;
-  const factory = data.page.factoryTourSection;
+  if (!hero) return null;
 
-  const slidesList = (hero?.heroslideslist || []).map((s: any) => ({
+  const slidesList = (hero.heroslideslist || []).map((s: any) => ({
     slideImage: s.slideImage?.node?.sourceUrl || null,
     slideTagline: s.slideTagline || null,
     slideTitle: s.slideTitle || null,
@@ -93,24 +86,14 @@ export async function getAboveFoldData() {
   })).filter((s: any) => s.slideImage);
 
   return {
-    heroTagline: hero?.herotagline || null,
-    heroTitle: hero?.herotitle || null,
-    heroSubtitle: hero?.herosubtitle || null,
-    heroBenefits: hero?.herobenefits || [],
-    heroButtons: hero?.herobuttons || [],
-    heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
+    heroTagline: hero.herotagline || null,
+    heroTitle: hero.herotitle || null,
+    heroSubtitle: hero.herosubtitle || null,
+    heroBenefits: hero.herobenefits || [],
+    heroButtons: hero.herobuttons || [],
+    heroSlides: hero.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
     heroSlidesList: slidesList,
-    stats: hero?.stats || [],
-    factoryTour: {
-      tagline: factory?.tagline || null,
-      title: factory?.title || null,
-      description: factory?.description || null,
-      videosList: (factory?.videosList || []).map((v: any) => ({
-        title: v.videoTitle || null,
-        url: v.videoUrl || null,
-        cover: v.coverImage?.node?.sourceUrl || null,
-      })),
-    },
+    stats: hero.stats || [],
   };
 }
 
@@ -351,16 +334,13 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
 }
 
 // ============================================================
-// Trang chủ (ACF) — query phần còn lại (below fold)
+// Trang chủ — below-fold (services, machinery, video, v.v.)
 // ============================================================
 
 export async function getHomePageData() {
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
-        cauHinhTrangChu {
-          stats { number suffix label }
-        }
         workingProcess {
           tagline title
           steps { steptitle stepdescription stepicon }
@@ -407,7 +387,6 @@ export async function getHomePageData() {
   const factory = p.factoryTourSection;
 
   return {
-    stats: p.cauHinhTrangChu?.stats || [],
     workingProcess: {
       tagline: process?.tagline,
       title: process?.title,
