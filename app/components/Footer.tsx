@@ -12,17 +12,18 @@ export default function Footer() {
     <footer className="bg-[var(--bg)] text-[var(--text-dim)] pt-24 pb-12 px-8 relative z-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         <div>
-          {/* Logo 16:9 */}
+          {/* Logo — chiều rộng full cột, chiều cao tự động theo tỷ lệ 16:9 */}
           <div className="mb-6">
             {settings.logoUrl ? (
-              <Image
-                src={settings.logoUrl}
-                alt="Logo"
-                width={280}
-                height={158}
-                className="object-contain h-12 w-auto"
-                referrerPolicy="no-referrer"
-              />
+              <div className="relative w-full" style={{ aspectRatio: '16/9', maxHeight: '80px' }}>
+                <Image
+                  src={settings.logoUrl}
+                  alt="Logo"
+                  fill
+                  className="object-contain object-left"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
             ) : (
               <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter">
                 {settings.logoText || 'Hoàng Thịnh Print'}
