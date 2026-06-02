@@ -26,15 +26,15 @@ export default function Header() {
       <header className="bg-[var(--bg)] py-2 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
         <Link href="/" className="flex items-center shrink-0">
           {settings.logoUrl ? (
-            <div className="relative" style={{ height: '68px', width: '240px' }}>
-              <Image
-                src={settings.logoUrl}
-                alt="Logo"
-                fill
-                className="object-contain object-left"
-                priority
-              />
-            </div>
+            <Image
+              src={settings.logoUrl}
+              alt="Logo"
+              width={280}
+              height={158}
+              className="object-contain h-14 w-auto"
+              priority
+              referrerPolicy="no-referrer"
+            />
           ) : (
             <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
               <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">H</div>
