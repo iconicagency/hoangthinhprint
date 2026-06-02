@@ -29,25 +29,25 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
     });
 
     if (!res.ok) {
-      console.error('K\u1ebft n\u1ed1i WP l\u1ed7i. Status:', res.status);
+      console.error('Kết nối WP lỗi. Status:', res.status);
       return null;
     }
 
     const json = await res.json();
     if (json.errors) {
-      console.error('L\u1ed7i t\u1eeb WordPress GraphQL:', JSON.stringify(json.errors, null, 2));
+      console.error('Lỗi từ WordPress GraphQL:', JSON.stringify(json.errors, null, 2));
       return null;
     }
 
     return json.data;
   } catch (error) {
-    console.error('L\u1ed7i k\u1ebft n\u1ed1i WordPress:', error);
+    console.error('Lỗi kết nối WordPress:', error);
     return null;
   }
 }
 
 // ============================================================
-// SEO \u2014 wp-graphql-rank-math (AxeWP)
+// SEO — wp-graphql-rank-math (AxeWP)
 // ============================================================
 
 export async function getSeoForPost(slug: string) {
@@ -226,7 +226,7 @@ export async function getRecentPosts() {
 }
 
 // ============================================================
-// D\u1ef1 \u00e1n / Portfolio (CPT: du_an)
+// Dự án / Portfolio (CPT: du_an)
 // ============================================================
 
 export async function getProjects() {
@@ -260,7 +260,7 @@ export async function getProjectBySlug(slug: string) {
 }
 
 // ============================================================
-// Gallery s\u1ea3n ph\u1ea9m (Posts + category, kh\u00f4ng c\u1ea7n WooCommerce)
+// Gallery sản phẩm (Posts + category, không cần WooCommerce)
 // ============================================================
 
 export async function getGalleryByCategory(categorySlug = 'san-pham', first = 200) {
@@ -280,7 +280,7 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 20
 }
 
 // ============================================================
-// Trang ch\u1ee7 (ACF)
+// Trang chủ (ACF)
 // ============================================================
 
 export async function getHomePageData() {
@@ -290,9 +290,9 @@ export async function getHomePageData() {
         cauHinhTrangChu {
           herotagline herotitle herosubtitle
           heroslides { nodes { sourceUrl } }
-          heroSlidesList {
-            slideImage { sourceUrl }
-            slideTagline slideTitle slideSubtitle
+          heroslideslist {
+            slideimage { sourceUrl }
+            slidetagline slidetitle slidesubtitle
           }
           herobenefits { title subtitle }
           herobuttons { label link }
@@ -346,7 +346,13 @@ export async function getHomePageData() {
     heroTitle: hero?.herotitle,
     heroSubtitle: hero?.herosubtitle,
     heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
-    heroSlidesList: hero?.heroSlidesList || [],
+    // heroslideslist — WPGraphQL lowercase convention
+    heroSlidesList: (hero?.heroslideslist || []).map((s: any) => ({
+      slideImage: s.slideimage,
+      slideTagline: s.slidetagline,
+      slideTitle: s.slidetitle,
+      slideSubtitle: s.slidesubtitle,
+    })),
     heroBenefits: hero?.herobenefits || [],
     heroButtons: hero?.herobuttons || [],
     stats: hero?.stats || [],
