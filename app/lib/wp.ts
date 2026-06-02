@@ -2,6 +2,7 @@
 // WordPress GraphQL client
 // CMS: cms.inhoangthinh.com.vn
 // Quy tắc WPGraphQL: ACF group name → lowercase, sub-fields → giữ nguyên camelCase
+// ACF Image field → AcfMediaItemConnectionEdge → dùng node { sourceUrl }
 // ============================================================
 
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
@@ -292,8 +293,10 @@ export async function getHomePageData() {
           herotagline herotitle herosubtitle
           heroslides { nodes { sourceUrl } }
           heroslideslist {
-            slideImage { sourceUrl }
-            slideTagline slideTitle slidesubtitle
+            slideImage { node { sourceUrl } }
+            slideTitle
+            slideTagline
+            slidesubtitle
           }
           herobenefits { title subtitle }
           herobuttons { label link }
@@ -348,7 +351,7 @@ export async function getHomePageData() {
     heroSubtitle: hero?.herosubtitle,
     heroSlides: hero?.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
     heroSlidesList: (hero?.heroslideslist || []).map((s: any) => ({
-      slideImage: s.slideImage,
+      slideImage: s.slideImage?.node?.sourceUrl || null,
       slideTagline: s.slideTagline,
       slideTitle: s.slideTitle,
       slideSubtitle: s.slidesubtitle,
