@@ -49,6 +49,57 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
 }
 
 // ============================================================
+// Hero Slides — query riêng, nhỏ gọn, ưu tiên load nhanh
+// ============================================================
+
+export async function getHeroSlides() {
+  const query = `
+    query GetHeroSlides {
+      page(id: "trang-chu", idType: URI) {
+        cauHinhTrangChu {
+          herotagline
+          herotitle
+          herosubtitle
+          herobenefits { title subtitle }
+          herobuttons { label link }
+          heroslideslist {
+            slideImage { node { sourceUrl } }
+            slideTagline
+            slideTitle
+            slidesubtitle
+          }
+          heroslides {
+            nodes { sourceUrl }
+          }
+        }
+      }
+    }
+  `;
+  const data = await fetchWP(query);
+  if (!data?.page) return null;
+
+  const hero = data.page.cauHinhTrangChu;
+  if (!hero) return null;
+
+  const slidesList = (hero.heroslideslist || []).map((s: any) => ({
+    slideImage: s.slideImage?.node?.sourceUrl || null,
+    slideTagline: s.slideTagline || null,
+    slideTitle: s.slideTitle || null,
+    slideSubtitle: s.slidesubtitle || null,
+  })).filter((s: any) => s.slideImage);
+
+  return {
+    heroTagline: hero.herotagline || null,
+    heroTitle: hero.herotitle || null,
+    heroSubtitle: hero.herosubtitle || null,
+    heroBenefits: hero.herobenefits || [],
+    heroButtons: hero.herobuttons || [],
+    heroSlides: hero.heroslides?.nodes?.map((n: any) => n.sourceUrl) || [],
+    heroSlidesList: slidesList,
+  };
+}
+
+// ============================================================
 // SEO — wp-graphql-rank-math (AxeWP)
 // ============================================================
 
@@ -282,7 +333,7 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 20
 }
 
 // ============================================================
-// Trang chủ (ACF)
+// Trang chủ (ACF) — tách thành 2 query để tránh timeout
 // ============================================================
 
 export async function getHomePageData() {
@@ -294,9 +345,7 @@ export async function getHomePageData() {
           heroslides { nodes { sourceUrl } }
           heroslideslist {
             slideImage { node { sourceUrl } }
-            slideTitle
-            slideTagline
-            slidesubtitle
+            slideTitle slideTagline slidesubtitle
           }
           herobenefits { title subtitle }
           herobuttons { label link }
