@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Phone } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 
@@ -8,8 +7,8 @@ export default function FloatContact() {
   const settings = useSettings();
 
   return (
-    <div className="fixed right-4 bottom-24 z-50 flex flex-col gap-3">
-      {/* Phone */}
+    // right-8 = 32px, bottom-28 để nhường chỗ cho BackToTop (bottom-8 + h-14 + gap)
+    <div className="fixed right-8 bottom-28 z-50 flex flex-col gap-3">
       <a
         href={`tel:${settings.contactPhone.replace(/\D/g, '')}`}
         className="w-14 h-14 bg-[var(--accent)] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
@@ -19,7 +18,6 @@ export default function FloatContact() {
         <Phone size={24} className="text-white" />
       </a>
 
-      {/* Zalo */}
       <a
         href={settings.zaloLink}
         target="_blank"
@@ -33,7 +31,6 @@ export default function FloatContact() {
         </svg>
       </a>
 
-      {/* Facebook Messenger */}
       <a
         href={settings.facebookLink}
         target="_blank"
