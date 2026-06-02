@@ -16,28 +16,35 @@ interface Slide {
 }
 
 function buildSlides(dynamicHero: any): Slide[] {
+  // Ưu tiên heroSlidesList — mỗi slide có nội dung riêng
   if (dynamicHero?.heroSlidesList?.length) {
     return dynamicHero.heroSlidesList.map((s: any) => ({
-      img: s.slideImage?.node?.sourceUrl || '',
+      // ACF Image field (Array) qua WPGraphQL: sourceUrl trực tiếp
+      img: s.slideImage?.sourceUrl || s.slideImage?.node?.sourceUrl || '',
       tagline: s.slideTagline || dynamicHero.heroTagline,
       title: s.slideTitle || dynamicHero.heroTitle,
       subtitle: s.slideSubtitle || dynamicHero.heroSubtitle,
-      buttons: dynamicHero.heroButtons || [],
-      benefits: dynamicHero.heroBenefits || [],
+      buttons: dynamicHero.heroButtons?.length ? dynamicHero.heroButtons : [
+        { label: 'Xem sản phẩm', link: '/san-pham' },
+        { label: 'Nhận báo giá miễn phí', link: '/bao-gia' },
+      ],
+      benefits: dynamicHero.heroBenefits?.map((b: any) =>
+        typeof b === 'string' ? { title: b, subtitle: '' } : b
+      ) || homeConfig.hero.benefits.map(b => ({ title: b, subtitle: '' })),
     }));
   }
 
+  // Fallback: dùng heroslides (Gallery) — tất cả slide chung 1 nội dung
   const imgs: string[] =
+    dynamicHero?.heroSlides?.length ? dynamicHero.heroSlides :
     dynamicHero?.heroSlides?.nodes?.map((n: any) => n.sourceUrl) ||
-    dynamicHero?.slides?.nodes?.map((n: any) => n.sourceUrl) ||
-    dynamicHero?.slides ||
     homeConfig.hero.slides;
 
   const sharedContent = {
-    tagline: dynamicHero?.heroTagline || dynamicHero?.tagline || homeConfig.hero.tagline,
-    title: dynamicHero?.heroTitle || dynamicHero?.title || homeConfig.hero.title,
-    subtitle: dynamicHero?.heroSubtitle || dynamicHero?.subtitle || homeConfig.hero.subtitle,
-    buttons: dynamicHero?.heroButtons || [
+    tagline: dynamicHero?.heroTagline || homeConfig.hero.tagline,
+    title: dynamicHero?.heroTitle || homeConfig.hero.title,
+    subtitle: dynamicHero?.heroSubtitle || homeConfig.hero.subtitle,
+    buttons: dynamicHero?.heroButtons?.length ? dynamicHero.heroButtons : [
       { label: 'Xem sản phẩm', link: '/san-pham' },
       { label: 'Nhận báo giá miễn phí', link: '/bao-gia' },
     ],
@@ -46,7 +53,8 @@ function buildSlides(dynamicHero: any): Slide[] {
     ) || homeConfig.hero.benefits.map(b => ({ title: b, subtitle: '' })),
   };
 
-  return (imgs.length ? imgs : homeConfig.hero.slides).map(img => ({ img, ...sharedContent }));
+  const finalImgs = (Array.isArray(imgs) && imgs.length) ? imgs : homeConfig.hero.slides;
+  return finalImgs.map((img: string) => ({ img, ...sharedContent }));
 }
 
 export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
@@ -132,10 +140,10 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
 
       {slides.length > 1 && (
         <>
-          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm" aria-label="Slide trước">
+          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm" aria-label="Slide tr\u01b0\u1edbc">
             <ChevronLeft size={22} />
           </button>
-          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm" aria-label="Slide tiếp">
+          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm" aria-label="Slide ti\u1ebfp">
             <ChevronRight size={22} />
           </button>
         </>

@@ -23,14 +23,14 @@ export default function Header() {
       </div>
 
       {/* Header */}
-      <header className="bg-[var(--bg)] py-4 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
+      <header className="bg-[var(--bg)] py-3 px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]">
         <Link href="/" className="flex items-center">
           {settings.logoUrl ? (
-            <div className="relative h-12 w-48">
-              <Image 
-                src={settings.logoUrl} 
-                alt="Logo" 
-                fill 
+            <div className="relative h-16 w-64">
+              <Image
+                src={settings.logoUrl}
+                alt="Logo"
+                fill
                 className="object-contain object-left"
                 priority
               />
@@ -46,7 +46,7 @@ export default function Header() {
           <ul className="flex gap-8 text-sm font-bold text-[var(--text-main)] uppercase tracking-wide items-center">
             <li><Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link></li>
             <li><Link href="/gioi-thieu" className="hover:text-[var(--accent)] transition-colors">Giới thiệu</Link></li>
-            
+
             <li className="relative group py-4 -my-4">
               <Link href="/nganh-hang" className="hover:text-[var(--accent)] transition-colors flex items-center gap-1">
                 Ngành hàng <ChevronDown size={14} />
@@ -74,7 +74,7 @@ export default function Header() {
               </div>
             </li>
 
-            <li><Link href="/du-an" className="hover:text-[var(--accent)] transition-colors">Dự dự án tiêu biểu</Link></li>
+            <li><Link href="/du-an" className="hover:text-[var(--accent)] transition-colors">Dự án tiêu biểu</Link></li>
             <li><Link href="/bao-gia" className="hover:text-[var(--accent)] transition-colors">Báo giá</Link></li>
             <li><Link href="/quy-trinh" className="hover:text-[var(--accent)] transition-colors">Quy trình</Link></li>
             <li><Link href="/blog" className="hover:text-[var(--accent)] transition-colors">Blog</Link></li>

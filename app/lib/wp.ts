@@ -29,25 +29,25 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
     });
 
     if (!res.ok) {
-      console.error('Kết nối WP lỗi. Status:', res.status);
+      console.error('K\u1ebft n\u1ed1i WP l\u1ed7i. Status:', res.status);
       return null;
     }
 
     const json = await res.json();
     if (json.errors) {
-      console.error('Lỗi từ WordPress GraphQL:', JSON.stringify(json.errors, null, 2));
+      console.error('L\u1ed7i t\u1eeb WordPress GraphQL:', JSON.stringify(json.errors, null, 2));
       return null;
     }
 
     return json.data;
   } catch (error) {
-    console.error('Lỗi kết nối WordPress:', error);
+    console.error('L\u1ed7i k\u1ebft n\u1ed1i WordPress:', error);
     return null;
   }
 }
 
 // ============================================================
-// SEO — wp-graphql-rank-math (AxeWP)
+// SEO \u2014 wp-graphql-rank-math (AxeWP)
 // ============================================================
 
 export async function getSeoForPost(slug: string) {
@@ -226,7 +226,7 @@ export async function getRecentPosts() {
 }
 
 // ============================================================
-// Dự án / Portfolio (CPT: du_an)
+// D\u1ef1 \u00e1n / Portfolio (CPT: du_an)
 // ============================================================
 
 export async function getProjects() {
@@ -260,7 +260,7 @@ export async function getProjectBySlug(slug: string) {
 }
 
 // ============================================================
-// Gallery sản phẩm (Posts + category, không cần WooCommerce)
+// Gallery s\u1ea3n ph\u1ea9m (Posts + category, kh\u00f4ng c\u1ea7n WooCommerce)
 // ============================================================
 
 export async function getGalleryByCategory(categorySlug = 'san-pham', first = 200) {
@@ -280,7 +280,7 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 20
 }
 
 // ============================================================
-// Trang chủ (ACF)
+// Trang ch\u1ee7 (ACF)
 // ============================================================
 
 export async function getHomePageData() {
@@ -291,7 +291,7 @@ export async function getHomePageData() {
           herotagline herotitle herosubtitle
           heroslides { nodes { sourceUrl } }
           heroSlidesList {
-            slideImage { node { sourceUrl } }
+            slideImage { sourceUrl }
             slideTagline slideTitle slideSubtitle
           }
           herobenefits { title subtitle }
