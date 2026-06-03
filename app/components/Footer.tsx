@@ -25,11 +25,13 @@ export default function Footer() {
               </div>
             ) : (
               <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter">
-                {settings.logoText || 'Hoang Thinh Print'}
+                {settings.logoText || 'In Hoàng Thịnh'}
               </div>
             )}
           </div>
-          <p className="text-sm leading-relaxed mb-6">{settings.footerDescription || 'Doi tac in an bao bi tron goi chuyen nghiep.'}</p>
+          <p className="text-sm leading-relaxed mb-6">
+            {settings.footerDescription || 'Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.'}
+          </p>
           <div className="flex gap-3">
             <a href={settings.facebookLink} target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -56,18 +58,22 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Dich Vu In An</h4>
+          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">
+            {'Dịch Vụ In Ấn'}
+          </h4>
           <ul className="space-y-3 text-sm">
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hop Cung Cao Cap</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tui Giay</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hop Song Carton</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tem Nhan Decal</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Hộp Cứng Cao Cấp'}</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Túi Giấy'}</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Hộp Sóng Carton'}</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Tem Nhãn Decal'}</Link></li>
             <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Catalogue, Brochure</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Thong Tin Lien He</h4>
+          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">
+            {'Thông Tin Liên Hệ'}
+          </h4>
           <ul className="space-y-4 text-sm">
             <li className="flex items-start gap-3">
               <MapPin size={18} className="text-[var(--accent)] shrink-0 mt-0.5" />
@@ -85,26 +91,32 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Ban Do</h4>
+          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">
+            {'Bản Đồ'}
+          </h4>
           <a href={settings.mapUrl || '#'} target="_blank" rel="noopener noreferrer"
             className="block w-full h-40 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg overflow-hidden relative group">
             {settings.mapImage ? (
               <Image src={settings.mapImage} alt="Map" fill className="object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-xs text-[var(--text-dim)]">Chua co ban do</div>
+              <div className="w-full h-full flex items-center justify-center text-xs text-[var(--text-dim)]">
+                {'Chưa có bản đồ'}
+              </div>
             )}
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-xs font-bold text-white bg-[var(--accent)] px-3 py-1 rounded">Xem tren Google Maps</span>
+              <span className="text-xs font-bold text-white bg-[var(--accent)] px-3 py-1 rounded">
+                {'Xem trên Google Maps'}
+              </span>
             </div>
           </a>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-[var(--border)] text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm">
-        <p>{settings.copyrightText || `© ${new Date().getFullYear()} In Hoang Thinh. All rights reserved.`}</p>
+        <p>{settings.copyrightText || `\u00a9 ${new Date().getFullYear()} In ${'Hoàng Thịnh'}. All rights reserved.`}</p>
         <div className="flex gap-6 mt-4 md:mt-0">
-          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Chinh sach bao mat</span>
-          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Dieu khoan dich vu</span>
+          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">{'Chính sách bảo mật'}</span>
+          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">{'Điều khoản dịch vụ'}</span>
         </div>
       </div>
     </footer>
