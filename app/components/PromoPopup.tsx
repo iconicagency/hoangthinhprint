@@ -1,130 +1,57 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { X, Gift, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Phone, Gift } from 'lucide-react';
+import { useSettings } from './SettingsProvider';
 
 export default function PromoPopup() {
-  const [isOpen, setIsOpen] = useState(false);
-  const popupRef = useRef<HTMLDivElement>(null);
-
-  const handleClose = () => {
-    localStorage.setItem('promo_popup_dismissed_at', Date.now().toString());
-    setIsOpen(false);
-  };
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const settings = useSettings();
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    
-    // Check if clicked outside
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        handleClose();
-      }
-    };
+    const timer = setTimeout(() => {
+      if (!dismissed) setVisible(true);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [dismissed]);
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    
-    const checkPopup = () => {
-      if (typeof window === 'undefined') return;
-      
-      const dismissedAt = localStorage.getItem('promo_popup_dismissed_at');
-      const now = Date.now();
-      const thirtyMinutes = 30 * 60 * 1000;
-
-      if (!dismissedAt || now - parseInt(dismissedAt) > thirtyMinutes) {
-        // Show popup after a short delay when the page loads
-        timer = setTimeout(() => {
-          setIsOpen(true);
-        }, 1000);
-      }
-    };
-
-    checkPopup();
-    
-    return () => {
-      if (timer) clearTimeout(timer);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+  if (dismissed) return null;
 
   return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+    <div
+      className={`fixed bottom-6 left-4 z-50 transition-all duration-500 ${
+        visible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
+      }`}
+      style={{ maxWidth: '280px' }}
     >
-      <div 
-        ref={popupRef}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-300"
-      >
-        {/* Header with gradient */}
-        <div className="bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] p-6 text-white relative">
-          <button 
-            onClick={handleClose}
-            className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+      <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-[var(--accent)] px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-white">
+            <Gift size={16} />
+            <span className="text-xs font-bold uppercase tracking-wide">ưu đãi hôm nay</span>
+          </div>
+          <button
+            onClick={() => { setVisible(false); setTimeout(() => setDismissed(true), 500); }}
+            className="text-white/80 hover:text-white transition-colors"
           >
-            <X size={20} />
+            <X size={16} />
           </button>
-          
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center border border-white/30">
-              <Gift className="text-white" size={24} />
-            </div>
-            <div>
-              <h3 className="text-2xl font-black tracking-tight">GIẢM NGAY 10%</h3>
-              <p className="text-white/90 text-sm">Cho mọi đơn hàng · Tối đa 2.000.000đ</p>
-            </div>
-          </div>
-          
-          <div className="bg-white/20 border border-white/30 rounded-lg py-2 px-4 flex items-center gap-2 text-sm font-medium">
-            <Sparkles size={16} className="text-yellow-300" />
-            Đăng ký ngay để nhận ưu đãi đặc biệt từ In Hoàng Thịnh!
-          </div>
         </div>
-
-        {/* Form */}
-        <div className="p-6">
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Họ tên <span className="text-red-500">*</span></label>
-              <input type="text" placeholder="Nguyễn Văn A" className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Số điện thoại <span className="text-red-500">*</span></label>
-              <div className="relative">
-                <input type="tel" placeholder="0901 234 567" className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-4 bg-red-600 rounded-sm flex items-center justify-center">
-                  <div className="w-1 h-1 bg-yellow-400 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Email</label>
-              <input type="email" placeholder="email@example.com" className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Địa chỉ</label>
-              <input type="text" placeholder="Quận/Huyện, Tỉnh/TP" className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-            </div>
-            
-            <button 
-              type="button" 
-              onClick={handleClose}
-              className="w-full bg-[var(--accent)] text-white font-bold py-3.5 rounded-lg hover:bg-[var(--accent-secondary)] transition-colors mt-2 text-lg"
-            >
-              Nhận ưu đãi 10% ngay
-            </button>
-            
-            <p className="text-center text-xs text-slate-500 mt-4">
-              Ưu đãi có hạn · Áp dụng cho mọi đơn hàng MOQ từ 500 sản phẩm
-            </p>
-          </form>
+        <div className="px-4 py-4">
+          <p className="text-sm font-bold text-[var(--text-main)] mb-1">
+            Thiết kế 3D miễn phí
+          </p>
+          <p className="text-xs text-[var(--text-dim)] mb-4 leading-relaxed">
+            Nhận báo giá &amp; thiết kế mẫu 3D miễn phí cho đơn hàng đầu tiên. Liên hệ ngay!
+          </p>
+          <a
+            href={`tel:${settings.contactPhone.replace(/\D/g, '')}`}
+            className="flex items-center justify-center gap-2 bg-[var(--accent)] text-white text-sm font-bold py-2.5 rounded-xl hover:opacity-90 transition-opacity w-full"
+          >
+            <Phone size={15} />
+            {settings.contactPhone}
+          </a>
         </div>
       </div>
     </div>
