@@ -22,9 +22,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Header — chiều cao 130px, logo 110px, py-2 tạo khoảng trắng trên dưới */}
-      <header className="bg-[var(--bg)] px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ height: '130px' }}>
-        <Link href="/" className="flex items-center shrink-0 py-2">
+      {/* Header — padding 4px trên dưới, logo 110px */}
+      <header className="bg-[var(--bg)] px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
+        <Link href="/" className="flex items-center shrink-0">
           {settings.logoUrl ? (
             <Image
               src={settings.logoUrl}
