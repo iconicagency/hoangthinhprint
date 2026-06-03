@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Star, Play, CheckCircle2, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote,
-  Package, Layout, Printer, Layers, Settings, Truck, Search, PenTool, Lightbulb, Zap, Award, Users, Heart
+  Star, Play, Clock, ThumbsUp, ShieldCheck, ArrowRight, Quote,
+  Package, Layout, Printer, Layers, Settings, Truck, Search, PenTool, Lightbulb, Zap, Award, Users, Heart, CheckCircle2
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -18,46 +18,14 @@ import { homeConfig } from './lib/config';
 import { getHomePageData, getAboveFoldData } from './lib/wp';
 import { getPageMetadata } from './lib/seo';
 import ClientLogoSlider from './components/ClientLogoSlider';
+import { VI } from './lib/vi';
 
 export async function generateMetadata(): Promise<Metadata> {
   return getPageMetadata('trang-chu', {
-    title: 'In Hoang Thinh — Giai Phap Bao Bi Toan Dien',
-    description: 'Xuong in bao bi Ha Noi. Hop cung, tui giay, hop carton, tem nhan.',
+    title: VI.seoTitle,
+    description: VI.seoDesc,
   });
 }
-
-const pageData = {
-  services: [
-    { title: 'In Hop Cung Chuyen Nghiep', desc: 'Hop cung cao cap · Ep kim · Dong gay sang trong', price: 'Lien he', img: 'box1' },
-    { title: 'In Tui Giay', desc: 'Tui giay cao cap Ivory · Couche · Kraft', price: 'Lien he', img: 'bag1' },
-    { title: 'Bao Bi My Pham', desc: 'Bao ve tinh chat · Ep kim cao cap', price: 'Lien he', img: 'cosmetic1' },
-    { title: 'Bao Bi Duoc Pham', desc: 'Bao quan thuoc · Chuan y te', price: 'Lien he', img: 'health1' },
-    { title: 'In Sach - So Tay', desc: 'Bia cung · Bia mem · Dong gay', price: 'Lien he', img: 'book1' },
-    { title: 'In Nhan - Tem Decal', desc: 'Tem decal · Tem vo · Kraft', price: 'Lien he', img: 'label1' },
-    { title: 'Bao Bi Nong San', desc: 'Chuan xuat khau · Do ben cao', price: 'Lien he', img: 'farm1' },
-    { title: 'Thiet Ke Do Hoa', desc: 'Cap nhat xu huong thiet ke', price: 'Lien he', img: 'design1' },
-  ],
-  features: [
-    { icon: Clock, title: 'May Ep Kim Tai Xuong', desc: 'In va ep kim ngay trong cung xuong. Khong gui ngoai, khong outsource.' },
-    { icon: ShieldCheck, title: 'Chu Xuong QC Truc Tiep', desc: 'Chinh chu xuong kiem tra tung lo hang truoc khi giao.' },
-    { icon: CheckCircle2, title: 'Sai Mau = In Lai Mien Phi', desc: 'Cam ket bang hop dong. Khong dat yeu cau ve mau sac — in lai toan bo, mien phi.' },
-    { icon: ThumbsUp, title: 'MOQ 500 — Nhan Don Vua', desc: 'Xuong lon tu choi don nho. In Hoang Thinh nhan tu 500 san pham.' }
-  ],
-  process: [
-    { step: '01', title: 'Tiep nhan' }, { step: '02', title: 'Tu van & Bao gia' },
-    { step: '03', title: 'Thiet ke 3D' }, { step: '04', title: 'In mau test' },
-    { step: '05', title: 'Ky hop dong' }, { step: '06', title: 'San xuat hang loat' },
-    { step: '07', title: 'Kiem tra QC' }, { step: '08', title: 'Giao hang' },
-  ],
-  machines: [
-    { title: 'May In Offset', desc: 'In 4 mau CMYK, chuan quoc te.', img: 'machine1' },
-    { title: 'May Ep Kim Vang', desc: 'Ep foil vang, bac, rose gold.', img: 'machine2' },
-    { title: 'May Can Mang', desc: 'Can mo, can bong.', img: 'machine3' },
-    { title: 'May Be Tu Dong', desc: 'Be hinh chinh xac.', img: 'machine4' },
-    { title: 'May Dan Hop', desc: 'Dan canh, dan day tu dong.', img: 'machine5' },
-    { title: 'Khu Kiem Tra QC', desc: 'Bang Pantone chuan.', img: 'machine6' }
-  ]
-};
 
 const iconMap: Record<string, any> = {
   'Clock': Clock, 'ShieldCheck': ShieldCheck, 'CheckCircle2': CheckCircle2,
@@ -86,29 +54,53 @@ export default async function Home() {
 
   const finalServices = wpHomeData?.printingServices?.services?.length
     ? wpHomeData.printingServices.services.map((s: any, i: number) => ({
-        title: s.title, desc: s.desc, price: 'Lien he',
+        title: s.title, desc: s.desc, price: VI.lienHe,
         img: s.img || `https://picsum.photos/seed/service-${i}/400/300`,
       }))
-    : pageData.services;
+    : [
+        { title: VI.s1Title, desc: VI.s1Desc, price: VI.lienHe, img: 'box1' },
+        { title: VI.s2Title, desc: VI.s2Desc, price: VI.lienHe, img: 'bag1' },
+        { title: VI.s3Title, desc: VI.s3Desc, price: VI.lienHe, img: 'cosmetic1' },
+        { title: VI.s4Title, desc: VI.s4Desc, price: VI.lienHe, img: 'health1' },
+        { title: VI.s5Title, desc: VI.s5Desc, price: VI.lienHe, img: 'book1' },
+        { title: VI.s6Title, desc: VI.s6Desc, price: VI.lienHe, img: 'label1' },
+        { title: VI.s7Title, desc: VI.s7Desc, price: VI.lienHe, img: 'farm1' },
+        { title: VI.s8Title, desc: VI.s8Desc, price: VI.lienHe, img: 'design1' },
+      ];
 
   const finalFeatures = wpHomeData?.whyChooseUs?.features?.length
     ? wpHomeData.whyChooseUs.features.map((f: any) => ({
         icon: iconMap[f.iconName] || Star, title: f.title, desc: f.desc,
       }))
-    : pageData.features;
+    : [
+        { icon: Clock, title: VI.f1Title, desc: VI.f1Desc },
+        { icon: ShieldCheck, title: VI.f2Title, desc: VI.f2Desc },
+        { icon: CheckCircle2, title: VI.f3Title, desc: VI.f3Desc },
+        { icon: ThumbsUp, title: VI.f4Title, desc: VI.f4Desc },
+      ];
 
   const finalProcess = wpHomeData?.workingProcess?.steps?.length
-    ? wpHomeData.workingProcess.steps.map((s: any) => ({
-        step: s.step, title: s.title, desc: s.desc,
-      }))
-    : pageData.process;
+    ? wpHomeData.workingProcess.steps.map((s: any) => ({ step: s.step, title: s.title, desc: s.desc }))
+    : [
+        { step: '01', title: VI.p1 }, { step: '02', title: VI.p2 },
+        { step: '03', title: VI.p3 }, { step: '04', title: VI.p4 },
+        { step: '05', title: VI.p5 }, { step: '06', title: VI.p6 },
+        { step: '07', title: VI.p7 }, { step: '08', title: VI.p8 },
+      ];
 
   const finalMachines = wpHomeData?.machinery?.machines?.length
     ? wpHomeData.machinery.machines.map((m: any, i: number) => ({
         title: m.title, desc: m.desc,
         img: m.img || `https://picsum.photos/seed/machine-${i+10}/300/200`,
       }))
-    : pageData.machines;
+    : [
+        { title: VI.m1, desc: VI.m1d, img: 'machine1' },
+        { title: VI.m2, desc: VI.m2d, img: 'machine2' },
+        { title: VI.m3, desc: VI.m3d, img: 'machine3' },
+        { title: VI.m4, desc: VI.m4d, img: 'machine4' },
+        { title: VI.m5, desc: VI.m5d, img: 'machine5' },
+        { title: VI.m6, desc: VI.m6d, img: 'machine6' },
+      ];
 
   const finalTestimonials = wpHomeData?.testimonials?.length
     ? wpHomeData.testimonials.map((t: any, i: number) => ({
@@ -116,9 +108,9 @@ export default async function Home() {
         rating: t.rating || 5, img: `https://picsum.photos/seed/user${i+1}/100/100`,
       }))
     : [
-        { content: "Chat luong hop cung ep kim rat tot. Giao hang dung hen.", author: "Nguyen Van A", position: "Giam doc Marketing - Cong ty ABC", rating: 5, img: "https://picsum.photos/seed/user1/100/100" },
-        { content: "Doi ngu tu van nhiet tinh, gia thanh canh tranh.", author: "Tran Thi B", position: "Quan ly thu mua - Tap doan G-Group", rating: 5, img: "https://picsum.photos/seed/user2/100/100" },
-        { content: "San pham in mau test rat nhanh.", author: "Le Van C", position: "CEO - Startup PASHANCHA", rating: 5, img: "https://picsum.photos/seed/user3/100/100" },
+        { content: VI.t1c, author: VI.t1a, position: VI.t1p, rating: 5, img: 'https://picsum.photos/seed/user1/100/100' },
+        { content: VI.t2c, author: VI.t2a, position: VI.t2p, rating: 5, img: 'https://picsum.photos/seed/user2/100/100' },
+        { content: VI.t3c, author: VI.t3a, position: VI.t3p, rating: 5, img: 'https://picsum.photos/seed/user3/100/100' },
       ];
 
   const clientsSectionData = wpHomeData?.clients;
@@ -149,8 +141,8 @@ export default async function Home() {
       {/* Dich Vu In An */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{printingServicesData?.tagline || 'DICH VU IN AN'}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{printingServicesData?.title || 'DICH VU IN AN CHUYEN NGHIEP'}</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{printingServicesData?.tagline || VI.dichVu}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{printingServicesData?.title || VI.dichVuTitle}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <ServiceLightbox services={finalServices} />
@@ -159,8 +151,8 @@ export default async function Home() {
       {/* Quy Trinh */}
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{workingProcessData?.tagline || 'QUY TRINH LAM VIEC'}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{workingProcessData?.title || 'QUY TRINH LAM VIEC'}</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{workingProcessData?.tagline || VI.quyTrinh}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{workingProcessData?.title || VI.quyTrinh}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto">
@@ -179,25 +171,25 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Projects */}
+      {/* San Pham Da Thuc Hien */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">DU AN TIEU BIEU</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">SAN PHAM DA THUC HIEN</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{VI.duAnTieuBieu}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{VI.sanPhamDaThucHien}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <WPProjects />
         <div className="text-center mt-12">
-          <Link href="/du-an" className="inline-block border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">Xem tat ca du an</Link>
+          <Link href="/du-an" className="inline-block border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3.5 rounded font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--card-bg)]">{VI.xemTatCaDuAn}</Link>
         </div>
       </section>
 
-      {/* Partners */}
+      {/* Khach Hang */}
       <section className="py-24 bg-[var(--bg)] border-t border-[var(--border)] overflow-hidden">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
-            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{clientsSectionData?.tagline || 'DOI TAC'}</div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{clientsSectionData?.title || 'KHACH HANG CUA CHUNG TOI'}</h2>
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{clientsSectionData?.tagline || VI.doiTac}</div>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{clientsSectionData?.title || VI.khachHangCuaChungToi}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
         </div>
@@ -208,13 +200,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Machinery */}
+      {/* May Moc Cong Nghe */}
       <section className="py-20 px-8 bg-[var(--card-bg)] border-y border-[var(--border)] relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
-            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{machinerySectionData?.tagline || 'NANG LUC SAN XUAT'}</div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-4 tracking-tight">{machinerySectionData?.title || 'MAY MOC & CONG NGHE'}</h2>
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{machinerySectionData?.tagline || VI.nangLucSanXuat}</div>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-4 tracking-tight">{machinerySectionData?.title || VI.mayMocCongNghe}</h2>
+            <p className="text-[var(--text-dim)] mb-6">{VI.chatLuongHangDau}</p>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -234,11 +227,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Tai Sao Chon */}
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{whyChooseUsData?.tagline || 'LY DO CHON CHUNG TOI'}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{whyChooseUsData?.title || 'TAI SAO CHON IN HOANG THINH?'}</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{whyChooseUsData?.tagline || VI.lyDoChon}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{whyChooseUsData?.title || VI.taiSaoChon}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
@@ -258,8 +251,8 @@ export default async function Home() {
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{factoryTourData?.tagline || 'VIDEO GIOI THIEU'}</div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{factoryTourData?.title || 'THAM QUAN XUONG IN'}</h2>
+            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{factoryTourData?.tagline || VI.videoGioiThieu}</div>
+            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{factoryTourData?.title || VI.thamQuanXuong}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           {videosList.length > 0 ? (
@@ -284,7 +277,7 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-[var(--text-main)] mb-1 line-clamp-2">{v.title || 'Video gioi thieu'}</h3>
+                    <h3 className="font-bold text-[var(--text-main)] mb-1 line-clamp-2">{v.title || VI.videoGioiThieu}</h3>
                   </div>
                 </a>
               ))}
@@ -305,10 +298,10 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-12 flex justify-between items-end">
             <div>
-              <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">Tin tuc</div>
-              <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] tracking-tight">BAI VIET MOI NHAT</h2>
+              <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{VI.tinTuc}</div>
+              <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] tracking-tight">{VI.baiVietMoiNhat}</h2>
             </div>
-            <Link href="/blog" className="hidden md:inline-flex border-b-2 border-transparent hover:border-[var(--accent)] text-[var(--text-dim)] hover:text-[var(--text-main)] font-medium pb-1 transition-colors">Xem tat ca bai viet</Link>
+            <Link href="/blog" className="hidden md:inline-flex border-b-2 border-transparent hover:border-[var(--accent)] text-[var(--text-dim)] hover:text-[var(--text-main)] font-medium pb-1 transition-colors">{VI.xemTatCaBaiViet}</Link>
           </div>
           <WPRecentPosts />
         </div>
@@ -317,8 +310,8 @@ export default async function Home() {
       {/* Testimonials */}
       <section className="pt-24 pb-44 px-8 bg-[var(--card-bg)] border-t border-[var(--border)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">KHACH HANG NOI GI</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">DANH GIA TU DOI TAC</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{VI.khachHangNoiGi}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{VI.danhGiaTuDoiTac}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -345,8 +338,8 @@ export default async function Home() {
       <section className="relative z-20 -mt-32 px-4 mb-24">
         <div className="max-w-5xl mx-auto bg-[var(--card-bg)] rounded-2xl shadow-2xl p-8 md:p-12 flex flex-col md:flex-row items-start gap-10 border border-[var(--border)]">
           <div className="md:w-1/2">
-            <h3 className="text-3xl md:text-4xl font-serif text-[var(--text-main)] mb-4 tracking-tight">Nhan Bao Gia Trong 5 Phut</h3>
-            <p className="text-[var(--text-dim)] mb-6">De lai thong tin, chuyen vien se lien he tu van va bao gia chi tiet ngay lap tuc.</p>
+            <h3 className="text-3xl md:text-4xl font-serif text-[var(--text-main)] mb-4 tracking-tight">{VI.nhanBaoGia}</h3>
+            <p className="text-[var(--text-dim)] mb-6">{VI.nhanBaoGiaDesc}</p>
             <div className="w-16 h-[2px] bg-[var(--accent)]"></div>
           </div>
           <div className="md:w-1/2 w-full">
