@@ -12,7 +12,6 @@ export default function Footer() {
     <footer className="bg-[var(--bg)] text-[var(--text-dim)] pt-24 pb-12 px-8 relative z-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         <div>
-          {/* Logo 16:9 full width, không giới hạn chiều cao */}
           <div className="mb-6">
             {settings.logoUrl ? (
               <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
@@ -26,11 +25,11 @@ export default function Footer() {
               </div>
             ) : (
               <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter">
-                {settings.logoText || 'Ho\u00e0ng Th\u1ecbnh Print'}
+                {settings.logoText || 'Hoang Thinh Print'}
               </div>
             )}
           </div>
-          <p className="text-sm leading-relaxed mb-6">{settings.footerDescription || '\u0110\u1ed1i t\u00e1c in \u1ea5n bao b\u00ec tr\u1ecdn g\u00f3i chuy\u00ean nghi\u1ec7p. Cam k\u1ebft ch\u1ea5t l\u01b0\u1ee3ng, \u0111\u00fang ti\u1ebfn \u0111\u1ed9, gi\u00e1 g\u1ed1c t\u1ea1i x\u01b0\u1edfng.'}</p>
+          <p className="text-sm leading-relaxed mb-6">{settings.footerDescription || 'Doi tac in an bao bi tron goi chuyen nghiep.'}</p>
           <div className="flex gap-3">
             <a href={settings.facebookLink} target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -57,18 +56,18 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">D\u1ecbch V\u1ee5 In \u1ea4n</h4>
+          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Dich Vu In An</h4>
           <ul className="space-y-3 text-sm">
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In H\u1ed9p C\u1ee9ng Cao C\u1ea5p</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In T\u00fai Gi\u1ea5y</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In H\u1ed9p S\u00f3ng Carton</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tem Nh\u00e3n Decal</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hop Cung Cao Cap</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tui Giay</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Hop Song Carton</Link></li>
+            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Tem Nhan Decal</Link></li>
             <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Catalogue, Brochure</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Th\u00f4ng Tin Li\u00ean H\u1ec7</h4>
+          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Thong Tin Lien He</h4>
           <ul className="space-y-4 text-sm">
             <li className="flex items-start gap-3">
               <MapPin size={18} className="text-[var(--accent)] shrink-0 mt-0.5" />
@@ -86,26 +85,26 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">B\u1ea3n \u0110\u1ed3</h4>
+          <h4 className="text-[var(--text-main)] font-bold text-lg mb-6 uppercase tracking-wide">Ban Do</h4>
           <a href={settings.mapUrl || '#'} target="_blank" rel="noopener noreferrer"
             className="block w-full h-40 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg overflow-hidden relative group">
             {settings.mapImage ? (
               <Image src={settings.mapImage} alt="Map" fill className="object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-xs text-[var(--text-dim)]">Ch\u01b0a c\u00f3 b\u1ea3n \u0111\u1ed3</div>
+              <div className="w-full h-full flex items-center justify-center text-xs text-[var(--text-dim)]">Chua co ban do</div>
             )}
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-xs font-bold text-white bg-[var(--accent)] px-3 py-1 rounded">Xem tr\u00ean Google Maps</span>
+              <span className="text-xs font-bold text-white bg-[var(--accent)] px-3 py-1 rounded">Xem tren Google Maps</span>
             </div>
           </a>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-[var(--border)] text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm">
-        <p>{settings.copyrightText || `\u00a9 ${new Date().getFullYear()} In Ho\u00e0ng Th\u1ecbnh. All rights reserved.`}</p>
+        <p>{settings.copyrightText || `© ${new Date().getFullYear()} In Hoang Thinh. All rights reserved.`}</p>
         <div className="flex gap-6 mt-4 md:mt-0">
-          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Ch\u00ednh s\u00e1ch b\u1ea3o m\u1eadt</span>
-          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">\u0110i\u1ec1u kho\u1ea3n d\u1ecbch v\u1ee5</span>
+          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Chinh sach bao mat</span>
+          <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">Dieu khoan dich vu</span>
         </div>
       </div>
     </footer>
