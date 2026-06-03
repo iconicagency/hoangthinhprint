@@ -1,5 +1,31 @@
 // Tất cả text tiếng Việt cố định — tránh lỗi encode qua GitHub API
 export const VI = {
+  // Menu
+  menu: {
+    trangChu: 'Trang chủ',
+    gioiThieu: 'Giới thiệu',
+    nganhHang: 'Ngành hàng',
+    sanPham: 'Sản phẩm',
+    duAnTieuBieu: 'Dự án tiêu biểu',
+    baoGia: 'Báo giá',
+    quyTrinh: 'Quy trình',
+    blog: 'Blog',
+    lienHe: 'Liên hệ',
+    baoGiaNgay: 'Báo Giá Ngay',
+    // Dropdown ngành hàng
+    tpcnDuocPham: 'TPCN & dược phẩm',
+    myPhamSkincare: 'Mỹ phẩm & skincare',
+    yenSao: 'Yến sào',
+    trangSucQuaTang: 'Trang sức & quà tặng',
+    ecommerce: 'Ecommerce',
+    // Dropdown sản phẩm
+    catalogue: 'Catalogue',
+    tuiGiay: 'Túi giấy',
+    hopGiay: 'Hộp giấy',
+    hopCartonLanh: 'Hộp carton lạnh',
+    hopCartonSong: 'Hộp carton sóng',
+    inNhanTemDecal: 'In nhãn - Tem decal',
+  },
   // Page chủ - sections
   dichVu: 'DỊCH VỤ IN ẤN',
   dichVuTitle: 'DỊCH VỤ IN ẤN CHUYÊN NGHIỆP',
