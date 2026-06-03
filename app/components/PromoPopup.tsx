@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, Phone, Gift } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
+import { VI } from '../lib/vi';
 
 export default function PromoPopup() {
   const [visible, setVisible] = useState(false);
@@ -29,7 +30,7 @@ export default function PromoPopup() {
         <div className="bg-[var(--accent)] px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2 text-white">
             <Gift size={16} />
-            <span className="text-xs font-bold uppercase tracking-wide">ưu đãi hôm nay</span>
+            <span className="text-xs font-bold uppercase tracking-wide">{VI.popupTitle}</span>
           </div>
           <button
             onClick={() => { setVisible(false); setTimeout(() => setDismissed(true), 500); }}
@@ -39,12 +40,8 @@ export default function PromoPopup() {
           </button>
         </div>
         <div className="px-4 py-4">
-          <p className="text-sm font-bold text-[var(--text-main)] mb-1">
-            Thiết kế 3D miễn phí
-          </p>
-          <p className="text-xs text-[var(--text-dim)] mb-4 leading-relaxed">
-            Nhận báo giá &amp; thiết kế mẫu 3D miễn phí cho đơn hàng đầu tiên. Liên hệ ngay!
-          </p>
+          <p className="text-sm font-bold text-[var(--text-main)] mb-1">{VI.popupHeading}</p>
+          <p className="text-xs text-[var(--text-dim)] mb-4 leading-relaxed">{VI.popupDesc}</p>
           <a
             href={`tel:${settings.contactPhone.replace(/\D/g, '')}`}
             className="flex items-center justify-center gap-2 bg-[var(--accent)] text-white text-sm font-bold py-2.5 rounded-xl hover:opacity-90 transition-opacity w-full"
