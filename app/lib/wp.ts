@@ -1,6 +1,11 @@
 // ============================================================
 // WordPress GraphQL client
 // CMS: cms.inhoangthinh.com.vn
+// Field names sau khi migrate sang cPanel:
+// whyChooseUs: features → whyList { icon title desc }
+// machinerysection: machines → danhSachMayMoc { machinename machinedescription machineimage }
+// factoryTourSection: videosList → videoUrl (single field)
+// testimonials: khong con tren Page
 // ============================================================
 
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
@@ -21,7 +26,6 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       return json.data;
     }
 
-    // Server-side: goi truc tiep WP, chi dung cache: no-store
     const res = await fetch(wpUrl, {
       method: 'POST',
       headers,
@@ -319,11 +323,14 @@ export async function getHomePageData() {
         }
         whyChooseUs {
           whyTagline whyTitle
-          features { iconName featureTitle featureDescription }
+          whyList { icon title desc }
         }
         machinerysection {
           tagline title
-          machines { machineName machineDescription machineImage { node { sourceUrl } } }
+          danhSachMayMoc {
+            machinename machinedescription
+            machineimage { node { sourceUrl } }
+          }
         }
         clientsSection {
           tagline title
@@ -331,12 +338,9 @@ export async function getHomePageData() {
         }
         factoryTourSection {
           tagline title description
-          videosList {
-            videoTitle videoUrl
-            coverImage { node { sourceUrl } }
-          }
+          videoUrl
+          coverImage { node { sourceUrl } }
         }
-        testimonials { content author position rating }
       }
     }
   `;
@@ -372,19 +376,19 @@ export async function getHomePageData() {
     whyChooseUs: {
       tagline: why?.whyTagline,
       title: why?.whyTitle,
-      features: (why?.features || []).map((f: any) => ({
-        iconName: f.iconName,
-        title: f.featureTitle,
-        desc: f.featureDescription,
+      features: (why?.whyList || []).map((f: any) => ({
+        iconName: f.icon,
+        title: f.title,
+        desc: f.desc,
       })),
     },
     machinery: {
       tagline: machinery?.tagline,
       title: machinery?.title,
-      machines: (machinery?.machines || []).map((m: any) => ({
-        title: m.machineName,
-        desc: m.machineDescription,
-        img: m.machineImage?.node?.sourceUrl || null,
+      machines: (machinery?.danhSachMayMoc || []).map((m: any) => ({
+        title: m.machinename,
+        desc: m.machinedescription,
+        img: m.machineimage?.node?.sourceUrl || null,
       })),
     },
     clients: {
@@ -399,13 +403,13 @@ export async function getHomePageData() {
       tagline: factory?.tagline,
       title: factory?.title,
       description: factory?.description,
-      videosList: (factory?.videosList || []).map((v: any) => ({
-        title: v.videoTitle || null,
-        url: v.videoUrl || null,
-        cover: v.coverImage?.node?.sourceUrl || null,
-      })),
+      videosList: factory?.videoUrl ? [{
+        title: factory?.title || null,
+        url: factory?.videoUrl || null,
+        cover: factory?.coverImage?.node?.sourceUrl || null,
+      }] : [],
     },
-    testimonials: p.testimonials || [],
+    testimonials: [],
   };
 }
 
