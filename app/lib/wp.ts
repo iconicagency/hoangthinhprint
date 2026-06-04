@@ -1,10 +1,6 @@
 // ============================================================
 // WordPress GraphQL client
 // CMS: cms.inhoangthinh.com.vn
-// Field names sau khi migrate sang cPanel:
-// whyChooseUs: whyList { icon { node { sourceUrl } } title desc }
-// machinerysection: danhSachMayMoc { machinename machinedescription machineimage }
-// factoryTourSection: videoUrl (single), coverImage
 // ============================================================
 
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
@@ -21,7 +17,8 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       });
       if (!res.ok) return null;
       const json = await res.json();
-      if (json.errors) return null;
+      // Chi return null khi KHONG co data gi ca
+      if (!json.data) return null;
       return json.data;
     }
 
@@ -38,12 +35,16 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
     }
 
     const json = await res.json();
+
+    // Log errors nhung van tra ve data neu co
     if (json.errors) {
-      console.error('Loi WP GraphQL:', JSON.stringify(json.errors));
-      return null;
+      console.error('WP GraphQL partial errors:', json.errors.map((e: any) => e.message).join(', '));
     }
 
-    return json.data;
+    // Tra ve data du co errors hay khong (partial data)
+    if (json.data) return json.data;
+    return null;
+
   } catch (error) {
     console.error('Loi ket noi WordPress:', error);
     return null;
