@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const wpUrl = 'https://cms.inhoangthinh.com.vn/graphql';
   
@@ -11,12 +13,20 @@ export async function GET() {
       body: JSON.stringify({
         query: `{
           page(id: "trang-chu", idType: URI) {
-            workingProcess { tagline title steps { steptitle } }
-            printingServices { tagline tieuD services { servicetitle } }
-            whyChooseUs { whyTagline whyTitle whyList { icon title desc } }
-            machinerysection { tagline title danhSachMayMoc { machinename } }
-            clientsSection { tagline title clients { clientname } }
-            factoryTourSection { tagline title videoUrl coverImage { node { sourceUrl } } }
+            printingServices { services { servicetitle } }
+            whyChooseUs {
+              whyList {
+                icon { node { sourceUrl } }
+                title
+                desc
+              }
+            }
+            machinerysection {
+              danhSachMayMoc { machinename }
+            }
+            factoryTourSection {
+              videoUrl
+            }
           }
         }`
       }),
@@ -27,9 +37,8 @@ export async function GET() {
     const page = json?.data?.page;
     
     return NextResponse.json({
-      ok: true,
+      ok: !json?.errors,
       elapsed: `${elapsed}ms`,
-      hasErrors: !!json?.errors,
       errors: json?.errors ?? null,
       services: page?.printingServices?.services?.length ?? 'null',
       whyList: page?.whyChooseUs?.whyList?.length ?? 'null',
