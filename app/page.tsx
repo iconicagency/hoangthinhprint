@@ -41,6 +41,13 @@ export default async function Home() {
     getHomePageData(),
   ]);
 
+  // DEBUG: log kết quả để xem lỗi trong Vercel logs
+  console.log('[HOME] aboveResult:', aboveResult.status, aboveResult.status === 'rejected' ? aboveResult.reason : 'OK');
+  console.log('[HOME] homeResult:', homeResult.status, homeResult.status === 'rejected' ? homeResult.reason : 'OK');
+  if (homeResult.status === 'fulfilled') {
+    console.log('[HOME] wpHomeData services:', (homeResult.value as any)?.printingServices?.services?.length ?? 'null');
+  }
+
   const aboveFold = aboveResult.status === 'fulfilled' ? aboveResult.value as any : null;
   const wpHomeData = homeResult.status === 'fulfilled' ? homeResult.value as any : null;
 
