@@ -2,10 +2,9 @@
 // WordPress GraphQL client
 // CMS: cms.inhoangthinh.com.vn
 // Field names sau khi migrate sang cPanel:
-// whyChooseUs: features → whyList { icon title desc }
-// machinerysection: machines → danhSachMayMoc { machinename machinedescription machineimage }
-// factoryTourSection: videosList → videoUrl (single field)
-// testimonials: khong con tren Page
+// whyChooseUs: whyList { icon { node { sourceUrl } } title desc }
+// machinerysection: danhSachMayMoc { machinename machinedescription machineimage }
+// factoryTourSection: videoUrl (single), coverImage
 // ============================================================
 
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
@@ -323,7 +322,11 @@ export async function getHomePageData() {
         }
         whyChooseUs {
           whyTagline whyTitle
-          whyList { icon title desc }
+          whyList {
+            icon { node { sourceUrl } }
+            title
+            desc
+          }
         }
         machinerysection {
           tagline title
@@ -377,7 +380,7 @@ export async function getHomePageData() {
       tagline: why?.whyTagline,
       title: why?.whyTitle,
       features: (why?.whyList || []).map((f: any) => ({
-        iconName: f.icon,
+        iconName: f.icon?.node?.sourceUrl || null,
         title: f.title,
         desc: f.desc,
       })),
