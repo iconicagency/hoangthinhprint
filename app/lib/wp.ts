@@ -1,8 +1,6 @@
 // ============================================================
 // WordPress GraphQL client
 // CMS: cms.inhoangthinh.com.vn
-// Quy tắc WPGraphQL: ACF group name → lowercase, sub-fields → giữ nguyên camelCase
-// ACF Image field → AcfMediaItemConnectionEdge → dùng node { sourceUrl }
 // ============================================================
 
 export async function fetchWP(query: string, { variables }: { variables?: any } = {}) {
@@ -23,37 +21,31 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       return json.data;
     }
 
+    // Server-side: goi truc tiep WP, chi dung cache: no-store
     const res = await fetch(wpUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify({ query, variables }),
       cache: 'no-store',
-      next: { revalidate: 0 },
     });
 
     if (!res.ok) {
-      console.error('Kết nối WP lỗi. Status:', res.status);
+      console.error('Ket noi WP loi. Status:', res.status);
       return null;
     }
 
     const json = await res.json();
     if (json.errors) {
-      console.error('Lỗi từ WordPress GraphQL:', JSON.stringify(json.errors, null, 2));
+      console.error('Loi WP GraphQL:', JSON.stringify(json.errors));
       return null;
     }
 
     return json.data;
   } catch (error) {
-    console.error('Lỗi kết nối WordPress:', error);
+    console.error('Loi ket noi WordPress:', error);
     return null;
   }
 }
-
-// ============================================================
-// Above-fold data — query NHỎ NHẤT có thể
-// Chỉ: hero slides + stats (hiển thị ngay khi load)
-// Video, services, machinery... → getHomePageData() below-fold
-// ============================================================
 
 export async function getAboveFoldData() {
   const query = `
@@ -75,17 +67,14 @@ export async function getAboveFoldData() {
   `;
   const data = await fetchWP(query);
   if (!data?.page) return null;
-
   const hero = data.page.cauHinhTrangChu;
   if (!hero) return null;
-
   const slidesList = (hero.heroslideslist || []).map((s: any) => ({
     slideImage: s.slideImage?.node?.sourceUrl || null,
     slideTagline: s.slideTagline || null,
     slideTitle: s.slideTitle || null,
     slideSubtitle: s.slidesubtitle || null,
   })).filter((s: any) => s.slideImage);
-
   return {
     heroTagline: hero.herotagline || null,
     heroTitle: hero.herotitle || null,
@@ -98,12 +87,7 @@ export async function getAboveFoldData() {
   };
 }
 
-// compat alias
 export const getHeroSlides = getAboveFoldData;
-
-// ============================================================
-// SEO — wp-graphql-rank-math (AxeWP)
-// ============================================================
 
 export async function getSeoForPost(slug: string) {
   const query = `
@@ -138,10 +122,6 @@ export async function getSeoForPage(slug: string) {
   const data = await fetchWP(query, { variables: { slug } });
   return data?.page?.seo || null;
 }
-
-// ============================================================
-// Pages
-// ============================================================
 
 export async function getPageBySlug(slug: string) {
   const query = `
@@ -230,10 +210,6 @@ export async function getIndustryPageData(uri: string) {
   return data?.page || null;
 }
 
-// ============================================================
-// Posts / Blog
-// ============================================================
-
 export async function getPostBySlug(slug: string) {
   const query = `
     query GetPostBySlug($id: ID!) {
@@ -280,10 +256,6 @@ export async function getRecentPosts() {
   return getPosts(3);
 }
 
-// ============================================================
-// Dự án / Portfolio (CPT: du_an)
-// ============================================================
-
 export async function getProjects() {
   const query = `
     query GetProjects {
@@ -314,10 +286,6 @@ export async function getProjectBySlug(slug: string) {
   return data?.duAn || null;
 }
 
-// ============================================================
-// Gallery sản phẩm (Posts + category)
-// ============================================================
-
 export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50) {
   const query = `
     query GetGallery($first: Int!, $categorySlug: String!) {
@@ -333,10 +301,6 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
   const data = await fetchWP(query, { variables: { first, categorySlug } });
   return data?.posts?.nodes || [];
 }
-
-// ============================================================
-// Trang chủ — below-fold (services, machinery, video, v.v.)
-// ============================================================
 
 export async function getHomePageData() {
   const query = `
@@ -378,7 +342,6 @@ export async function getHomePageData() {
   `;
   const data = await fetchWP(query);
   if (!data?.page) return null;
-
   const p = data.page;
   const process = p.workingProcess;
   const services = p.printingServices;
@@ -386,7 +349,6 @@ export async function getHomePageData() {
   const machinery = p.machinerysection;
   const clients = p.clientsSection;
   const factory = p.factoryTourSection;
-
   return {
     workingProcess: {
       tagline: process?.tagline,
@@ -447,10 +409,6 @@ export async function getHomePageData() {
   };
 }
 
-// ============================================================
-// Header / Footer settings (ACF Options)
-// ============================================================
-
 export async function getHeaderFooterSettings() {
   const query = `
     query GetHeaderFooterSettings {
@@ -469,7 +427,6 @@ export async function getHeaderFooterSettings() {
   `;
   const data = await fetchWP(query);
   if (!data) return null;
-
   return {
     siteTitle: data.generalSettings?.title,
     ...data.headerSettings?.headerSetup,
