@@ -24,29 +24,29 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Header — padding 1px trên dưới, logo 100px */}
-      <header className="bg-[var(--bg)] px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ paddingTop: '1px', paddingBottom: '1px' }}>
-        <Link href="/" className="flex items-center shrink-0">
+      {/* Header — line-height: 0 để loại bỏ khoảng trắng thừa, logo 100px */}
+      <header className="bg-[var(--bg)] px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ lineHeight: 0 }}>
+        <Link href="/" className="flex items-center shrink-0" style={{ lineHeight: 0 }}>
           {settings.logoUrl ? (
             <Image
               src={settings.logoUrl}
               alt="Logo"
               width={400}
               height={100}
-              className="object-contain w-auto"
-              style={{ height: '100px' }}
+              className="object-contain w-auto block"
+              style={{ height: '100px', display: 'block' }}
               priority
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2">
+            <div className="text-2xl font-black text-[var(--text-main)] tracking-tighter flex items-center gap-2" style={{ lineHeight: 'normal' }}>
               <div className="w-10 h-10 bg-[var(--accent)] rounded-sm flex items-center justify-center text-[var(--bg)] text-sm">H</div>
               {settings.logoText || 'In Hoàng Thịnh'}
             </div>
           )}
         </Link>
 
-        <nav className="hidden lg:block">
+        <nav className="hidden lg:block" style={{ lineHeight: 'normal' }}>
           <ul className="flex gap-6 text-sm font-bold text-[var(--text-main)] uppercase tracking-wide items-center">
             <li><Link href="/" className="hover:text-[var(--accent)] transition-colors">{M.trangChu}</Link></li>
             <li><Link href="/gioi-thieu" className="hover:text-[var(--accent)] transition-colors">{M.gioiThieu}</Link></li>
@@ -86,7 +86,7 @@ export default function Header() {
           </ul>
         </nav>
 
-        <Link href="/bao-gia" className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20 shrink-0">
+        <Link href="/bao-gia" className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20 shrink-0" style={{ lineHeight: 'normal' }}>
           {M.baoGiaNgay}
         </Link>
       </header>
