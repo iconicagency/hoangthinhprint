@@ -8,6 +8,10 @@ import BackToTop from './components/BackToTop';
 import FloatContact from './components/FloatContact';
 import { getHeaderFooterSettings } from './lib/wp';
 
+// Bat buoc tat ca pages render dong (server-side) thay vi static
+// De dam bao data luon duoc fetch tu WP khi nguoi dung truy cap
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({
   subsets: ['vietnamese'],
   variable: '--font-sans',
@@ -22,8 +26,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'In Hoàng Thịnh',
-  description: 'Giải Pháp In Ấn Bao Bì Trọn Gói',
+  title: 'In Hoang Thinh',
+  description: 'Giai Phap In An Bao Bi Tron Goi',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
