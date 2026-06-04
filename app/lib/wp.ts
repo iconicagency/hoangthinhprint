@@ -28,6 +28,7 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       headers,
       body: JSON.stringify({ query, variables }),
       cache: 'no-store',
+      next: { revalidate: 0 },
     });
 
     if (!res.ok) {
