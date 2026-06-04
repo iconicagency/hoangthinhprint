@@ -11,13 +11,12 @@ export async function GET() {
       body: JSON.stringify({
         query: `{
           page(id: "trang-chu", idType: URI) {
-            workingProcess { tagline title steps { steptitle stepdescription } }
-            printingServices { tagline tieuD services { servicetitle servicedescription serviceimage { node { sourceUrl } } } }
-            whyChooseUs { whyTagline whyTitle features { iconName featureTitle featureDescription } }
-            machinerysection { tagline title machines { machineName machineDescription machineImage { node { sourceUrl } } } }
-            clientsSection { tagline title clients { clientname clientlogo { node { sourceUrl } } } }
-            factoryTourSection { tagline title description videosList { videoTitle videoUrl coverImage { node { sourceUrl } } } }
-            testimonials { content author position rating }
+            workingProcess { tagline title steps { steptitle } }
+            printingServices { tagline tieuD services { servicetitle } }
+            whyChooseUs { whyTagline whyTitle whyList { icon title desc } }
+            machinerysection { tagline title danhSachMayMoc { machinename } }
+            clientsSection { tagline title clients { clientname } }
+            factoryTourSection { tagline title videoUrl coverImage { node { sourceUrl } } }
           }
         }`
       }),
@@ -25,12 +24,17 @@ export async function GET() {
     });
     const elapsed = Date.now() - start;
     const json = await res.json();
+    const page = json?.data?.page;
     
     return NextResponse.json({
-      ok: res.ok,
+      ok: true,
       elapsed: `${elapsed}ms`,
+      hasErrors: !!json?.errors,
       errors: json?.errors ?? null,
-      services: json?.data?.page?.printingServices?.services?.length ?? 'null',
+      services: page?.printingServices?.services?.length ?? 'null',
+      whyList: page?.whyChooseUs?.whyList?.length ?? 'null',
+      machines: page?.machinerysection?.danhSachMayMoc?.length ?? 'null',
+      videoUrl: page?.factoryTourSection?.videoUrl ?? 'null',
     });
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err?.message });
