@@ -1,5 +1,7 @@
 'use client';
 
+import ContactForm from '../../components/ContactForm';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -16,82 +18,61 @@ export default function YenSaoPage() {
         const data = await getIndustryPageData('nganh-hang/yen-sao');
         if (data) setPageData(data);
       } catch (error) {
-        console.error("Lỗi khi tải trang:", error);
+        console.error("Loi khi tai trang:", error);
       }
     }
     loadData();
   }, []);
 
   const acf = pageData?.cauHinhChiTietNganhHang || {};
-
   const defaultFaqs = [
-    { question: 'Có làm hộp yến sào set quà tặng không?', answer: 'Có, chúng tôi chuyên thiết kế và sản xuất các set hộp yến sào quà tặng cao cấp, bao gồm hộp lớn, hộp nhỏ bên trong, túi giấy và thiệp đi kèm.' },
-    { question: 'Lót nhung bên trong có được không?', answer: 'Chắc chắn rồi. Lót nhung, lót lụa hoặc mút xốp bế định hình là lựa chọn tuyệt vời để bảo vệ và tôn lên vẻ sang trọng cho các lọ yến.' },
-    { question: 'Đặt 500 hộp có nhận không?', answer: 'Có, chúng tôi nhận sản xuất từ số lượng 500 hộp để hỗ trợ các doanh nghiệp vừa và nhỏ với mức chi phí tối ưu nhất.' },
-    { question: 'Thời gian sản xuất?', answer: 'Thời gian sản xuất trung bình từ 7-10 ngày làm việc kể từ khi chốt thiết kế và đặt cọc.' },
+    { question: 'Co lam hop yen sao set qua tang khong?', answer: 'Co, chuyen thiet ke va san xuat cac set hop yen sao qua tang cao cap.' },
+    { question: 'Lot nhung ben trong co duoc khong?', answer: 'Chac chan roi. Lot nhung, lot lua hoac mut xop be dinh hinh.' },
+    { question: 'Dat 500 hop co nhan khong?', answer: 'Co, nhan san xuat tu 500 hop.' },
+    { question: 'Thoi gian san xuat?', answer: 'Tu 7-10 ngay lam viec.' },
   ];
-
   const faqs = acf.faqs && acf.faqs.length > 0 ? acf.faqs : defaultFaqs;
-
-  const whyList = acf.whyList && acf.whyList.length > 0 
-    ? acf.whyList.map((w: any) => w.item) 
-    : [
-      'Sản phẩm giá trị cao — bao bì phải tương xứng',
-      'Hộp cứng bảo vệ lọ yến trong vận chuyển',
-      'Ép kim vàng tạo cảm giác sang trọng, quà tặng',
-      'Lót nhung, ngăn chia giữ cố định từng lọ',
-      'Chủ xưởng QC trực tiếp — đảm bảo hoàn hảo'
-    ];
-
-  const productsList = acf.productsList && acf.productsList.length > 0
-    ? acf.productsList
-    : [
-      { title: 'Hộp cứng âm dương', description: 'Ép kim vàng, lót nhung. Phổ biến nhất cho yến sào.' },
-      { title: 'Hộp cứng ngăn kéo', description: 'Sang trọng, kéo ra đẩy vào. Cho set quà tặng.' },
-      { title: 'Túi giấy kèm theo', description: 'Túi giấy ivory đi kèm hộp. Hoàn thiện bộ quà tặng.' }
-    ];
+  const whyList = acf.whyList && acf.whyList.length > 0 ? acf.whyList.map((w: any) => w.item) : [
+    'San pham gia tri cao — bao bi phai tuong xung',
+    'Hop cung bao ve lo yen trong van chuyen',
+    'Ep kim vang tao cam giac sang trong, qua tang',
+    'Lot nhung, ngan chia giu co dinh tung lo',
+    'Chu xuong QC truc tiep — dam bao hoan hao'
+  ];
+  const productsList = acf.productsList && acf.productsList.length > 0 ? acf.productsList : [
+    { title: 'Hop cung am duong', description: 'Ep kim vang, lot nhung. Pho bien nhat cho yen sao.' },
+    { title: 'Hop cung ngan keo', description: 'Sang trong, keo ra day vao. Cho set qua tang.' },
+    { title: 'Tui giay kem theo', description: 'Tui giay ivory di kem hop. Hoan thien bo qua tang.' }
+  ];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
-      {/* Hero Section */}
       <section className="bg-slate-900 text-white py-20 px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-sm text-slate-400 mb-6 flex items-center gap-2">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
-            <span>/</span>
-            <Link href="/nganh-hang" className="hover:text-white transition-colors">Ngành hàng</Link>
-            <span>/</span>
-            <span className="text-white">Yến Sào</span>
+            <Link href="/" className="hover:text-white transition-colors">Trang chu</Link>
+            <span>/</span><Link href="/nganh-hang" className="hover:text-white transition-colors">Nganh hang</Link>
+            <span>/</span><span className="text-white">Yen Sao</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">
-            {acf.heroTitle || 'Bao Bì Cho Ngành Yến Sào'}
-          </h1>
-          <p className="text-xl text-slate-300 max-w-2xl">
-            {acf.heroSubtitle || 'Hộp cứng truyền thống, ép kim vàng — Xứng tầm sản vật quý'}
-          </p>
+          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 tracking-tight">{acf.heroTitle || 'Bao Bi Cho Nganh Yen Sao'}</h1>
+          <p className="text-xl text-slate-300 max-w-2xl">{acf.heroSubtitle || 'Hop cung truyen thong, ep kim vang — Xung tam san vat quy'}</p>
         </div>
       </section>
-
-      {/* Intro Section */}
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bì Cho Ngành Yến Sào'}</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bi Cho Nganh Yen Sao'}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
           {acf.introContent ? (
-            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none prose-p:mb-4" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
+            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
           ) : (
-            <p className="text-[var(--text-dim)] text-lg leading-relaxed">
-              Yến sào là sản vật quý — bao bì phải xứng tầm. Hộp cứng ép kim vàng, lót nhung bên trong, thiết kế truyền thống kết hợp hiện đại giúp sản phẩm yến sào trở thành món quà ý nghĩa.
-            </p>
+            <p className="text-[var(--text-dim)] text-lg leading-relaxed">Yen sao la san vat quy — bao bi phai xung tam.</p>
           )}
         </div>
       </section>
-
-      {/* Why Choose Us */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">{acf.whyTitle || 'Tại sao yến sào cần bao bì đặc biệt?'}</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-12 text-center">{acf.whyTitle || 'Tai sao yen sao can bao bi dac biet?'}</h2>
           <div className="space-y-6">
             {whyList.map((item: string, i: number) => (
               <div key={i} className="flex items-start gap-4">
@@ -102,15 +83,12 @@ export default function YenSaoPage() {
           </div>
         </div>
       </section>
-
-      {/* Suitable Products */}
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.productsTitle || 'Sản phẩm phù hợp'}</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.productsTitle || 'San pham phu hop'}</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {productsList.map((prod: any, i: number) => (
               <div key={i} className="bg-white border border-[var(--border)] rounded-2xl p-8 text-center hover:shadow-xl transition-shadow group">
@@ -120,143 +98,63 @@ export default function YenSaoPage() {
                 <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">{prod.title}</h3>
                 <p className="text-[var(--text-dim)] mb-8 h-12">{prod.description}</p>
                 <Link href={prod.link || '/san-pham'} className="text-[var(--accent)] font-bold flex items-center justify-center gap-2 w-full hover:opacity-80 transition-opacity">
-                  Xem thêm <ArrowRight size={18} />
+                  Xem them <ArrowRight size={18} />
                 </Link>
               </div>
             ))}
           </div>
-          
-          <p className="text-center text-[var(--accent)] font-bold text-lg">
-            {acf.pricingText || 'Hộp cứng yến sào từ 17.800đ/hộp. MOQ 500.'}
-          </p>
+          <p className="text-center text-[var(--accent)] font-bold text-lg">{acf.pricingText || 'Hop cung yen sao tu 17.800d/hop. MOQ 500.'}</p>
         </div>
       </section>
-
-      {/* Sample Products */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Sản phẩm mẫu</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">San pham mau</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
-          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {acf.sampleImages?.nodes?.length > 0 ? (
-              acf.sampleImages.nodes.map((img: any, i: number) => (
-                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                  <Image src={img.sourceUrl} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                </div>
-              ))
-            ) : (
-              [1, 2, 3, 4].map((i) => (
-                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                  <Image src={`https://picsum.photos/seed/yensao${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-24 px-8 bg-[var(--bg)]">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Câu hỏi thường gặp'}</h2>
-            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
-          </div>
-          
-          <div className="space-y-4">
-            {faqs.map((faq: any, i: number) => (
-              <div key={i} className="border border-[var(--border)] rounded-xl overflow-hidden bg-white">
-                <button 
-                  className="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-[var(--text-main)] hover:bg-[var(--card-bg)] transition-colors"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                >
-                  {faq.question || faq.q}
-                  {openFaq === i ? <ChevronUp size={20} className="text-[var(--accent)]" /> : <ChevronDown size={20} className="text-[var(--text-dim)]" />}
-                </button>
-                {openFaq === i && (
-                  <div className="px-6 pb-4 text-[var(--text-dim)] leading-relaxed">
-                    {faq.answer || faq.a}
-                  </div>
-                )}
+            {acf.sampleImages?.nodes?.length > 0 ? acf.sampleImages.nodes.map((img: any, i: number) => (
+              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                <Image src={img.sourceUrl} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+              </div>
+            )) : [1,2,3,4].map((i) => (
+              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
+                <Image src={`https://picsum.photos/seed/yensao${i}/400/400`} alt={`Sample ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
               </div>
             ))}
           </div>
         </div>
       </section>
-
-      {/* Contact Form */}
+      <section className="py-24 px-8 bg-[var(--bg)]">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Cau hoi thuong gap'}</h2>
+            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+          </div>
+          <div className="space-y-4">
+            {faqs.map((faq: any, i: number) => (
+              <div key={i} className="border border-[var(--border)] rounded-xl overflow-hidden bg-white">
+                <button className="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-[var(--text-main)] hover:bg-[var(--card-bg)] transition-colors"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  {faq.question || faq.q}
+                  {openFaq === i ? <ChevronUp size={20} className="text-[var(--accent)]" /> : <ChevronDown size={20} className="text-[var(--text-dim)]" />}
+                </button>
+                {openFaq === i && <div className="px-6 pb-4 text-[var(--text-dim)] leading-relaxed">{faq.answer || faq.a}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* Contact Form - ket noi /api/bao-gia */}
       <section className="py-24 px-4 bg-slate-900 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Nhận báo giá miễn phí</h2>
-            <p className="text-slate-400">Phản hồi trong 5 phút</p>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Nhan bao gia mien phi</h2>
+            <p className="text-slate-400">Phan hoi trong 5 phut</p>
           </div>
-          
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Họ và tên <span className="text-red-500">*</span></label>
-                  <input type="text" placeholder="Nguyễn Văn A" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Số điện thoại <span className="text-red-500">*</span></label>
-                  <input type="tel" placeholder="0901 234 567" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                  <input type="email" placeholder="email@example.com" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Tên công ty</label>
-                  <input type="text" placeholder="Công ty ABC" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900" />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Sản phẩm cần in</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900">
-                    <option>-- Chọn --</option>
-                    <option>Hộp cứng</option>
-                    <option>Túi giấy</option>
-                    <option>Hộp sóng</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Số lượng dự kiến</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900">
-                    <option>-- Chọn --</option>
-                    <option>500 - 1.000</option>
-                    <option>1.000 - 5.000</option>
-                    <option>&gt; 5.000</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Ngành hàng</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900">
-                    <option>Yến sào</option>
-                    <option>TPCN & Dược phẩm</option>
-                    <option>Mỹ phẩm & Skincare</option>
-                    <option>Thực phẩm</option>
-                    <option>Quà tặng</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Ghi chú thêm</label>
-                <textarea placeholder="Mô tả yêu cầu chi tiết..." rows={4} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] bg-white text-slate-900"></textarea>
-              </div>
-              <button type="button" className="w-full bg-[var(--accent)] text-white font-bold py-4 rounded-lg hover:opacity-90 transition-opacity uppercase tracking-wide flex items-center justify-center gap-2">
-                GỬI YÊU CẦU BÁO GIÁ <ArrowRight size={20} />
-              </button>
-              <p className="text-center text-xs text-slate-500 mt-4">Cam kết bảo mật thông tin - Phản hồi trong 5 phút</p>
-            </form>
+            <ContactForm showCompany={true} showIndustry={true} />
           </div>
         </div>
       </section>
