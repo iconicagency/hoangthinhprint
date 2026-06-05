@@ -171,6 +171,7 @@ export async function getAboutPageData() {
 }
 
 export async function getNganhHangPageData() {
+  // danhsachnganhhang - lowercase theo GraphQL schema
   const query = `
     query GetNganhHangPageData {
       page(id: "nganh-hang", idType: URI) {
@@ -178,7 +179,7 @@ export async function getNganhHangPageData() {
         featuredImage { node { sourceUrl } }
         cauHinhTrangNganhHang {
           heroTitle heroSubtitle
-          danhSachNganhHang {
+          danhsachnganhhang {
             title description icon link
             image { node { sourceUrl } }
           }
