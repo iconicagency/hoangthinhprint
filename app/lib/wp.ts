@@ -136,7 +136,6 @@ export async function getPageBySlug(slug: string) {
 }
 
 export async function getAboutPageData() {
-  // Field names dung lowercase theo GraphQL schema thuc te
   const query = `
     query GetAboutPageData {
       page(id: "gioi-thieu", idType: URI) {
@@ -171,7 +170,6 @@ export async function getAboutPageData() {
 }
 
 export async function getNganhHangPageData() {
-  // Tat ca field names dung lowercase theo GraphQL schema
   const query = `
     query GetNganhHangPageData {
       page(id: "nganh-hang", idType: URI) {
@@ -307,6 +305,10 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
 }
 
 export async function getHomePageData() {
+  // LƯU Ý: KHÔNG query tagline/title từ machinerysection, clientsSection, factoryTourSection
+  // vì các ACF field groups này đều dùng field name "tagline"/"title" giống nhau
+  // → WordPress lưu chung 1 meta_key, data bị lẫn nhau (ACF field name conflict không thể fix ở schema level)
+  // → Dùng VI constants trong page.tsx thay thế
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
@@ -329,18 +331,16 @@ export async function getHomePageData() {
           }
         }
         machinerysection {
-          tagline title
           danhSachMayMoc {
             machinename machinedescription
             machineimage { node { sourceUrl } }
           }
         }
         clientsSection {
-          tagline title
           clients { clientname clientlogo { node { sourceUrl } } }
         }
         factoryTourSection {
-          tagline title description
+          description
           videoUrl
           coverImage { node { sourceUrl } }
         }
@@ -377,17 +377,18 @@ export async function getHomePageData() {
       })),
     },
     whyChooseUs: {
-      tagline: why?.whyTagline,
-      title: why?.whyTitle,
+      tagline: why?.whyTagline || null,
+      title: why?.whyTitle || null,
       features: (why?.whyList || []).map((f: any) => ({
         iconName: f.icon?.node?.sourceUrl || null,
         title: f.title,
         desc: f.desc,
       })),
     },
+    // tagline/title trả về null — page.tsx sẽ dùng VI constants thay thế
     machinery: {
-      tagline: machinery?.tagline,
-      title: machinery?.title,
+      tagline: null,
+      title: null,
       machines: (machinery?.danhSachMayMoc || []).map((m: any) => ({
         title: m.machinename,
         desc: m.machinedescription,
@@ -395,19 +396,19 @@ export async function getHomePageData() {
       })),
     },
     clients: {
-      tagline: clients?.tagline,
-      title: clients?.title,
+      tagline: null,
+      title: null,
       list: (clients?.clients || []).map((c: any) => ({
         name: c.clientname,
         logo: c.clientlogo?.node?.sourceUrl || null,
       })),
     },
     factoryTour: {
-      tagline: factory?.tagline,
-      title: factory?.title,
-      description: factory?.description,
+      tagline: null,
+      title: null,
+      description: factory?.description || null,
       videosList: factory?.videoUrl ? [{
-        title: factory?.title || null,
+        title: null,
         url: factory?.videoUrl || null,
         cover: factory?.coverImage?.node?.sourceUrl || null,
       }] : [],
