@@ -31,7 +31,6 @@ const DEFAULT_CONTENT = {
 };
 
 function buildSlides(dynamicHero: any): Slide[] {
-  // Ưu tiên heroSlidesList — mỗi slide có ảnh riêng từ WP
   const slidesList = dynamicHero?.heroSlidesList;
   if (Array.isArray(slidesList) && slidesList.length > 0) {
     const validSlides = slidesList
@@ -49,7 +48,6 @@ function buildSlides(dynamicHero: any): Slide[] {
     if (validSlides.length > 0) return validSlides;
   }
 
-  // Fallback: heroslides (Gallery field cũ)
   const heroSlides = dynamicHero?.heroSlides;
   if (Array.isArray(heroSlides) && heroSlides.length > 0) {
     const sharedContent = {
@@ -64,7 +62,6 @@ function buildSlides(dynamicHero: any): Slide[] {
     return heroSlides.filter(Boolean).map((img: string) => ({ img, ...sharedContent }));
   }
 
-  // Không có ảnh — hiện nền gradient với nội dung mặc định
   return [{ img: '', ...DEFAULT_CONTENT }];
 }
 
@@ -87,39 +84,46 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
   return (
     <section
       className="relative overflow-hidden bg-slate-900 text-white"
-      style={{ height: 'clamp(340px, 56vw, 750px)' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Slides background */}
-      {slides.map((s, i) => (
-        <div
-          key={i}
-          className="absolute inset-0 transition-opacity duration-1000"
-          style={{ opacity: i === current ? 1 : 0, zIndex: 0 }}
-        >
-          {s.img ? (
-            <Image
-              src={s.img}
-              alt={s.title || ''}
-              fill
-              className="object-cover object-center"
-              priority={i === 0}
-              referrerPolicy="no-referrer"
-              unoptimized
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950" />
-          )}
-          {/* Overlay nhẹ hơn trên mobile để ảnh nổi bật hơn */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 md:bg-gradient-to-r md:from-black/80 md:via-black/50 md:to-black/80" />
-        </div>
-      ))}
+      {/*
+        Mobile: aspect-ratio 4/3 — ảnh hiện đầy đủ, không bị cắt đầu cắt chân
+        Desktop: chiều cao cố định 750px như thiết kế gốc
+      */}
+      <div className="aspect-[4/3] md:aspect-auto md:h-[750px] relative">
 
-      {/* Desktop content — ẩn trên mobile */}
-      <div className="hidden md:flex relative z-10 h-full items-center justify-center">
-        <div className="max-w-5xl mx-auto px-8 text-center mt-10">
-          <div key={current}>
+        {/* Slides */}
+        {slides.map((s, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 transition-opacity duration-1000"
+            style={{ opacity: i === current ? 1 : 0, zIndex: 0 }}
+          >
+            {s.img ? (
+              <Image
+                src={s.img}
+                alt={s.title || ''}
+                fill
+                sizes="(max-width: 768px) 100vw, 100vw"
+                className="object-cover object-center"
+                priority={i === 0}
+                referrerPolicy="no-referrer"
+                unoptimized
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950" />
+            )}
+
+            {/* Overlay: mobile = gradient nhẹ chỉ ở đáy để button dễ đọc; desktop = overlay đậm phủ đều */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:hidden" />
+            <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/80 via-black/50 to-black/80" />
+          </div>
+        ))}
+
+        {/* Desktop content */}
+        <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center">
+          <div className="max-w-5xl mx-auto px-8 text-center mt-10" key={current}>
             {slide.tagline && (
               <div className="inline-block border border-[var(--accent)] text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase bg-[var(--accent)]/80 backdrop-blur-sm mb-8 shadow-lg">
                 {slide.tagline}
@@ -133,76 +137,77 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
             </p>
             {slide.buttons && slide.buttons.length > 0 && (
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                {slide.buttons.map((btn: any, i: number) => (
-                  <Link key={i} href={btn.link}
-                    className={i === 0
+                {slide.buttons.map((btn: any, idx: number) => (
+                  <Link key={idx} href={btn.link}
+                    className={idx === 0
                       ? "bg-[var(--accent)] text-white px-10 py-4 rounded-lg font-bold hover:scale-105 transition-all shadow-xl shadow-[var(--accent)]/30 flex items-center justify-center gap-2 text-lg"
                       : "bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-lg font-bold hover:bg-white/20 transition-colors flex items-center justify-center text-lg shadow-lg"
                     }>
-                    {btn.label} {i === 0 && <ArrowRight size={20} />}
+                    {btn.label} {idx === 0 && <ArrowRight size={20} />}
                   </Link>
                 ))}
               </div>
             )}
             {slide.benefits && slide.benefits.length > 0 && (
-              <div className="mt-14 grid grid-cols-4 gap-6 text-sm md:text-base text-gray-200 font-medium">
-                {slide.benefits.map((b: any, i: number) => (
-                  <div key={i} className="flex flex-col items-center gap-1">
+              <div className="mt-14 grid grid-cols-4 gap-6 text-base text-gray-200 font-medium">
+                {slide.benefits.map((b: any, idx: number) => (
+                  <div key={idx} className="flex flex-col items-center gap-1">
                     <span className="font-bold text-white text-lg">{b.title}</span>
-                    {b.subtitle && <span className="text-gray-300 text-xs md:text-sm">{b.subtitle}</span>}
+                    {b.subtitle && <span className="text-gray-300 text-sm">{b.subtitle}</span>}
                   </div>
                 ))}
               </div>
             )}
           </div>
         </div>
-      </div>
 
-      {/* Mobile content — chỉ hiện button ở góc dưới */}
-      <div className="flex md:hidden absolute inset-0 z-10 items-end justify-center pb-10 px-4">
-        {slide.buttons && slide.buttons.length > 0 && (
-          <div className="flex gap-3 w-full max-w-sm">
-            {slide.buttons.map((btn: any, i: number) => (
-              <Link
+        {/* Mobile: chỉ 2 button ở đáy, nổi lên trên ảnh */}
+        <div className="md:hidden absolute inset-x-0 bottom-0 z-10 px-4 pb-5">
+          {slide.buttons && slide.buttons.length > 0 && (
+            <div className="flex gap-3">
+              {slide.buttons.map((btn: any, idx: number) => (
+                <Link
+                  key={idx}
+                  href={btn.link}
+                  className={
+                    idx === 0
+                      ? "flex-1 bg-[var(--accent)] text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg flex items-center justify-center gap-1 active:scale-95 transition-transform"
+                      : "flex-1 bg-black/50 backdrop-blur-sm border border-white/30 text-white py-3 rounded-xl font-bold text-sm text-center active:scale-95 transition-transform"
+                  }
+                >
+                  {btn.label} {idx === 0 && <ArrowRight size={15} />}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Arrows */}
+        {slides.length > 1 && (
+          <>
+            <button onClick={prev} className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-11 md:h-11 bg-white/15 hover:bg-white/30 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
+              <ChevronLeft size={18} />
+            </button>
+            <button onClick={next} className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-11 md:h-11 bg-white/15 hover:bg-white/30 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
+
+        {/* Dots */}
+        {slides.length > 1 && (
+          <div className="absolute bottom-14 md:bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
+            {slides.map((_, i) => (
+              <button
                 key={i}
-                href={btn.link}
-                className={
-                  i === 0
-                    ? "flex-1 bg-[var(--accent)] text-white py-3 rounded-lg font-bold text-center text-sm shadow-lg flex items-center justify-center gap-1"
-                    : "flex-1 bg-black/40 backdrop-blur-md border border-white/40 text-white py-3 rounded-lg font-bold text-center text-sm"
-                }
-              >
-                {btn.label} {i === 0 && <ArrowRight size={16} />}
-              </Link>
+                onClick={() => setCurrent(i)}
+                className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-5 h-2' : 'bg-white/50 hover:bg-white/80 w-2 h-2'}`}
+              />
             ))}
           </div>
         )}
+
       </div>
-
-      {/* Navigation arrows */}
-      {slides.length > 1 && (
-        <>
-          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-11 md:h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
-            <ChevronLeft size={20} />
-          </button>
-          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-11 md:h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
-            <ChevronRight size={20} />
-          </button>
-        </>
-      )}
-
-      {/* Dots */}
-      {slides.length > 1 && (
-        <div className="absolute bottom-4 md:bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-6 h-2.5' : 'bg-white/50 hover:bg-white/80 w-2.5 h-2.5'}`}
-            />
-          ))}
-        </div>
-      )}
     </section>
   );
 }
