@@ -8,7 +8,6 @@ import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-import PromoPopup from './components/PromoPopup';
 import HeroSlider from './components/HeroSlider';
 import WPRecentPosts from './components/WPRecentPosts';
 import WPProjects from './components/WPProjects';
@@ -40,13 +39,6 @@ export default async function Home() {
     getAboveFoldData(),
     getHomePageData(),
   ]);
-
-  // DEBUG: log kết quả để xem lỗi trong Vercel logs
-  console.log('[HOME] aboveResult:', aboveResult.status, aboveResult.status === 'rejected' ? aboveResult.reason : 'OK');
-  console.log('[HOME] homeResult:', homeResult.status, homeResult.status === 'rejected' ? homeResult.reason : 'OK');
-  if (homeResult.status === 'fulfilled') {
-    console.log('[HOME] wpHomeData services:', (homeResult.value as any)?.printingServices?.services?.length ?? 'null');
-  }
 
   const aboveFold = aboveResult.status === 'fulfilled' ? aboveResult.value as any : null;
   const wpHomeData = homeResult.status === 'fulfilled' ? homeResult.value as any : null;
@@ -128,7 +120,6 @@ export default async function Home() {
 
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
-      <PromoPopup />
       <HeroSlider dynamicHero={aboveFold} />
 
       {/* Stats */}
@@ -148,7 +139,7 @@ export default async function Home() {
       {/* Dich Vu In An */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{printingServicesData?.tagline || VI.dichVu}</div>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{VI.dichVu}</div>
           <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{printingServicesData?.title || VI.dichVuTitle}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
@@ -158,8 +149,8 @@ export default async function Home() {
       {/* Quy Trinh */}
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{workingProcessData?.tagline || VI.quyTrinh}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{workingProcessData?.title || VI.quyTrinh}</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{VI.quyTrinh}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{VI.quyTrinh}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto">
