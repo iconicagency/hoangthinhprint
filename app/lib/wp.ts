@@ -136,28 +136,32 @@ export async function getPageBySlug(slug: string) {
 }
 
 export async function getAboutPageData() {
+  // Field names dung lowercase theo GraphQL schema thuc te
   const query = `
     query GetAboutPageData {
       page(id: "gioi-thieu", idType: URI) {
         title content
         featuredImage { node { sourceUrl } }
         cauHinhTrangGioiThieu {
-          heroTitle heroSubtitle storyTitle storyContent
-          storyImage { node { sourceUrl } }
-          visionTitle visionContent missionTitle missionContent
+          heroSection
+          herosubtitle
+          storytitle storycontent storysubtitle
+          storyimage { node { sourceUrl } }
+          visiontitle visioncontent
+          missiontitle missioncontent
           stats { number label }
-          productionCapacityTitle productionCapacityDescription
-          productionImages { nodes { sourceUrl } }
-          productionFacilities { title description icon }
-          benefits { title description }
-          coreValues { title description }
-          servicesTitle
-          servicesList { title description image { node { sourceUrl } } }
-          commitmentsTitle
-          commitmentsList { title description icon }
-          ctaTitle ctaDescription
-          contactAddress contactHotline contactEmail
-          contactImages { nodes { sourceUrl } }
+          productioncapacitytitle productioncapacitydescription
+          productionimages { nodes { sourceUrl } }
+          productionfacilities { title description icon }
+          benefits { title description icon }
+          corevalues { title description icon }
+          servicestitle
+          serviceslist { title description image { node { sourceUrl } } }
+          commitmentstitle
+          commitmentslist { title description icon }
+          ctatitle ctadescription
+          contactaddress contacthotline contactemail
+          contactimages { nodes { sourceUrl } }
         }
       }
     }
@@ -302,9 +306,6 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
 }
 
 export async function getHomePageData() {
-  // NOTE: Khong query tagline/title cua printingServices va workingProcess
-  // vi WP luu chung 1 meta_key 'tagline'/'title' cho ca 2 section
-  // Dung VI constants thay the (app/lib/vi.ts)
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
@@ -356,8 +357,8 @@ export async function getHomePageData() {
   const factory = p.factoryTourSection;
   return {
     workingProcess: {
-      tagline: null, // dung VI.quyTrinh trong page.tsx
-      title: null,   // dung VI.quyTrinh trong page.tsx
+      tagline: null,
+      title: null,
       steps: (process?.steps || []).map((s: any, i: number) => ({
         step: (i + 1).toString().padStart(2, '0'),
         title: s.steptitle,
@@ -366,7 +367,7 @@ export async function getHomePageData() {
       })),
     },
     printingServices: {
-      tagline: null, // dung VI.dichVu trong page.tsx
+      tagline: null,
       title: services?.tieuD || null,
       services: (services?.services || []).map((s: any) => ({
         title: s.servicetitle,
