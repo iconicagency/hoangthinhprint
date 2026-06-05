@@ -171,14 +171,14 @@ export async function getAboutPageData() {
 }
 
 export async function getNganhHangPageData() {
-  // danhsachnganhhang - lowercase theo GraphQL schema
+  // Tat ca field names dung lowercase theo GraphQL schema
   const query = `
     query GetNganhHangPageData {
       page(id: "nganh-hang", idType: URI) {
         title content
         featuredImage { node { sourceUrl } }
         cauHinhTrangNganhHang {
-          heroTitle heroSubtitle
+          herotitle herosubtitle
           danhsachnganhhang {
             title description icon link
             image { node { sourceUrl } }
