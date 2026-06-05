@@ -1,21 +1,26 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Phone, Gift, Send, User } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 import { VI } from '../lib/vi';
+import { usePathname } from 'next/navigation';
 
 export default function PromoPopup() {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [hiddenByScroll, setHiddenByScroll] = useState(false);
+  const [hiddenByHero, setHiddenByHero] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const settings = useSettings();
+  const pathname = usePathname();
 
-  // Hiện sau 3 giây
+  // Chi an popup khi dang o trang chu va chua scroll qua hero
+  const isHomePage = pathname === '/';
+
+  // Hien sau 3 giay
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!dismissed) setVisible(true);
@@ -23,24 +28,22 @@ export default function PromoPopup() {
     return () => clearTimeout(timer);
   }, [dismissed]);
 
-  // Ẩn khi scroll vào hero, hiện lại khi qua hero
+  // Chi xu ly scroll tren trang chu
   useEffect(() => {
+    if (!isHomePage) {
+      setHiddenByHero(false);
+      return;
+    }
+
     const handleScroll = () => {
-      // Hero slider cao ~750px, thêm header ~100px
       const heroBottom = 750;
-      const scrollY = window.scrollY;
-      if (scrollY < heroBottom) {
-        setHiddenByScroll(true);
-      } else {
-        setHiddenByScroll(false);
-      }
+      setHiddenByHero(window.scrollY < heroBottom);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Chạy ngay lần đầu
-    handleScroll();
+    handleScroll(); // chay ngay lan dau
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   const handleSubmit = async () => {
     if (!name.trim() || !phone.trim()) return;
@@ -51,8 +54,8 @@ export default function PromoPopup() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name, phone,
-          message: 'Đặt lịch tư vấn qua popup',
-          product: 'Tư vấn chung',
+          message: 'Dat lich tu van qua popup',
+          product: 'Tu van chung',
         }),
       });
       setSent(true);
@@ -65,10 +68,7 @@ export default function PromoPopup() {
 
   if (dismissed) return null;
 
-  // Tính trạng thái hiển thị:
-  // - visible = false → chưa đến lúc xuất hiện
-  // - hiddenByScroll = true → đang ở vùng hero → ẩn
-  const show = visible && !hiddenByScroll;
+  const show = visible && !hiddenByHero;
 
   return (
     <div
@@ -92,7 +92,7 @@ export default function PromoPopup() {
           </button>
         </div>
 
-        {/* Nội dung */}
+        {/* Noi dung */}
         <div className="px-3 py-3">
           {!sent ? (
             <>
@@ -123,7 +123,7 @@ export default function PromoPopup() {
                 </div>
               </div>
 
-              {/* Nút đặt lịch */}
+              {/* Nut dat lich */}
               <button
                 onClick={handleSubmit}
                 disabled={sending || !name.trim() || !phone.trim()}
