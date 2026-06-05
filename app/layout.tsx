@@ -6,10 +6,9 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import FloatContact from './components/FloatContact';
+import PromoPopup from './components/PromoPopup';
 import { getHeaderFooterSettings } from './lib/wp';
 
-// Bat buoc tat ca pages render dong (server-side) thay vi static
-// De dam bao data luon duoc fetch tu WP khi nguoi dung truy cap
 export const dynamic = 'force-dynamic';
 
 const inter = Inter({
@@ -43,6 +42,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </main>
           <BackToTop />
           <FloatContact />
+          <PromoPopup />
           <Footer />
         </SettingsProvider>
       </body>
