@@ -17,7 +17,6 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       });
       if (!res.ok) return null;
       const json = await res.json();
-      // Chi return null khi KHONG co data gi ca
       if (!json.data) return null;
       return json.data;
     }
@@ -35,13 +34,9 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
     }
 
     const json = await res.json();
-
-    // Log errors nhung van tra ve data neu co
     if (json.errors) {
       console.error('WP GraphQL partial errors:', json.errors.map((e: any) => e.message).join(', '));
     }
-
-    // Tra ve data du co errors hay khong (partial data)
     if (json.data) return json.data;
     return null;
 
@@ -307,15 +302,17 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
 }
 
 export async function getHomePageData() {
+  // NOTE: Khong query tagline/title cua printingServices va workingProcess
+  // vi WP luu chung 1 meta_key 'tagline'/'title' cho ca 2 section
+  // Dung VI constants thay the (app/lib/vi.ts)
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
         workingProcess {
-          tagline title
           steps { steptitle stepdescription stepicon }
         }
         printingServices {
-          tagline tieuD
+          tieuD
           services {
             servicetitle servicedescription
             serviceimage { node { sourceUrl } }
@@ -359,8 +356,8 @@ export async function getHomePageData() {
   const factory = p.factoryTourSection;
   return {
     workingProcess: {
-      tagline: process?.tagline,
-      title: process?.title,
+      tagline: null, // dung VI.quyTrinh trong page.tsx
+      title: null,   // dung VI.quyTrinh trong page.tsx
       steps: (process?.steps || []).map((s: any, i: number) => ({
         step: (i + 1).toString().padStart(2, '0'),
         title: s.steptitle,
@@ -369,8 +366,8 @@ export async function getHomePageData() {
       })),
     },
     printingServices: {
-      tagline: services?.tagline,
-      title: services?.tieuD,
+      tagline: null, // dung VI.dichVu trong page.tsx
+      title: services?.tieuD || null,
       services: (services?.services || []).map((s: any) => ({
         title: s.servicetitle,
         desc: s.servicedescription,
