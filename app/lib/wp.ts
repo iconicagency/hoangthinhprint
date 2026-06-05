@@ -305,10 +305,11 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
 }
 
 export async function getHomePageData() {
-  // LƯU Ý: KHÔNG query tagline/title từ machinerysection, clientsSection, factoryTourSection
-  // vì các ACF field groups này đều dùng field name "tagline"/"title" giống nhau
-  // → WordPress lưu chung 1 meta_key, data bị lẫn nhau (ACF field name conflict không thể fix ở schema level)
-  // → Dùng VI constants trong page.tsx thay thế
+  // LƯU Ý QUAN TRỌNG:
+  // Tất cả các ACF field group trên trang chủ đều dùng field name "tagline", "title" giống nhau
+  // → WordPress lưu chung 1 meta_key trong wp_postmeta → data bị lẫn nhau
+  // → KHÔNG query tagline/title/tieuD từ bất kỳ section nào
+  // → Tất cả section title/tagline dùng VI constants trong page.tsx
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
@@ -316,7 +317,6 @@ export async function getHomePageData() {
           steps { steptitle stepdescription stepicon }
         }
         printingServices {
-          tieuD
           services {
             servicetitle servicedescription
             serviceimage { node { sourceUrl } }
@@ -367,15 +367,17 @@ export async function getHomePageData() {
         iconName: s.stepicon,
       })),
     },
+    // title=null → page.tsx dùng VI.dichVuTitle
     printingServices: {
       tagline: null,
-      title: services?.tieuD || null,
+      title: null,
       services: (services?.services || []).map((s: any) => ({
         title: s.servicetitle,
         desc: s.servicedescription,
         img: s.serviceimage?.node?.sourceUrl || null,
       })),
     },
+    // whyChooseUs dùng field riêng biệt (whyTagline, whyTitle) nên không bị conflict
     whyChooseUs: {
       tagline: why?.whyTagline || null,
       title: why?.whyTitle || null,
@@ -385,7 +387,6 @@ export async function getHomePageData() {
         desc: f.desc,
       })),
     },
-    // tagline/title trả về null — page.tsx sẽ dùng VI constants thay thế
     machinery: {
       tagline: null,
       title: null,
