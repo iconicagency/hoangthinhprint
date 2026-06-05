@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Slide {
   img: string;
@@ -86,10 +86,12 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
 
   return (
     <section
-      className="relative h-[750px] bg-slate-900 text-white overflow-hidden flex items-center justify-center"
+      className="relative overflow-hidden bg-slate-900 text-white"
+      style={{ height: 'clamp(340px, 56vw, 750px)' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* Slides background */}
       {slides.map((s, i) => (
         <div
           key={i}
@@ -101,7 +103,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
               src={s.img}
               alt={s.title || ''}
               fill
-              className="object-cover"
+              className="object-cover object-center"
               priority={i === 0}
               referrerPolicy="no-referrer"
               unoptimized
@@ -109,67 +111,95 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/80" />
+          {/* Overlay nhẹ hơn trên mobile để ảnh nổi bật hơn */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 md:bg-gradient-to-r md:from-black/80 md:via-black/50 md:to-black/80" />
         </div>
       ))}
 
-      <div className="relative z-10 max-w-5xl mx-auto px-8 text-center mt-10">
-        <div key={current}>
-          {slide.tagline && (
-            <div className="inline-block border border-[var(--accent)] text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase bg-[var(--accent)]/80 backdrop-blur-sm mb-8 shadow-lg">
-              {slide.tagline}
-            </div>
-          )}
-          <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight tracking-tight drop-shadow-xl">
-            {slide.title}
-          </h1>
-          <p className="text-gray-200 mb-10 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed drop-shadow-md">
-            {slide.subtitle}
-          </p>
-          {slide.buttons && slide.buttons.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {slide.buttons.map((btn: any, i: number) => (
-                <Link key={i} href={btn.link}
-                  className={i === 0
-                    ? "bg-[var(--accent)] text-white px-10 py-4 rounded-lg font-bold hover:scale-105 transition-all shadow-xl shadow-[var(--accent)]/30 flex items-center justify-center gap-2 text-lg"
-                    : "bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-lg font-bold hover:bg-white/20 transition-colors flex items-center justify-center text-lg shadow-lg"
-                  }>
-                  {btn.label} {i === 0 && <ArrowRight size={20} />}
-                </Link>
-              ))}
-            </div>
-          )}
-          {slide.benefits && slide.benefits.length > 0 && (
-            <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm md:text-base text-gray-200 font-medium">
-              {slide.benefits.map((b: any, i: number) => (
-                <div key={i} className="flex flex-col items-center gap-1 group">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={24} className="text-[var(--accent)] group-hover:scale-110 transition-transform" />
+      {/* Desktop content — ẩn trên mobile */}
+      <div className="hidden md:flex relative z-10 h-full items-center justify-center">
+        <div className="max-w-5xl mx-auto px-8 text-center mt-10">
+          <div key={current}>
+            {slide.tagline && (
+              <div className="inline-block border border-[var(--accent)] text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase bg-[var(--accent)]/80 backdrop-blur-sm mb-8 shadow-lg">
+                {slide.tagline}
+              </div>
+            )}
+            <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight tracking-tight drop-shadow-xl">
+              {slide.title}
+            </h1>
+            <p className="text-gray-200 mb-10 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed drop-shadow-md">
+              {slide.subtitle}
+            </p>
+            {slide.buttons && slide.buttons.length > 0 && (
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {slide.buttons.map((btn: any, i: number) => (
+                  <Link key={i} href={btn.link}
+                    className={i === 0
+                      ? "bg-[var(--accent)] text-white px-10 py-4 rounded-lg font-bold hover:scale-105 transition-all shadow-xl shadow-[var(--accent)]/30 flex items-center justify-center gap-2 text-lg"
+                      : "bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-lg font-bold hover:bg-white/20 transition-colors flex items-center justify-center text-lg shadow-lg"
+                    }>
+                    {btn.label} {i === 0 && <ArrowRight size={20} />}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {slide.benefits && slide.benefits.length > 0 && (
+              <div className="mt-14 grid grid-cols-4 gap-6 text-sm md:text-base text-gray-200 font-medium">
+                {slide.benefits.map((b: any, i: number) => (
+                  <div key={i} className="flex flex-col items-center gap-1">
                     <span className="font-bold text-white text-lg">{b.title}</span>
+                    {b.subtitle && <span className="text-gray-300 text-xs md:text-sm">{b.subtitle}</span>}
                   </div>
-                  {b.subtitle && <span className="text-gray-300 text-xs md:text-sm">{b.subtitle}</span>}
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Mobile content — chỉ hiện button ở góc dưới */}
+      <div className="flex md:hidden absolute inset-0 z-10 items-end justify-center pb-10 px-4">
+        {slide.buttons && slide.buttons.length > 0 && (
+          <div className="flex gap-3 w-full max-w-sm">
+            {slide.buttons.map((btn: any, i: number) => (
+              <Link
+                key={i}
+                href={btn.link}
+                className={
+                  i === 0
+                    ? "flex-1 bg-[var(--accent)] text-white py-3 rounded-lg font-bold text-center text-sm shadow-lg flex items-center justify-center gap-1"
+                    : "flex-1 bg-black/40 backdrop-blur-md border border-white/40 text-white py-3 rounded-lg font-bold text-center text-sm"
+                }
+              >
+                {btn.label} {i === 0 && <ArrowRight size={16} />}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Navigation arrows */}
       {slides.length > 1 && (
         <>
-          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
-            <ChevronLeft size={22} />
+          <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-11 md:h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
+            <ChevronLeft size={20} />
           </button>
-          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
-            <ChevronRight size={22} />
+          <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-11 md:h-11 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
+            <ChevronRight size={20} />
           </button>
         </>
       )}
+
+      {/* Dots */}
       {slides.length > 1 && (
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
+        <div className="absolute bottom-4 md:bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
           {slides.map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)}
-              className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-6 h-3' : 'bg-white/50 hover:bg-white/80 w-3 h-3'}`} />
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-6 h-2.5' : 'bg-white/50 hover:bg-white/80 w-2.5 h-2.5'}`}
+            />
           ))}
         </div>
       )}
