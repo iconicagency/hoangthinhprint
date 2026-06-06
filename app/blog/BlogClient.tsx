@@ -7,11 +7,24 @@ import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 import { getPosts, getCategories } from '../lib/wp';
 
+// Slugs thuộc nhóm sản phẩm — loại bỏ khỏi blog
+const PRODUCT_CATEGORY_SLUGS = new Set([
+  'san-pham',
+  'catalogue',
+  'tui-giay',
+  'hop-giay',
+  'hop-carton-lanh',
+  'hop-carton-song',
+  'in-nhan-tem-decal',
+  'hop-cung',
+  'hop-trung-thu',
+]);
+
 export default function BlogClient() {
   const [activeCategory, setActiveCategory] = useState('tat-ca');
   const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState<any[]>([]);
-  const [wpCategories, setWpCategories] = useState<any[]>([]);
+  const [blogCategories, setBlogCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const settings = useSettings();
 
@@ -20,7 +33,13 @@ export default function BlogClient() {
       try {
         const [postsData, catsData] = await Promise.all([getPosts(20), getCategories()]);
         if (postsData) setPosts(postsData);
-        if (catsData) setWpCategories(catsData.filter((c: any) => c.slug !== 'uncategorized'));
+        if (catsData) {
+          // Chỉ giữ categories KHÔNG thuộc nhóm sản phẩm và không phải uncategorized
+          const blogCats = catsData.filter((c: any) =>
+            !PRODUCT_CATEGORY_SLUGS.has(c.slug) && c.slug !== 'uncategorized'
+          );
+          setBlogCategories(blogCats);
+        }
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu blog:', error);
       } finally {
@@ -46,7 +65,6 @@ export default function BlogClient() {
   return (
     <div className="min-h-screen bg-white text-[var(--text-main)] font-sans">
       <section className="relative py-24 px-8 bg-[var(--bg)] text-[var(--text-main)] overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/blog-hero/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
             <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
@@ -60,18 +78,21 @@ export default function BlogClient() {
 
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row gap-10">
         <div className="lg:w-2/3">
-          <div className="flex flex-wrap gap-2 mb-10">
-            <button onClick={() => setActiveCategory('tat-ca')}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${activeCategory === 'tat-ca' ? 'bg-[var(--accent)] text-[var(--bg)]' : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'}`}>
-              Tất cả
-            </button>
-            {wpCategories.map((cat) => (
-              <button key={cat.slug} onClick={() => setActiveCategory(cat.slug)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${activeCategory === cat.slug ? 'bg-[var(--accent)] text-[var(--bg)]' : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'}`}>
-                {cat.name}{cat.count > 0 && <span className="ml-1 opacity-60 text-xs">({cat.count})</span>}
+          {/* Filter — chỉ hiện nếu có categories blog thực sự */}
+          {blogCategories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-10">
+              <button onClick={() => setActiveCategory('tat-ca')}
+                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${activeCategory === 'tat-ca' ? 'bg-[var(--accent)] text-[var(--bg)]' : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'}`}>
+                Tất cả
               </button>
-            ))}
-          </div>
+              {blogCategories.map((cat) => (
+                <button key={cat.slug} onClick={() => setActiveCategory(cat.slug)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${activeCategory === cat.slug ? 'bg-[var(--accent)] text-[var(--bg)]' : 'bg-[var(--card-bg)] text-[var(--text-dim)] hover:bg-[var(--border)]'}`}>
+                  {cat.name}{cat.count > 0 && <span className="ml-1 opacity-60 text-xs">({cat.count})</span>}
+                </button>
+              ))}
+            </div>
+          )}
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -88,7 +109,7 @@ export default function BlogClient() {
                       <div className="w-full h-full bg-slate-200 flex items-center justify-center"><span className="text-slate-400 text-sm">Chưa có ảnh</span></div>
                     )}
                     <div className="absolute top-4 left-4 bg-[var(--accent)] text-[var(--bg)] text-xs font-bold px-3 py-1.5 rounded-full">
-                      {post.categories?.nodes?.[0]?.name || 'Tin tức'}
+                      {post.categories?.nodes?.find((c: any) => !PRODUCT_CATEGORY_SLUGS.has(c.slug))?.name || 'Tin tức'}
                     </div>
                   </div>
                   <div className="p-6 flex flex-col flex-1">
@@ -144,11 +165,12 @@ export default function BlogClient() {
             </div>
           )}
 
-          {wpCategories.length > 0 && (
+          {/* Sidebar categories: chỉ hiện categories blog, không hiện sản phẩm */}
+          {blogCategories.length > 0 && (
             <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] p-6">
               <h3 className="font-bold text-lg text-[var(--text-main)] mb-6">Danh mục</h3>
               <ul className="space-y-4">
-                {wpCategories.map((cat) => (
+                {blogCategories.map((cat) => (
                   <li key={cat.slug} className="flex items-center justify-between group cursor-pointer" onClick={() => setActiveCategory(cat.slug)}>
                     <div className="flex items-center gap-3">
                       <span className="w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[var(--accent)] transition-colors"></span>
