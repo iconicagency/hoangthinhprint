@@ -190,26 +190,53 @@ export async function getNganhHangPageData() {
 }
 
 export async function getIndustryPageData(uri: string) {
+  // LƯU Ý: Tất cả field names trong CauHinhChiTietNganhHang đều LOWERCASE theo schema WPGraphQL
+  // herotitle, herosubtitle, introtitle, introcontent, whytitle, whylist,
+  // productstitle, productslist, pricingtext, sampleimages, faqs
+  // KHÔNG dùng camelCase như heroTitle, heroSubtitle...
   const query = `
     query GetIndustryPageData($uri: ID!) {
       page(id: $uri, idType: URI) {
         title content
         cauHinhChiTietNganhHang {
-          heroTitle heroSubtitle introTitle introContent
-          whyTitle
-          whyList { item }
-          productsTitle
-          productsList { title description link }
-          pricingText
-          sampleImages { nodes { sourceUrl } }
-          faqTitle
+          herotitle
+          herosubtitle
+          introtitle
+          introcontent
+          whytitle
+          whylist { item }
+          productstitle
+          productslist { title description link }
+          pricingtext
+          sampleimages { nodes { sourceUrl } }
           faqs { question answer }
         }
       }
     }
   `;
   const data = await fetchWP(query, { variables: { uri } });
-  return data?.page || null;
+  if (!data?.page) return null;
+
+  // Normalize về camelCase để các IndustryClient.tsx dùng thống nhất
+  const raw = data.page.cauHinhChiTietNganhHang;
+  if (raw) {
+    data.page.cauHinhChiTietNganhHang = {
+      heroTitle:    raw.herotitle    || null,
+      heroSubtitle: raw.herosubtitle || null,
+      introTitle:   raw.introtitle   || null,
+      introContent: raw.introcontent || null,
+      whyTitle:     raw.whytitle     || null,
+      whyList:      raw.whylist      || [],
+      productsTitle: raw.productstitle || null,
+      productsList:  raw.productslist  || [],
+      pricingText:   raw.pricingtext   || null,
+      sampleImages:  raw.sampleimages  || null,
+      faqTitle:      null, // không có field này trong schema
+      faqs:          raw.faqs || [],
+    };
+  }
+
+  return data.page || null;
 }
 
 export async function getPostBySlug(slug: string) {
@@ -367,7 +394,6 @@ export async function getHomePageData() {
         iconName: s.stepicon,
       })),
     },
-    // title=null → page.tsx dùng VI.dichVuTitle
     printingServices: {
       tagline: null,
       title: null,
@@ -377,7 +403,6 @@ export async function getHomePageData() {
         img: s.serviceimage?.node?.sourceUrl || null,
       })),
     },
-    // whyChooseUs dùng field riêng biệt (whyTagline, whyTitle) nên không bị conflict
     whyChooseUs: {
       tagline: why?.whyTagline || null,
       title: why?.whyTitle || null,
