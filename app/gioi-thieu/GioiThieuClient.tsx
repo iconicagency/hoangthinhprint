@@ -33,14 +33,31 @@ export default function GioiThieuClient() {
 
   const acf = pageData?.cauHinhTrangGioiThieu;
   const featuredImg = pageData?.featuredImage?.node?.sourceUrl;
+  // ảnh nền hero: ưu tiên ACF heroImage nếu có, rồi đến Featured Image
+  const heroBgImg = acf?.heroImage?.node?.sourceUrl || featuredImg || null;
   const storyImg = acf?.storyimage?.node?.sourceUrl || featuredImg || 'https://picsum.photos/seed/factory/800/1000';
   const productionImgs = acf?.productionimages?.nodes || [];
   const servicesList = acf?.serviceslist || [];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-sans">
+
+      {/* ── Hero banner ── */}
       <section className="relative py-24 px-8 text-center overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://picsum.photos/seed/printingpress/1920/1080')] bg-cover bg-center"></div>
+        {/* Ảnh nền: lấy từ Featured Image trang Giới thiệu trong WP Admin */}
+        {heroBgImg ? (
+          <Image
+            src={heroBgImg}
+            alt="In Hoàng Thịnh"
+            fill
+            className="object-cover object-center opacity-10"
+            priority
+            referrerPolicy="no-referrer"
+            unoptimized
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 opacity-50" />
+        )}
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-block border border-[var(--accent)] text-[var(--accent)] px-5 py-1.5 rounded-full text-xs mb-8 uppercase tracking-widest font-bold bg-[var(--accent)]/10">Về Chúng Tôi</div>
           <h1 className="text-5xl md:text-6xl font-serif mb-6 leading-tight text-[var(--text-main)] tracking-tight">
