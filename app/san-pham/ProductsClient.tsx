@@ -4,10 +4,24 @@
 
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import Image from 'next/image';
+import ImagePlaceholder from '../components/ImagePlaceholder';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getGalleryByCategory, getCategories, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
+
+// Slugs thuộc nhóm sản phẩm — chỉ hiển thị những cái này trong filter trang sản phẩm
+const PRODUCT_CATEGORY_SLUGS = new Set([
+  'san-pham',
+  'catalogue',
+  'tui-giay',
+  'hop-giay',
+  'hop-carton-lanh',
+  'hop-carton-song',
+  'in-nhan-tem-decal',
+  'hop-cung',
+  'hop-trung-thu',
+]);
 
 const CATEGORY_LABELS: Record<string, string> = {
   'catalogue': 'Catalogue',
@@ -40,7 +54,13 @@ function ProductsContent() {
           getPageBySlug('san-pham'),
         ]);
         if (productsData) setCmsProducts(productsData);
-        if (catsData) setWpCategories(catsData.filter((c: any) => c.slug !== 'uncategorized'));
+        if (catsData) {
+          // Chỉ giữ lại categories thuộc nhóm sản phẩm, bỏ 'uncategorized' và 'san-pham' cha
+          const productCats = catsData.filter((c: any) =>
+            PRODUCT_CATEGORY_SLUGS.has(c.slug) && c.slug !== 'san-pham' && c.slug !== 'uncategorized'
+          );
+          setWpCategories(productCats);
+        }
         if (pData) setPageData(pData);
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
@@ -59,7 +79,7 @@ function ProductsContent() {
       id: p.id, title: p.title, slug: p.slug,
       categorySlug: subCat?.slug || '',
       categoryName: subCat?.name || 'Sản phẩm',
-      img: p.featuredImage?.node?.sourceUrl || `https://picsum.photos/seed/${p.id}/400/400`,
+      img: p.featuredImage?.node?.sourceUrl || null,
     };
   });
 
@@ -67,7 +87,7 @@ function ProductsContent() {
     ? products : products.filter(p => p.categorySlug === activeSlug);
 
   const filterCategories = wpCategories.length > 0
-    ? [{ slug: 'tat-ca', name: 'Tất cả', count: cmsProducts.length }, ...wpCategories.filter(c => c.slug !== 'san-pham')]
+    ? [{ slug: 'tat-ca', name: 'Tất cả', count: cmsProducts.length }, ...wpCategories]
     : [{ slug: 'tat-ca', name: 'Tất cả', count: 0 }, ...Object.entries(CATEGORY_LABELS).map(([slug, name]) => ({ slug, name, count: 0 }))];
 
   const openLightbox = useCallback((index: number) => setLightboxIndex(index), []);
@@ -80,7 +100,6 @@ function ProductsContent() {
       {lightboxIndex !== null && <Lightbox items={filteredProducts} currentIndex={lightboxIndex} onClose={closeLightbox} onPrev={prevImage} onNext={nextImage} />}
 
       <section className="relative py-20 px-8 bg-[var(--bg)] overflow-hidden border-b border-[var(--border)]">
-        <div className="absolute inset-0 opacity-5 bg-[url('https://picsum.photos/seed/pattern/1920/1080')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-sm text-[var(--text-dim)] mb-4 flex items-center gap-2">
             <Link href="/" className="hover:text-[var(--accent)] transition-colors">Trang chủ</Link>
@@ -111,10 +130,16 @@ function ProductsContent() {
             {filteredProducts.map((product, index) => (
               <div key={product.id} className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer" onClick={() => openLightbox(index)}>
                 <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
-                  <Image src={product.img} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
-                    <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-4 py-2 rounded-full">Xem ảnh</span>
-                  </div>
+                  {product.img ? (
+                    <>
+                      <Image src={product.img} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+                        <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-4 py-2 rounded-full">Xem ảnh</span>
+                      </div>
+                    </>
+                  ) : (
+                    <ImagePlaceholder label="Chưa có ảnh" />
+                  )}
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold text-[var(--text-main)] text-sm mb-1.5 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{product.title}</h3>
