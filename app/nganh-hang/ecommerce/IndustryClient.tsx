@@ -2,6 +2,7 @@
 
 import ContactForm from '../../components/ContactForm';
 import Image from 'next/image';
+import ImagePlaceholder from '../../components/ImagePlaceholder';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
@@ -125,8 +126,8 @@ export default function IndustryClient() {
                 </div>
               ))
               : [1, 2, 3, 4].map((i) => (
-                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
-                  <Image src={`https://picsum.photos/seed/ecommerce${i}/400/400`} alt={`Mẫu ${i}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                <div key={i} className="relative aspect-square rounded-2xl overflow-hidden">
+                  <ImagePlaceholder label="Upload ảnh trong WP Admin" />
                 </div>
               ))}
           </div>
@@ -136,7 +137,7 @@ export default function IndustryClient() {
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.faqTitle || 'Câu hỏi thường gặp'}</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">Câu hỏi thường gặp</h2>
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           <div className="space-y-4">
