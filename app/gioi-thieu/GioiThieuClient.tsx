@@ -33,7 +33,6 @@ export default function GioiThieuClient() {
 
   const acf = pageData?.cauHinhTrangGioiThieu;
   const featuredImg = pageData?.featuredImage?.node?.sourceUrl;
-  // ảnh nền hero: ưu tiên ACF heroImage nếu có, rồi đến Featured Image
   const heroBgImg = acf?.heroImage?.node?.sourceUrl || featuredImg || null;
   const storyImg = acf?.storyimage?.node?.sourceUrl || featuredImg || 'https://picsum.photos/seed/factory/800/1000';
   const productionImgs = acf?.productionimages?.nodes || [];
@@ -50,7 +49,7 @@ export default function GioiThieuClient() {
             src={heroBgImg}
             alt="In Hoàng Thịnh"
             fill
-            className="object-cover object-center opacity-10"
+            className="object-cover object-center opacity-30"
             priority
             referrerPolicy="no-referrer"
             unoptimized
