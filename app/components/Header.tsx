@@ -1,19 +1,43 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Mail, MapPin, ChevronDown } from 'lucide-react';
+import { Phone, Mail, MapPin, ChevronDown, Menu, X } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 import { VI } from '../lib/vi';
 
+const NGANH_HANG_LINKS = [
+  { href: '/nganh-hang/tpcn-duoc-pham', key: 'tpcnDuocPham' },
+  { href: '/nganh-hang/my-pham-skincare', key: 'myPhamSkincare' },
+  { href: '/nganh-hang/yen-sao', key: 'yenSao' },
+  { href: '/nganh-hang/trang-suc-qua-tang', key: 'trangSucQuaTang' },
+  { href: '/nganh-hang/ecommerce', key: 'ecommerce' },
+];
+
+// Khớp với category slug thật trong WordPress
+const SAN_PHAM_LINKS = [
+  { href: '/san-pham?cat=catalogue', key: 'catalogue' },
+  { href: '/san-pham?cat=tui-giay', key: 'tuiGiay' },
+  { href: '/san-pham?cat=hop-giay', key: 'hopGiay' },
+  { href: '/san-pham?cat=hop-cung', key: 'hopCung' },
+  { href: '/san-pham?cat=hop-song', key: 'hopSong' },
+  { href: '/san-pham?cat=hop-qua-tet', key: 'hopQuaTet' },
+  { href: '/san-pham?cat=hop-trung-thu', key: 'hopTrungThu' },
+];
+
 export default function Header() {
   const settings = useSettings();
-  const M = VI.menu;
+  const M = VI.menu as Record<string, string>;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openSub, setOpenSub] = useState<string | null>(null);
+
+  const closeMobile = () => { setMobileOpen(false); setOpenSub(null); };
 
   return (
     <>
       {/* Top Bar */}
-      <div className="bg-[var(--card-bg)] text-[var(--text-dim)] text-xs py-2 px-8 flex justify-between items-center hidden md:flex border-b border-[var(--border)]">
+      <div className="bg-[var(--card-bg)] text-[var(--text-dim)] text-xs py-2 px-8 justify-between items-center hidden md:flex border-b border-[var(--border)]">
         <div className="flex gap-6">
           <span className="flex items-center gap-2"><Mail size={14}/> {settings.contactEmail}</span>
           <span className="flex items-center gap-2"><MapPin size={14}/> {settings.contactAddress}</span>
@@ -24,17 +48,17 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Header — line-height: 0 để loại bỏ khoảng trắng thừa, logo 100px */}
-      <header className="bg-[var(--bg)] px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ lineHeight: 0 }}>
-        <Link href="/" className="flex items-center shrink-0" style={{ lineHeight: 0 }}>
+      {/* Header */}
+      <header className="bg-[var(--bg)] px-4 md:px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm border-b border-[var(--border)]" style={{ lineHeight: 0 }}>
+        <Link href="/" className="flex items-center shrink-0" style={{ lineHeight: 0 }} onClick={closeMobile}>
           {settings.logoUrl ? (
             <Image
               src={settings.logoUrl}
               alt="Logo"
               width={400}
               height={100}
-              className="object-contain w-auto block"
-              style={{ height: '100px', display: 'block' }}
+              className="object-contain w-auto block h-[72px] md:h-[100px]"
+              style={{ display: 'block' }}
               priority
               referrerPolicy="no-referrer"
             />
@@ -46,6 +70,7 @@ export default function Header() {
           )}
         </Link>
 
+        {/* Desktop nav */}
         <nav className="hidden lg:block" style={{ lineHeight: 'normal' }}>
           <ul className="flex gap-6 text-sm font-bold text-[var(--text-main)] uppercase tracking-wide items-center">
             <li><Link href="/" className="hover:text-[var(--accent)] transition-colors">{M.trangChu}</Link></li>
@@ -56,11 +81,9 @@ export default function Header() {
                 {M.nganhHang} <ChevronDown size={14} />
               </Link>
               <div className="absolute top-full left-0 mt-0 w-60 bg-[var(--bg)] border border-[var(--border)] shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                <Link href="/nganh-hang/tpcn-duoc-pham" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.tpcnDuocPham}</Link>
-                <Link href="/nganh-hang/my-pham-skincare" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.myPhamSkincare}</Link>
-                <Link href="/nganh-hang/yen-sao" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.yenSao}</Link>
-                <Link href="/nganh-hang/trang-suc-qua-tang" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.trangSucQuaTang}</Link>
-                <Link href="/nganh-hang/ecommerce" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.ecommerce}</Link>
+                {NGANH_HANG_LINKS.map(l => (
+                  <Link key={l.href} href={l.href} className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M[l.key]}</Link>
+                ))}
               </div>
             </li>
 
@@ -69,12 +92,9 @@ export default function Header() {
                 {M.sanPham} <ChevronDown size={14} />
               </Link>
               <div className="absolute top-full left-0 mt-0 w-60 bg-[var(--bg)] border border-[var(--border)] shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                <Link href="/san-pham?cat=catalogue" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.catalogue}</Link>
-                <Link href="/san-pham?cat=tui-giay" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.tuiGiay}</Link>
-                <Link href="/san-pham?cat=hop-giay" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.hopGiay}</Link>
-                <Link href="/san-pham?cat=hop-carton-lanh" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.hopCartonLanh}</Link>
-                <Link href="/san-pham?cat=hop-carton-song" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.hopCartonSong}</Link>
-                <Link href="/san-pham?cat=in-nhan-tem-decal" className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M.inNhanTemDecal}</Link>
+                {SAN_PHAM_LINKS.map(l => (
+                  <Link key={l.href} href={l.href} className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M[l.key]}</Link>
+                ))}
               </div>
             </li>
 
@@ -86,10 +106,105 @@ export default function Header() {
           </ul>
         </nav>
 
-        <Link href="/bao-gia" className="bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20 shrink-0" style={{ lineHeight: 'normal' }}>
-          {M.baoGiaNgay}
-        </Link>
+        <div className="flex items-center gap-3" style={{ lineHeight: 'normal' }}>
+          <Link href="/bao-gia" className="hidden sm:inline-block bg-[var(--accent)] text-[var(--bg)] px-6 py-2.5 rounded text-sm font-bold uppercase hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/20 shrink-0">
+            {M.baoGiaNgay}
+          </Link>
+
+          {/* Hamburger — mobile/tablet */}
+          <button
+            type="button"
+            className="lg:hidden p-2 text-[var(--text-main)] hover:text-[var(--accent)] transition-colors"
+            aria-label={mobileOpen ? 'Đóng menu' : 'Mở menu'}
+            onClick={() => setMobileOpen(v => !v)}
+          >
+            {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </header>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 top-[72px] z-40 bg-black/40" onClick={closeMobile}>
+          <nav
+            className="bg-[var(--bg)] border-b border-[var(--border)] shadow-xl max-h-[calc(100vh-72px)] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <ul className="flex flex-col text-sm font-bold text-[var(--text-main)] uppercase tracking-wide">
+              <li className="border-b border-[var(--border)]">
+                <Link href="/" className="block px-6 py-4" onClick={closeMobile}>{M.trangChu}</Link>
+              </li>
+              <li className="border-b border-[var(--border)]">
+                <Link href="/gioi-thieu" className="block px-6 py-4" onClick={closeMobile}>{M.gioiThieu}</Link>
+              </li>
+
+              {/* Ngành hàng accordion */}
+              <li className="border-b border-[var(--border)]">
+                <div className="flex items-center justify-between">
+                  <Link href="/nganh-hang" className="flex-1 px-6 py-4" onClick={closeMobile}>{M.nganhHang}</Link>
+                  <button type="button" className="px-6 py-4" aria-label="Mở danh sách ngành hàng"
+                    onClick={() => setOpenSub(openSub === 'nganh-hang' ? null : 'nganh-hang')}>
+                    <ChevronDown size={18} className={`transition-transform ${openSub === 'nganh-hang' ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+                {openSub === 'nganh-hang' && (
+                  <div className="bg-[var(--card-bg)] flex flex-col">
+                    {NGANH_HANG_LINKS.map(l => (
+                      <Link key={l.href} href={l.href} onClick={closeMobile}
+                        className="px-10 py-3 text-sm normal-case font-medium border-t border-[var(--border)] hover:text-[var(--accent)]">
+                        {M[l.key]}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </li>
+
+              {/* Sản phẩm accordion */}
+              <li className="border-b border-[var(--border)]">
+                <div className="flex items-center justify-between">
+                  <Link href="/san-pham" className="flex-1 px-6 py-4" onClick={closeMobile}>{M.sanPham}</Link>
+                  <button type="button" className="px-6 py-4" aria-label="Mở danh sách sản phẩm"
+                    onClick={() => setOpenSub(openSub === 'san-pham' ? null : 'san-pham')}>
+                    <ChevronDown size={18} className={`transition-transform ${openSub === 'san-pham' ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+                {openSub === 'san-pham' && (
+                  <div className="bg-[var(--card-bg)] flex flex-col">
+                    {SAN_PHAM_LINKS.map(l => (
+                      <Link key={l.href} href={l.href} onClick={closeMobile}
+                        className="px-10 py-3 text-sm normal-case font-medium border-t border-[var(--border)] hover:text-[var(--accent)]">
+                        {M[l.key]}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </li>
+
+              <li className="border-b border-[var(--border)]">
+                <Link href="/du-an" className="block px-6 py-4" onClick={closeMobile}>{M.duAnTieuBieu}</Link>
+              </li>
+              <li className="border-b border-[var(--border)]">
+                <Link href="/bao-gia" className="block px-6 py-4" onClick={closeMobile}>{M.baoGia}</Link>
+              </li>
+              <li className="border-b border-[var(--border)]">
+                <Link href="/quy-trinh" className="block px-6 py-4" onClick={closeMobile}>{M.quyTrinh}</Link>
+              </li>
+              <li className="border-b border-[var(--border)]">
+                <Link href="/blog" className="block px-6 py-4" onClick={closeMobile}>{M.blog}</Link>
+              </li>
+              <li className="border-b border-[var(--border)]">
+                <Link href="/lien-he" className="block px-6 py-4" onClick={closeMobile}>{M.lienHe}</Link>
+              </li>
+              <li className="p-4">
+                <Link href="/bao-gia" onClick={closeMobile}
+                  className="block text-center bg-[var(--accent)] text-[var(--bg)] px-6 py-3 rounded text-sm font-bold uppercase">
+                  {M.baoGiaNgay}
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
