@@ -15,7 +15,8 @@ export default function IndustryClient() {
   useEffect(() => {
     async function loadData() {
       try {
-        const data = await getIndustryPageData('nganh-hang/yen-sao');
+        // Slug trong WordPress la "yen-xao" (khong phai yen-sao)
+        const data = await getIndustryPageData('nganh-hang/yen-xao');
         if (data) setPageData(data);
       } catch (error) {
         console.error('Lỗi khi tải trang:', error);
