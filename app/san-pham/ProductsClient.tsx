@@ -10,16 +10,15 @@ import { useSearchParams } from 'next/navigation';
 import { getGalleryByCategory, getCategories, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
 
-// Slugs thuộc nhóm sản phẩm — chỉ hiển thị những cái này trong filter trang sản phẩm
+// Slugs thuộc nhóm sản phẩm — khớp với category thật trong WordPress
 const PRODUCT_CATEGORY_SLUGS = new Set([
   'san-pham',
   'catalogue',
   'tui-giay',
   'hop-giay',
-  'hop-carton-lanh',
-  'hop-carton-song',
-  'in-nhan-tem-decal',
   'hop-cung',
+  'hop-song',
+  'hop-qua-tet',
   'hop-trung-thu',
 ]);
 
@@ -27,10 +26,9 @@ const CATEGORY_LABELS: Record<string, string> = {
   'catalogue': 'Catalogue',
   'tui-giay': 'Túi giấy',
   'hop-giay': 'Hộp giấy',
-  'hop-carton-lanh': 'Hộp carton lạnh',
-  'hop-carton-song': 'Hộp carton sóng',
-  'in-nhan-tem-decal': 'In nhãn - Tem decal',
   'hop-cung': 'Hộp cứng',
+  'hop-song': 'Hộp sóng',
+  'hop-qua-tet': 'Hộp quà tết',
   'hop-trung-thu': 'Hộp Trung Thu',
 };
 
@@ -79,12 +77,13 @@ function ProductsContent() {
       id: p.id, title: p.title, slug: p.slug,
       categorySlug: subCat?.slug || '',
       categoryName: subCat?.name || 'Sản phẩm',
+      allCategorySlugs: (p.categories?.nodes || []).map((c: any) => c.slug),
       img: p.featuredImage?.node?.sourceUrl || null,
     };
   });
 
   const filteredProducts = activeSlug === 'tat-ca'
-    ? products : products.filter(p => p.categorySlug === activeSlug);
+    ? products : products.filter(p => p.allCategorySlugs.includes(activeSlug));
 
   const filterCategories = wpCategories.length > 0
     ? [{ slug: 'tat-ca', name: 'Tất cả', count: cmsProducts.length }, ...wpCategories]
