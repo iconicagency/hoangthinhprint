@@ -7,7 +7,7 @@ import Image from 'next/image';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { getGalleryByCategory, getCategories, getPageBySlug } from '../lib/wp';
+import { fetchWP, getCategories, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
 
 // Slugs thuộc nhóm sản phẩm — khớp với category thật trong WordPress
@@ -32,6 +32,34 @@ const CATEGORY_LABELS: Record<string, string> = {
   'hop-trung-thu': 'Hộp Trung Thu',
 };
 
+// WPGraphQL gioi han 100 bai/query — phan trang cursor de lay het tat ca san pham
+const GALLERY_QUERY = `
+  query GetGallery($first: Int!, $categorySlug: String!, $after: String) {
+    posts(first: $first, after: $after, where: {categoryName: $categorySlug, orderby: {field: DATE, order: DESC}}) {
+      pageInfo { hasNextPage endCursor }
+      nodes {
+        id title slug
+        featuredImage { node { sourceUrl } }
+        categories { nodes { name slug } }
+      }
+    }
+  }
+`;
+
+async function fetchAllProducts(categorySlug: string, maxItems = 600) {
+  let all: any[] = [];
+  let after: string | null = null;
+  for (let i = 0; i < 10; i++) {
+    const data: any = await fetchWP(GALLERY_QUERY, { variables: { first: 100, categorySlug, after } });
+    const posts = data?.posts;
+    if (!posts?.nodes?.length) break;
+    all = all.concat(posts.nodes);
+    if (!posts.pageInfo?.hasNextPage || all.length >= maxItems) break;
+    after = posts.pageInfo.endCursor;
+  }
+  return all;
+}
+
 function ProductsContent() {
   const searchParams = useSearchParams();
   const catFromUrl = searchParams.get('cat') || 'tat-ca';
@@ -47,8 +75,8 @@ function ProductsContent() {
     async function loadData() {
       try {
         const [productsData, catsData, pData] = await Promise.all([
-          // Fetch theo tat ca category slug (OR) — bai viet chi tick category con van hien thi
-          getGalleryByCategory('san-pham,catalogue,tui-giay,hop-giay,hop-cung,hop-song,hop-qua-tet,hop-trung-thu', 200),
+          // Fetch theo tat ca category slug (OR) + phan trang de vuot gioi han 100 bai
+          fetchAllProducts('san-pham,catalogue,tui-giay,hop-giay,hop-cung,hop-song,hop-qua-tet,hop-trung-thu'),
           getCategories(),
           getPageBySlug('san-pham'),
         ]);
