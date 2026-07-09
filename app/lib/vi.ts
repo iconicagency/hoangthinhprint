@@ -18,13 +18,14 @@ export const VI = {
     yenSao: 'Yến sào',
     trangSucQuaTang: 'Trang sức & quà tặng',
     ecommerce: 'Ecommerce',
-    // Dropdown sản phẩm
+    // Dropdown sản phẩm — khớp với category slug thật trong WordPress
     catalogue: 'Catalogue',
     tuiGiay: 'Túi giấy',
     hopGiay: 'Hộp giấy',
-    hopCartonLanh: 'Hộp carton lạnh',
-    hopCartonSong: 'Hộp carton sóng',
-    inNhanTemDecal: 'In nhãn - Tem decal',
+    hopCung: 'Hộp cứng',
+    hopSong: 'Hộp sóng',
+    hopQuaTet: 'Hộp quà tết',
+    hopTrungThu: 'Hộp trung thu',
   },
   // Page chủ - sections
   dichVu: 'DỊCH VỤ IN ẤN',
