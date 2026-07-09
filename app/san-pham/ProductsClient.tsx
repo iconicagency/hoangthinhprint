@@ -47,7 +47,8 @@ function ProductsContent() {
     async function loadData() {
       try {
         const [productsData, catsData, pData] = await Promise.all([
-          getGalleryByCategory('san-pham', 200),
+          // Fetch theo tat ca category slug (OR) — bai viet chi tick category con van hien thi
+          getGalleryByCategory('san-pham,catalogue,tui-giay,hop-giay,hop-cung,hop-song,hop-qua-tet,hop-trung-thu', 200),
           getCategories(),
           getPageBySlug('san-pham'),
         ]);
