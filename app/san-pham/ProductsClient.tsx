@@ -46,10 +46,11 @@ const GALLERY_QUERY = `
   }
 `;
 
-async function fetchAllProducts(categorySlug: string, maxItems = 600) {
+// Gioi han 1500 bai (15 trang x 100 bai/trang)
+async function fetchAllProducts(categorySlug: string, maxItems = 1500) {
   let all: any[] = [];
   let after: string | null = null;
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 15; i++) {
     const data: any = await fetchWP(GALLERY_QUERY, { variables: { first: 100, categorySlug, after } });
     const posts = data?.posts;
     if (!posts?.nodes?.length) break;
