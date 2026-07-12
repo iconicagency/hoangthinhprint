@@ -3,17 +3,59 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ArrowRight, Phone } from 'lucide-react';
 
 interface ServiceItem {
   title: string;
   desc: string;
   price?: string;
   img?: string;
+  link?: string | null;     // Link nut "Xem san pham" (tu ACF servicelink)
+  contact?: string | null;  // SDT hoac link cho nut "Lien he" (tu ACF servicecontact)
 }
 
 interface ServiceLightboxProps {
   services: ServiceItem[];
+}
+
+// Nhan dien contact la so dien thoai hay link
+function isPhoneNumber(value: string) {
+  return /^[\d\s+.()-]{8,}$/.test(value.trim());
+}
+function isUrl(value: string) {
+  return /^https?:\/\//i.test(value.trim()) || value.trim().startsWith('/');
+}
+
+// Chip "Lien he" thong minh: SDT → bam goi ngay; link → mo trang; text thuong → hien thi
+function ContactChip({ contact, fallback }: { contact?: string | null; fallback?: string }) {
+  const chipClass = 'inline-flex items-center gap-2 bg-[var(--accent)]/10 text-[var(--accent)] font-bold px-4 py-2 rounded-lg text-sm';
+
+  if (contact) {
+    const value = contact.trim();
+    if (isPhoneNumber(value)) {
+      return (
+        <a href={`tel:${value.replace(/[^\d+]/g, '')}`} className={`${chipClass} hover:bg-[var(--accent)] hover:text-white transition-colors`}>
+          <Phone size={15} /> {value}
+        </a>
+      );
+    }
+    if (isUrl(value)) {
+      const external = /^https?:\/\//i.test(value);
+      return (
+        <a
+          href={value}
+          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          className={`${chipClass} hover:bg-[var(--accent)] hover:text-white transition-colors`}
+        >
+          Liên hệ <ArrowRight size={14} />
+        </a>
+      );
+    }
+    return <span className={chipClass}>{value}</span>;
+  }
+
+  if (fallback) return <span className={chipClass}>{fallback}</span>;
+  return null;
 }
 
 export default function ServiceLightbox({ services }: ServiceLightboxProps) {
@@ -126,11 +168,7 @@ export default function ServiceLightbox({ services }: ServiceLightboxProps) {
                 <p className="text-[var(--text-dim)] leading-relaxed text-base mb-6">
                   {currentService.desc}
                 </p>
-                {currentService.price && (
-                  <span className="inline-block bg-[var(--accent)]/10 text-[var(--accent)] font-bold px-4 py-2 rounded-lg text-sm">
-                    {currentService.price}
-                  </span>
-                )}
+                <ContactChip contact={currentService.contact} fallback={currentService.price} />
               </div>
               <div className="flex gap-3 mt-8">
                 <Link
@@ -139,12 +177,23 @@ export default function ServiceLightbox({ services }: ServiceLightboxProps) {
                 >
                   Nhận báo giá <ArrowRight size={16} />
                 </Link>
-                <Link
-                  href="/san-pham"
-                  className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-sm"
-                >
-                  Xem sản phẩm
-                </Link>
+                {/^https?:\/\//i.test(currentService.link || '') ? (
+                  <a
+                    href={currentService.link as string}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-sm"
+                  >
+                    Xem sản phẩm
+                  </a>
+                ) : (
+                  <Link
+                    href={currentService.link || '/san-pham'}
+                    className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-sm"
+                  >
+                    Xem sản phẩm
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -214,9 +263,20 @@ function ServiceCard({ service, index, onOpen, getImg }: {
           {service.title}
         </h3>
         <p className="text-sm text-[var(--text-dim)] line-clamp-2 mb-3">{service.desc}</p>
-        <span className="text-[var(--accent)] text-xs font-bold flex items-center gap-1">
-          Xem sản phẩm <ArrowRight size={13} />
-        </span>
+        {service.link ? (
+          <Link
+            href={service.link}
+            onClick={e => e.stopPropagation()}
+            {...(/^https?:\/\//i.test(service.link) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            className="text-[var(--accent)] text-xs font-bold flex items-center gap-1 hover:underline"
+          >
+            Xem sản phẩm <ArrowRight size={13} />
+          </Link>
+        ) : (
+          <span className="text-[var(--accent)] text-xs font-bold flex items-center gap-1">
+            Xem sản phẩm <ArrowRight size={13} />
+          </span>
+        )}
       </div>
     </div>
   );
