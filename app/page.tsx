@@ -53,7 +53,11 @@ export default async function Home() {
 
   const finalServices = wpHomeData?.printingServices?.services?.length
     ? wpHomeData.printingServices.services.map((s: any, i: number) => ({
-        title: s.title, desc: s.desc, price: VI.lienHe,
+        title: s.title, desc: s.desc,
+        // Neu co servicecontact tu WP thi hien thi thay cho chu "Lien he"
+        price: VI.lienHe,
+        contact: s.contact || null,
+        link: s.link || null,
         img: s.img || `https://picsum.photos/seed/service-${i}/400/300`,
       }))
     : [
