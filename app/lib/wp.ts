@@ -378,22 +378,24 @@ export async function getHomePageData() {
   if (!data?.page) return null;
   const p = data.page;
 
-  // Query MO RONG cho dich vu: servicelink (nut Xem san pham) + servicecontact (nut Lien he)
-  // Tach rieng: neu chua tao 2 ACF field nay trong WP thi query loi → bo qua, trang chu van chay binh thuong
+  // Query MO RONG cho dich vu: link nut "Xem san pham" + lien he
+  // Schema thuc te: field ten "serviceLink" (camelCase do ACF sinh) va "servicecontact"
+  // → dung alias servicelink: serviceLink de code phia sau dung thong nhat
+  // Tach rieng: neu field chua ton tai thi query loi → bo qua, trang chu van chay binh thuong
   let extServices: any[] = [];
   try {
     const extData = await fetchWP(`
       query GetServiceExtras {
         page(id: "trang-chu", idType: URI) {
           printingServices {
-            services { servicelink servicecontact }
+            services { servicelink: serviceLink servicecontact }
           }
         }
       }
     `);
     extServices = extData?.page?.printingServices?.services || [];
   } catch {
-    // ACF fields servicelink/servicecontact chua ton tai — bo qua
+    // ACF fields chua ton tai — bo qua
   }
 
   const process = p.workingProcess;
