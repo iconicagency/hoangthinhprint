@@ -377,6 +377,25 @@ export async function getHomePageData() {
   const data = await fetchWP(query);
   if (!data?.page) return null;
   const p = data.page;
+
+  // Query MO RONG cho dich vu: servicelink (nut Xem san pham) + servicecontact (nut Lien he)
+  // Tach rieng: neu chua tao 2 ACF field nay trong WP thi query loi → bo qua, trang chu van chay binh thuong
+  let extServices: any[] = [];
+  try {
+    const extData = await fetchWP(`
+      query GetServiceExtras {
+        page(id: "trang-chu", idType: URI) {
+          printingServices {
+            services { servicelink servicecontact }
+          }
+        }
+      }
+    `);
+    extServices = extData?.page?.printingServices?.services || [];
+  } catch {
+    // ACF fields servicelink/servicecontact chua ton tai — bo qua
+  }
+
   const process = p.workingProcess;
   const services = p.printingServices;
   const why = p.whyChooseUs;
@@ -397,10 +416,12 @@ export async function getHomePageData() {
     printingServices: {
       tagline: null,
       title: null,
-      services: (services?.services || []).map((s: any) => ({
+      services: (services?.services || []).map((s: any, i: number) => ({
         title: s.servicetitle,
         desc: s.servicedescription,
         img: s.serviceimage?.node?.sourceUrl || null,
+        link: extServices[i]?.servicelink || null,
+        contact: extServices[i]?.servicecontact || null,
       })),
     },
     whyChooseUs: {
