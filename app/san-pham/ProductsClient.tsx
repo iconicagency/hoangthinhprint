@@ -1,7 +1,7 @@
 // ProductsClient.tsx — Client Component trang san pham
-// Toi uu cho hang ngan san pham:
-// - Fetch theo category dang xem (server loc, khong tai thua)
-// - Phan trang cursor: moi lan tai 100 bai, nut "Xem them" tai tiep
+// - Danh muc lay DONG tu WordPress (children cua category san-pham)
+//   → them/xoa/doi ten danh muc trong WP Admin, filter tu cap nhat
+// - Fetch theo category dang xem + phan trang cursor (nut Xem them)
 'use client';
 
 import { useState, useEffect, Suspense, useCallback } from 'react';
@@ -9,34 +9,35 @@ import Image from 'next/image';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { fetchWP, getCategories, getPageBySlug } from '../lib/wp';
+import { fetchWP, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
 
-// Slugs thuộc nhóm sản phẩm — khớp với category thật trong WordPress
-const PRODUCT_CATEGORY_SLUGS = new Set([
-  'san-pham',
-  'catalogue',
-  'tui-giay',
-  'hop-giay',
-  'hop-cung',
-  'hop-song',
-  'hop-qua-tet',
-  'hop-trung-thu',
-]);
-
-const CATEGORY_LABELS: Record<string, string> = {
-  'catalogue': 'Catalogue',
-  'tui-giay': 'Túi giấy',
-  'hop-giay': 'Hộp giấy',
-  'hop-cung': 'Hộp cứng',
-  'hop-song': 'Hộp sóng',
-  'hop-qua-tet': 'Hộp quà tết',
-  'hop-trung-thu': 'Hộp Trung Thu',
-};
-
-// Khi xem "Tất cả": fetch theo danh sách slug (OR)
-const ALL_PRODUCT_SLUGS = 'san-pham,catalogue,tui-giay,hop-giay,hop-cung,hop-song,hop-qua-tet,hop-trung-thu';
 const PER_PAGE = 100; // WPGraphQL gioi han toi da 100 bai/query
+
+// Fallback khi khong ket noi duoc WP — khop voi danh muc trong admin
+const FALLBACK_CATS = [
+  { slug: 'catalogue', name: 'Catalogue', count: 0 },
+  { slug: 'hop-carton-lanh', name: 'Hộp carton lạnh', count: 0 },
+  { slug: 'hop-carton-song', name: 'Hộp carton sóng', count: 0 },
+  { slug: 'hop-giay', name: 'Hộp giấy', count: 0 },
+  { slug: 'hop-qua-tet', name: 'Hộp quà tết', count: 0 },
+  { slug: 'hop-trung-thu', name: 'Hộp trung thu', count: 0 },
+  { slug: 'kep-file', name: 'Kẹp file', count: 0 },
+  { slug: 'name-card', name: 'Name card', count: 0 },
+  { slug: 'phong-bi', name: 'Phong bì', count: 0 },
+  { slug: 'tui-giay', name: 'Túi giấy', count: 0 },
+];
+
+// Lay danh muc con cua "san-pham" truc tiep tu WordPress
+const PRODUCT_CATS_QUERY = `
+  query GetProductCats {
+    category(id: "san-pham", idType: SLUG) {
+      children(first: 50) {
+        nodes { name slug count }
+      }
+    }
+  }
+`;
 
 const GALLERY_QUERY = `
   query GetGallery($first: Int!, $categorySlug: String!, $after: String) {
@@ -65,17 +66,16 @@ function ProductsContent() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Categories + page info: chi tai 1 lan
+  // Danh muc + page info: chi tai 1 lan
   useEffect(() => {
     async function loadMeta() {
       try {
-        const [catsData, pData] = await Promise.all([getCategories(), getPageBySlug('san-pham')]);
-        if (catsData) {
-          const productCats = catsData.filter((c: any) =>
-            PRODUCT_CATEGORY_SLUGS.has(c.slug) && c.slug !== 'san-pham' && c.slug !== 'uncategorized'
-          );
-          setWpCategories(productCats);
-        }
+        const [catsData, pData] = await Promise.all([
+          fetchWP(PRODUCT_CATS_QUERY),
+          getPageBySlug('san-pham'),
+        ]);
+        const children = catsData?.category?.children?.nodes;
+        if (children?.length) setWpCategories(children);
         if (pData) setPageData(pData);
       } catch (error) {
         console.error('Lỗi khi tải danh mục:', error);
@@ -87,7 +87,8 @@ function ProductsContent() {
   // Dong bo activeSlug voi URL (?cat=...)
   useEffect(() => { setActiveSlug(catFromUrl); }, [catFromUrl]);
 
-  // Moi khi doi category: reset va tai trang dau tien cua category do
+  // Moi khi doi category: reset va tai trang dau tien
+  // "Tat ca" fetch theo slug cha "san-pham" — WordPress tu bao gom moi danh muc con
   useEffect(() => {
     let cancelled = false;
     async function loadFirstPage() {
@@ -96,7 +97,7 @@ function ProductsContent() {
       setHasNextPage(false);
       setEndCursor(null);
       try {
-        const slugParam = activeSlug === 'tat-ca' ? ALL_PRODUCT_SLUGS : activeSlug;
+        const slugParam = activeSlug === 'tat-ca' ? 'san-pham' : activeSlug;
         const data: any = await fetchWP(GALLERY_QUERY, { variables: { first: PER_PAGE, categorySlug: slugParam, after: null } });
         if (cancelled) return;
         const posts = data?.posts;
@@ -113,12 +114,12 @@ function ProductsContent() {
     return () => { cancelled = true; };
   }, [activeSlug]);
 
-  // Nut "Xem them": tai trang tiep theo, noi vao danh sach
+  // Nut "Xem them": tai trang tiep theo
   const loadMore = useCallback(async () => {
     if (!hasNextPage || loadingMore || !endCursor) return;
     setLoadingMore(true);
     try {
-      const slugParam = activeSlug === 'tat-ca' ? ALL_PRODUCT_SLUGS : activeSlug;
+      const slugParam = activeSlug === 'tat-ca' ? 'san-pham' : activeSlug;
       const data: any = await fetchWP(GALLERY_QUERY, { variables: { first: PER_PAGE, categorySlug: slugParam, after: endCursor } });
       const posts = data?.posts;
       if (posts?.nodes?.length) {
@@ -133,7 +134,6 @@ function ProductsContent() {
     }
   }, [activeSlug, endCursor, hasNextPage, loadingMore]);
 
-  // Server da loc theo category — khong can loc lai phia client
   const products = cmsProducts.map(p => {
     const subCat = p.categories?.nodes?.find((c: any) => c.slug !== 'san-pham');
     return {
@@ -144,10 +144,9 @@ function ProductsContent() {
     };
   });
 
-  const totalCount = wpCategories.reduce((sum: number, c: any) => sum + (c.count || 0), 0);
-  const filterCategories = wpCategories.length > 0
-    ? [{ slug: 'tat-ca', name: 'Tất cả', count: totalCount }, ...wpCategories]
-    : [{ slug: 'tat-ca', name: 'Tất cả', count: 0 }, ...Object.entries(CATEGORY_LABELS).map(([slug, name]) => ({ slug, name, count: 0 }))];
+  const cats = wpCategories.length > 0 ? wpCategories : FALLBACK_CATS;
+  const totalCount = cats.reduce((sum: number, c: any) => sum + (c.count || 0), 0);
+  const filterCategories = [{ slug: 'tat-ca', name: 'Tất cả', count: totalCount }, ...cats];
 
   const openLightbox = useCallback((index: number) => setLightboxIndex(index), []);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -172,7 +171,7 @@ function ProductsContent() {
 
       <section className="py-12 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="flex flex-wrap gap-2 mb-12 justify-center md:justify-start">
-          {filterCategories.map((cat) => (
+          {filterCategories.map((cat: any) => (
             <Link key={cat.slug} href={cat.slug === 'tat-ca' ? '/san-pham' : `/san-pham?cat=${cat.slug}`} onClick={() => setActiveSlug(cat.slug)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${activeSlug === cat.slug ? 'bg-[var(--accent)] text-[var(--bg)]' : 'bg-[var(--bg)] text-[var(--text-dim)] hover:bg-[var(--card-bg)] border border-[var(--border)]'}`}>
               {cat.name}{cat.count > 0 && <span className="ml-1.5 opacity-60 text-xs">({cat.count})</span>}
