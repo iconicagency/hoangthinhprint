@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail, MapPin, ChevronDown, Menu, X } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 import { VI } from '../lib/vi';
+import { fetchWP } from '../lib/wp';
 
 const NGANH_HANG_LINKS = [
   { href: '/nganh-hang/tpcn-duoc-pham', key: 'tpcnDuocPham' },
@@ -15,22 +16,46 @@ const NGANH_HANG_LINKS = [
   { href: '/nganh-hang/ecommerce', key: 'ecommerce' },
 ];
 
-// Khớp với category slug thật trong WordPress
-const SAN_PHAM_LINKS = [
-  { href: '/san-pham?cat=catalogue', key: 'catalogue' },
-  { href: '/san-pham?cat=tui-giay', key: 'tuiGiay' },
-  { href: '/san-pham?cat=hop-giay', key: 'hopGiay' },
-  { href: '/san-pham?cat=hop-cung', key: 'hopCung' },
-  { href: '/san-pham?cat=hop-song', key: 'hopSong' },
-  { href: '/san-pham?cat=hop-qua-tet', key: 'hopQuaTet' },
-  { href: '/san-pham?cat=hop-trung-thu', key: 'hopTrungThu' },
+// Fallback khi chua tai duoc danh muc tu WP — khop voi admin hien tai
+const SAN_PHAM_FALLBACK = [
+  { slug: 'catalogue', name: 'Catalogue' },
+  { slug: 'hop-carton-lanh', name: 'Hộp carton lạnh' },
+  { slug: 'hop-carton-song', name: 'Hộp carton sóng' },
+  { slug: 'hop-giay', name: 'Hộp giấy' },
+  { slug: 'hop-qua-tet', name: 'Hộp quà tết' },
+  { slug: 'hop-trung-thu', name: 'Hộp trung thu' },
+  { slug: 'kep-file', name: 'Kẹp file' },
+  { slug: 'name-card', name: 'Name card' },
+  { slug: 'phong-bi', name: 'Phong bì' },
+  { slug: 'tui-giay', name: 'Túi giấy' },
 ];
+
+// Danh muc san pham lay DONG tu WordPress (children cua category san-pham)
+const PRODUCT_CATS_QUERY = `
+  query GetProductCatsMenu {
+    category(id: "san-pham", idType: SLUG) {
+      children(first: 50) {
+        nodes { name slug }
+      }
+    }
+  }
+`;
 
 export default function Header() {
   const settings = useSettings();
   const M = VI.menu as Record<string, string>;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSub, setOpenSub] = useState<string | null>(null);
+  const [productCats, setProductCats] = useState<{ slug: string; name: string }[]>(SAN_PHAM_FALLBACK);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchWP(PRODUCT_CATS_QUERY).then((data: any) => {
+      const nodes = data?.category?.children?.nodes;
+      if (!cancelled && nodes?.length) setProductCats(nodes);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const closeMobile = () => { setMobileOpen(false); setOpenSub(null); };
 
@@ -92,8 +117,8 @@ export default function Header() {
                 {M.sanPham} <ChevronDown size={14} />
               </Link>
               <div className="absolute top-full left-0 mt-0 w-60 bg-[var(--bg)] border border-[var(--border)] shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 flex flex-col py-2">
-                {SAN_PHAM_LINKS.map(l => (
-                  <Link key={l.href} href={l.href} className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{M[l.key]}</Link>
+                {productCats.map(cat => (
+                  <Link key={cat.slug} href={`/san-pham?cat=${cat.slug}`} className="px-5 py-2.5 hover:bg-[var(--card-bg)] hover:text-[var(--accent)] transition-colors text-sm normal-case font-medium border-b border-[var(--border)] last:border-0">{cat.name}</Link>
                 ))}
               </div>
             </li>
@@ -170,10 +195,10 @@ export default function Header() {
                 </div>
                 {openSub === 'san-pham' && (
                   <div className="bg-[var(--card-bg)] flex flex-col">
-                    {SAN_PHAM_LINKS.map(l => (
-                      <Link key={l.href} href={l.href} onClick={closeMobile}
+                    {productCats.map(cat => (
+                      <Link key={cat.slug} href={`/san-pham?cat=${cat.slug}`} onClick={closeMobile}
                         className="px-10 py-3 text-sm normal-case font-medium border-t border-[var(--border)] hover:text-[var(--accent)]">
-                        {M[l.key]}
+                        {cat.name}
                       </Link>
                     ))}
                   </div>
