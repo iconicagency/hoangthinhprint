@@ -113,10 +113,10 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* aspectRatio chi tac dung tren mobile; desktop md:h-[750px] co height co dinh nen ratio bi bo qua */}
+      {/* aspect-ratio qua CSS variable: CHI ap dung mobile; desktop md tat aspect-ratio + height 750px full width */}
       <div
-        className="relative md:h-[750px]"
-        style={{ aspectRatio: String(mobileRatio) }}
+        className="relative w-full [aspect-ratio:var(--hero-ar)] md:[aspect-ratio:auto] md:h-[750px]"
+        style={{ '--hero-ar': String(mobileRatio) } as React.CSSProperties}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
