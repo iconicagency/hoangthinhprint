@@ -1,36 +1,71 @@
 'use client';
 
+// Trang Du an tieu bieu
+// - Uu tien: bai viet san pham gan tag "tieu-bieu" (chon san pham that tu muc Post)
+// - Fallback: CPT "cacDuAn" nhu cu neu chua co bai nao gan tag
+// - Filter danh muc tu dong build tu san pham dang hien thi
+
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
-import { getProjects, getPageBySlug } from '../lib/wp';
+import { getProjects, getPageBySlug, fetchWP } from '../lib/wp';
 
-const categories = [
-  'Tất cả',
-  'Hộp cứng',
-  'Hộp giấy',
-  'Túi giấy',
-  'Hộp sóng',
-  'Hộp Trung Thu'
-];
+const FEATURED_PRODUCTS_QUERY = `
+  query GetFeaturedProducts($first: Int!) {
+    posts(first: $first, where: {tag: "tieu-bieu", orderby: {field: DATE, order: DESC}}) {
+      nodes {
+        id title slug
+        featuredImage { node { sourceUrl } }
+        categories { nodes { name slug } }
+      }
+    }
+  }
+`;
 
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
   const [selectedImage, setSelectedImage] = useState<{img: string, title: string} | null>(null);
-  const [cmsProjects, setCmsProjects] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [pageData, setPageData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [projectsData, pData] = await Promise.all([
+        const [featuredData, projectsData, pData] = await Promise.all([
+          fetchWP(FEATURED_PRODUCTS_QUERY, { variables: { first: 100 } }),
           getProjects(),
-          getPageBySlug('du-an')
+          getPageBySlug('du-an'),
         ]);
-        if (projectsData) setCmsProjects(projectsData);
         if (pData) setPageData(pData);
+
+        // Uu tien bai viet san pham gan tag "tieu-bieu"
+        const featured = (featuredData?.posts?.nodes || [])
+          .filter((p: any) => p?.featuredImage?.node?.sourceUrl)
+          .map((p: any) => {
+            const subCat = p.categories?.nodes?.find((c: any) => c.slug !== 'san-pham');
+            return {
+              id: p.id,
+              title: p.title,
+              tag: subCat?.name || 'Sản phẩm tiêu biểu',
+              category: subCat?.name || 'Khác',
+              img: p.featuredImage.node.sourceUrl,
+            };
+          });
+
+        if (featured.length > 0) {
+          setProducts(featured);
+        } else if (projectsData?.length) {
+          // Fallback: CPT du an cu
+          setProducts(projectsData.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            tag: p.thongtinduan?.nhanHienThi || 'Dự án',
+            category: p.categories?.nodes?.[0]?.name || 'Dự án',
+            img: p.featuredImage?.node?.sourceUrl || 'https://picsum.photos/seed/prod/400/400',
+          })));
+        }
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu dự án:", error);
       } finally {
@@ -40,44 +75,38 @@ export default function Projects() {
     loadData();
   }, []);
 
-  // Chuyển đổi dữ liệu từ CMS sang format của component
-  const products = cmsProjects.map(p => ({
-    id: p.id,
-    title: p.title,
-    tag: p.thongtinduan?.nhanHienThi || 'Dự án',
-    category: p.categories?.nodes[0]?.name || 'Hộp cứng',
-    img: p.featuredImage?.node?.sourceUrl || 'https://picsum.photos/seed/prod/400/400'
-  }));
+  // Filter danh muc: build tu dong tu san pham dang co
+  const categories = ['Tất cả', ...Array.from(new Set(products.map(p => p.category))).sort()];
 
-  const filteredProducts = activeCategory === 'Tất cả' 
-    ? products 
+  const filteredProducts = activeCategory === 'Tất cả'
+    ? products
     : products.filter(p => p.category === activeCategory);
 
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
-    
+
       {/* Lightbox Modal */}
       {selectedImage && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 sm:p-8"
           onClick={() => setSelectedImage(null)}
         >
-          <button 
+          <button
             className="absolute top-6 right-6 text-white hover:text-[var(--accent)] transition-colors p-2 bg-white/10 rounded-full z-10"
             onClick={() => setSelectedImage(null)}
           >
             <X size={32} />
           </button>
-          
-          <div 
+
+          <div
             className="relative w-full max-w-5xl aspect-auto max-h-[85vh] h-full mb-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image 
-              src={selectedImage.img} 
-              alt={selectedImage.title} 
-              fill 
-              className="object-contain" 
+            <Image
+              src={selectedImage.img}
+              alt={selectedImage.title}
+              fill
+              className="object-contain"
               referrerPolicy="no-referrer"
               unoptimized
             />
@@ -109,7 +138,7 @@ export default function Projects() {
 
       {/* Main Content */}
       <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto">
-        
+
         {/* Portfolio Header */}
         <div className="text-center mb-12">
           <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">
@@ -123,55 +152,63 @@ export default function Projects() {
         </div>
 
         {/* Categories Filter */}
-        <div className="flex flex-wrap gap-2 mb-12 justify-center">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === cat 
-                  ? 'bg-[var(--accent)] text-[var(--bg)]' 
-                  : 'bg-[var(--bg)] text-[var(--text-dim)] hover:bg-[var(--card-bg)] border border-[var(--border)]'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {products.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-12 justify-center">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-6 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                  activeCategory === cat
+                    ? 'bg-[var(--accent)] text-[var(--bg)]'
+                    : 'bg-[var(--bg)] text-[var(--text-dim)] hover:bg-[var(--card-bg)] border border-[var(--border)]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div 
-              key={product.id} 
-              onClick={() => setSelectedImage({ img: product.img, title: product.title })}
-              className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
-            >
-              <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
-                <Image 
-                  src={product.img} 
-                  alt={product.title} 
-                  fill 
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                  unoptimized
-                />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-[var(--text-main)] text-sm mb-2 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
-                  {product.title}
-                </h3>
-                <div className="text-xs font-medium text-[var(--accent)]">
-                  {product.tag}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => <div key={i} className="animate-pulse bg-slate-200 rounded-xl aspect-square"></div>)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                onClick={() => setSelectedImage({ img: product.img, title: product.title })}
+                className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
+              >
+                <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
+                  <Image
+                    src={product.img}
+                    alt={product.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                    unoptimized
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="font-bold text-[var(--text-main)] text-sm mb-2 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
+                    {product.title}
+                  </h3>
+                  <div className="text-xs font-medium text-[var(--accent)]">
+                    {product.tag}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-20 text-[var(--text-dim)]">
-            Không tìm thấy sản phẩm nào trong danh mục này.
+            Chưa có sản phẩm tiêu biểu. Gắn tag &quot;tieu-bieu&quot; vào bài viết sản phẩm trong WP Admin để hiển thị tại đây.
           </div>
         )}
 
@@ -191,7 +228,7 @@ export default function Projects() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-[var(--text-main)] mb-6 tracking-tight">Gửi yêu cầu báo giá</h2>
           </div>
-          
+
           <div className="bg-[var(--bg)] p-8 md:p-10 rounded-3xl border border-[var(--border)] shadow-sm">
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
