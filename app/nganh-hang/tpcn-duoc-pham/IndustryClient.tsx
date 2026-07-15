@@ -61,6 +61,9 @@ export default function IndustryClient() {
         </div>
       </section>
 
+      {/* San pham mau: loc theo tag "tpcn-duoc-pham", fallback san pham moi nhat — dat ngay duoi hero */}
+      <SampleProductsSection tag="tpcn-duoc-pham" fallbackImages={acf.sampleImages?.nodes} />
+
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bì Cho Ngành TPCN & Dược Phẩm'}</h2>
@@ -110,9 +113,6 @@ export default function IndustryClient() {
           <p className="text-center text-[var(--accent)] font-bold text-lg">{acf.pricingText || 'Giá từ 10.200đ/hộp (MOQ 500). Đơn từ 5.000 hộp giảm thêm 10-15%.'}</p>
         </div>
       </section>
-
-      {/* San pham mau: loc theo tag "tpcn-duoc-pham", fallback san pham moi nhat */}
-      <SampleProductsSection tag="tpcn-duoc-pham" fallbackImages={acf.sampleImages?.nodes} />
 
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
