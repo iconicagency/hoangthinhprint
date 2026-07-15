@@ -28,14 +28,14 @@ function isUrl(value: string) {
 
 // Chip "Lien he" thong minh: SDT → bam goi ngay; link → mo trang; text thuong → hien thi
 function ContactChip({ contact, fallback }: { contact?: string | null; fallback?: string }) {
-  const chipClass = 'inline-flex items-center gap-2 bg-[var(--accent)]/10 text-[var(--accent)] font-bold px-4 py-2 rounded-lg text-sm';
+  const chipClass = 'inline-flex items-center gap-2 bg-[var(--accent)]/10 text-[var(--accent)] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm';
 
   if (contact) {
     const value = contact.trim();
     if (isPhoneNumber(value)) {
       return (
         <a href={`tel:${value.replace(/[^\d+]/g, '')}`} className={`${chipClass} hover:bg-[var(--accent)] hover:text-white transition-colors`}>
-          <Phone size={15} /> {value}
+          <Phone size={14} /> {value}
         </a>
       );
     }
@@ -120,7 +120,7 @@ export default function ServiceLightbox({ services }: ServiceLightboxProps) {
           {/* Đóng */}
           <button
             onClick={close}
-            className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white z-10 transition-colors"
+            className="absolute top-3 right-3 md:top-4 md:right-4 w-9 h-9 md:w-10 md:h-10 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white z-10 transition-colors"
           >
             <X size={20} />
           </button>
@@ -129,67 +129,82 @@ export default function ServiceLightbox({ services }: ServiceLightboxProps) {
           {services.length > 1 && (
             <button
               onClick={e => { e.stopPropagation(); goPrev(); }}
-              className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white z-10 transition-colors"
+              className="hidden md:flex absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 rounded-full items-center justify-center text-white z-10 transition-colors"
             >
               <ChevronLeft size={26} />
             </button>
           )}
 
-          {/* Panel chính — ảnh trái + nội dung phải */}
+          {/* Panel chính — mobile gọn: ảnh 4:3 thấp + nội dung compact; desktop: ảnh vuông lớn bên trái */}
           <div
-            className="bg-[var(--card-bg)] rounded-2xl overflow-hidden w-full shadow-2xl flex flex-col md:flex-row"
-            style={{ maxWidth: '960px', maxHeight: '90vh' }}
+            className="bg-[var(--card-bg)] rounded-2xl overflow-hidden w-full max-w-sm md:max-w-[960px] shadow-2xl flex flex-col md:flex-row"
+            style={{ maxHeight: '85vh' }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Ảnh — 600x600 */}
-            <div
-              className="relative shrink-0 bg-slate-900"
-              style={{ width: '100%', aspectRatio: '1/1', maxWidth: '600px', minHeight: '280px' }}
-            >
+            {/* Ảnh — mobile 4:3 giới hạn 34vh, desktop vuông 600px */}
+            <div className="relative shrink-0 bg-slate-900 w-full aspect-[4/3] max-h-[34vh] md:max-h-none md:w-[480px] lg:w-[560px] md:aspect-square">
               <Image
                 src={getImg(currentService, lightboxIdx)}
                 alt={currentService.title}
                 fill
                 className="object-cover"
                 referrerPolicy="no-referrer"
-                sizes="600px"
+                sizes="(max-width: 768px) 100vw, 600px"
               />
+
+              {/* Mobile: mũi tên đặt trên ảnh */}
+              {services.length > 1 && (
+                <>
+                  <button
+                    onClick={e => { e.stopPropagation(); goPrev(); }}
+                    className="md:hidden absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/35 active:bg-black/55 rounded-full flex items-center justify-center text-white z-10"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={e => { e.stopPropagation(); goNext(); }}
+                    className="md:hidden absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/35 active:bg-black/55 rounded-full flex items-center justify-center text-white z-10"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Nội dung */}
-            <div className="flex flex-col justify-between p-8 md:p-10 overflow-y-auto flex-1">
+            <div className="flex flex-col justify-between p-5 md:p-10 overflow-y-auto flex-1">
               <div>
-                <p className="text-xs text-[var(--accent)] font-bold uppercase tracking-widest mb-3">
+                <p className="text-[10px] md:text-xs text-[var(--accent)] font-bold uppercase tracking-widest mb-1.5 md:mb-3">
                   {lightboxIdx + 1} / {services.length}
                 </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-[var(--text-main)] mb-4 leading-tight">
+                <h2 className="text-lg md:text-3xl font-bold text-[var(--text-main)] mb-2 md:mb-4 leading-tight">
                   {currentService.title}
                 </h2>
-                <p className="text-[var(--text-dim)] leading-relaxed text-base mb-6">
+                <p className="text-[var(--text-dim)] leading-relaxed text-sm md:text-base mb-3 md:mb-6">
                   {currentService.desc}
                 </p>
                 <ContactChip contact={currentService.contact} fallback={currentService.price} />
               </div>
-              <div className="flex gap-3 mt-8">
+              <div className="flex gap-2.5 md:gap-3 mt-5 md:mt-8">
                 <Link
                   href="/bao-gia"
-                  className="flex-1 bg-[var(--accent)] text-white py-3.5 rounded-xl font-bold text-center hover:opacity-90 transition-opacity text-sm flex items-center justify-center gap-2"
+                  className="flex-1 bg-[var(--accent)] text-white py-2.5 md:py-3.5 rounded-xl font-bold text-center hover:opacity-90 transition-opacity text-xs md:text-sm flex items-center justify-center gap-1.5 md:gap-2"
                 >
-                  Nhận báo giá <ArrowRight size={16} />
+                  Nhận báo giá <ArrowRight size={15} />
                 </Link>
                 {/^https?:\/\//i.test(currentService.link || '') ? (
                   <a
                     href={currentService.link as string}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-sm"
+                    className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-2.5 md:py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-xs md:text-sm flex items-center justify-center"
                   >
                     Xem sản phẩm
                   </a>
                 ) : (
                   <Link
                     href={currentService.link || '/san-pham'}
-                    className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-sm"
+                    className="flex-1 border border-[var(--border)] text-[var(--text-main)] py-2.5 md:py-3.5 rounded-xl font-bold text-center hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-xs md:text-sm flex items-center justify-center"
                   >
                     Xem sản phẩm
                   </Link>
@@ -202,15 +217,15 @@ export default function ServiceLightbox({ services }: ServiceLightboxProps) {
           {services.length > 1 && (
             <button
               onClick={e => { e.stopPropagation(); goNext(); }}
-              className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 rounded-full flex items-center justify-center text-white z-10 transition-colors"
+              className="hidden md:flex absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 rounded-full items-center justify-center text-white z-10 transition-colors"
             >
               <ChevronRight size={26} />
             </button>
           )}
 
-          {/* Thumbnail strip */}
+          {/* Thumbnail strip — chỉ desktop, mobile ẩn cho gọn */}
           {services.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-[80vw] px-2">
+            <div className="hidden md:flex absolute bottom-4 left-1/2 -translate-x-1/2 gap-2 overflow-x-auto max-w-[80vw] px-2">
               {services.map((s, i) => (
                 <button
                   key={i}
