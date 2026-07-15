@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -82,6 +82,16 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
   const next = useCallback(() => setCurrent(i => (i + 1) % slides.length), [slides.length]);
   const prev = useCallback(() => setCurrent(i => (i - 1 + slides.length) % slides.length), [slides.length]);
 
+  // Vuot chuyen slide tren mobile
+  const touchStartX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 50) { if (dx < 0) next(); else prev(); }
+    touchStartX.current = null;
+  };
+
   useEffect(() => {
     if (paused || slides.length <= 1) return;
     const t = setInterval(next, 5000);
@@ -97,7 +107,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="aspect-[4/3] md:aspect-auto md:h-[750px] relative">
+      <div className="aspect-[16/9] md:aspect-auto md:h-[750px] relative" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
 
         {/* ── Slides background ── */}
         {slides.map((s, i) => (
@@ -121,7 +131,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950" />
             )}
             <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/80 via-black/50 to-black/80" />
-            <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+            <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/35 via-transparent to-transparent" />
           </div>
         ))}
 
@@ -177,27 +187,6 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
           </div>
         </div>
 
-        {/* ── MOBILE: chỉ buttons ở đáy ── */}
-        <div className="md:hidden absolute inset-x-0 bottom-0 z-10 px-4 pb-5">
-          {slide.buttons && slide.buttons.length > 0 && (
-            <div className="flex gap-3">
-              {slide.buttons.map((btn, idx) => (
-                <Link
-                  key={idx}
-                  href={btn.link}
-                  className={
-                    idx === 0
-                      ? "flex-1 bg-[var(--accent)] text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg flex items-center justify-center gap-1 active:scale-95 transition-transform"
-                      : "flex-1 bg-black/50 backdrop-blur-sm border border-white/30 text-white py-3 rounded-xl font-bold text-sm text-center active:scale-95 transition-transform"
-                  }
-                >
-                  {btn.label} {idx === 0 && <ArrowRight size={15} />}
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-
         {/* ── Arrows ── */}
         {slides.length > 1 && (
           <>
@@ -212,7 +201,7 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
 
         {/* ── Dots ── */}
         {slides.length > 1 && (
-          <div className="absolute bottom-14 md:bottom-[4.5rem] left-0 right-0 flex justify-center gap-2 z-20">
+          <div className="absolute bottom-3 md:bottom-[4.5rem] left-0 right-0 flex justify-center gap-2 z-20">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -224,6 +213,27 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
         )}
 
       </div>
+
+      {/* ── MOBILE: buttons nằm DƯỚI ảnh, không đè lên banner ── */}
+      {slide.buttons && slide.buttons.length > 0 && (
+        <div className="md:hidden px-4 pt-4 pb-14 bg-slate-900">
+          <div className="flex gap-3">
+            {slide.buttons.map((btn, idx) => (
+              <Link
+                key={idx}
+                href={btn.link}
+                className={
+                  idx === 0
+                    ? "flex-1 bg-[var(--accent)] text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg flex items-center justify-center gap-1 active:scale-95 transition-transform"
+                    : "flex-1 bg-white/10 border border-white/30 text-white py-3 rounded-xl font-bold text-sm text-center flex items-center justify-center active:scale-95 transition-transform"
+                }
+              >
+                {btn.label} {idx === 0 && <ArrowRight size={15} />}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
