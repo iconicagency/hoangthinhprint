@@ -46,6 +46,9 @@ export default async function Home() {
   const finalStats = (aboveFold?.stats?.length ? aboveFold.stats : wpHomeData?.stats?.length ? wpHomeData.stats : homeConfig.stats);
   const videosList: any[] = wpHomeData?.factoryTour?.videosList?.length ? wpHomeData.factoryTour.videosList : [];
   const factoryTourData = wpHomeData?.factoryTour;
+  // Chi hien section "Tham quan xuong" khi WP THUC SU co video hoac mo ta.
+  // Xoa het data trong ACF → section tu an hoan toan (khong con fallback cung).
+  const showFactoryTour = videosList.length > 0 || !!factoryTourData?.description;
 
   const finalPartners = wpHomeData?.clients?.list?.length
     ? wpHomeData.clients.list
@@ -249,51 +252,53 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Video */}
-      <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{factoryTourData?.tagline || VI.videoGioiThieu}</div>
-            <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{factoryTourData?.title || VI.thamQuanXuong}</h2>
-            <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
-          </div>
-          {videosList.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videosList.map((v: any, i: number) => (
-                <a key={i} href={v.url} target="_blank" rel="noopener noreferrer"
-                  className="group block bg-[var(--bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-lg transition-all">
-                  <div className="relative aspect-video overflow-hidden bg-slate-800">
-                    {v.cover ? (
-                      <Image src={v.cover} alt={v.title || 'Video'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
-                    ) : (
-                      <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-[var(--accent)] rounded-full flex items-center justify-center">
-                          <Play size={32} fill="white" className="text-white ml-1" />
+      {/* Video / Tham quan xuong — CHI hien khi WP co video hoac mo ta */}
+      {showFactoryTour && (
+        <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{factoryTourData?.tagline || VI.videoGioiThieu}</div>
+              <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{factoryTourData?.title || VI.thamQuanXuong}</h2>
+              <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
+            </div>
+            {videosList.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {videosList.map((v: any, i: number) => (
+                  <a key={i} href={v.url} target="_blank" rel="noopener noreferrer"
+                    className="group block bg-[var(--bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-lg transition-all">
+                    <div className="relative aspect-video overflow-hidden bg-slate-800">
+                      {v.cover ? (
+                        <Image src={v.cover} alt={v.title || 'Video'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      ) : (
+                        <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-[var(--accent)] rounded-full flex items-center justify-center">
+                            <Play size={32} fill="white" className="text-white ml-1" />
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <div className="w-16 h-16 bg-[var(--accent)]/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <Play size={28} fill="white" className="text-white ml-1" />
                         </div>
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <div className="w-16 h-16 bg-[var(--accent)]/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <Play size={28} fill="white" className="text-white ml-1" />
-                      </div>
                     </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-[var(--text-main)] mb-1 line-clamp-2">{v.title || VI.videoGioiThieu}</h3>
-                  </div>
-                </a>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-[var(--bg)] rounded-2xl border border-[var(--border)]">
-              <div className="w-20 h-20 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Play size={36} className="text-[var(--accent)] ml-1" />
+                    <div className="p-5">
+                      <h3 className="font-bold text-[var(--text-main)] mb-1 line-clamp-2">{v.title || VI.videoGioiThieu}</h3>
+                    </div>
+                  </a>
+                ))}
               </div>
-              <p className="text-[var(--text-dim)] text-sm max-w-md mx-auto">{factoryTourData?.description || homeConfig.videoSection.description}</p>
-            </div>
-          )}
-        </div>
-      </section>
+            ) : (
+              <div className="text-center py-12 bg-[var(--bg)] rounded-2xl border border-[var(--border)]">
+                <div className="w-20 h-20 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Play size={36} className="text-[var(--accent)] ml-1" />
+                </div>
+                <p className="text-[var(--text-dim)] text-sm max-w-md mx-auto">{factoryTourData?.description}</p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Blog */}
       <section className="py-24 px-8 bg-[var(--bg)] border-t border-[var(--border)]">
