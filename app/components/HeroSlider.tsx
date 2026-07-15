@@ -79,6 +79,10 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
+  // Ti le thuc cua tung anh banner (naturalWidth / naturalHeight)
+  // → khung mobile co dan dung theo anh, KHONG bi crop du banner ti le nao
+  const [ratios, setRatios] = useState<Record<number, number>>({});
+
   const next = useCallback(() => setCurrent(i => (i + 1) % slides.length), [slides.length]);
   const prev = useCallback(() => setCurrent(i => (i - 1 + slides.length) % slides.length), [slides.length]);
 
@@ -100,6 +104,8 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
 
   const slide = slides[current];
   const hasText = !!(slide.title || slide.subtitle);
+  // Mobile: chieu cao khung = width / ti le anh that (fallback 16/9 khi anh chua load)
+  const mobileRatio = ratios[current] || 16 / 9;
 
   return (
     <section
@@ -107,7 +113,13 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="aspect-[16/9] md:aspect-auto md:h-[750px] relative" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      {/* aspectRatio chi tac dung tren mobile; desktop md:h-[750px] co height co dinh nen ratio bi bo qua */}
+      <div
+        className="relative md:h-[750px]"
+        style={{ aspectRatio: String(mobileRatio) }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
 
         {/* ── Slides background ── */}
         {slides.map((s, i) => (
@@ -126,12 +138,18 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
                 priority={i === 0}
                 referrerPolicy="no-referrer"
                 unoptimized
+                onLoad={(e) => {
+                  const t = e.currentTarget as HTMLImageElement;
+                  if (t.naturalWidth > 0 && t.naturalHeight > 0) {
+                    const r = t.naturalWidth / t.naturalHeight;
+                    setRatios(prevR => (prevR[i] ? prevR : { ...prevR, [i]: r }));
+                  }
+                }}
               />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950" />
             )}
             <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/80 via-black/50 to-black/80" />
-            <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/35 via-transparent to-transparent" />
           </div>
         ))}
 
@@ -199,9 +217,9 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
           </>
         )}
 
-        {/* ── Dots ── */}
+        {/* ── Dots: desktop trong ảnh ── */}
         {slides.length > 1 && (
-          <div className="absolute bottom-3 md:bottom-[4.5rem] left-0 right-0 flex justify-center gap-2 z-20">
+          <div className="hidden md:flex absolute bottom-[4.5rem] left-0 right-0 justify-center gap-2 z-20">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -214,9 +232,20 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
 
       </div>
 
-      {/* ── MOBILE: buttons nằm DƯỚI ảnh, không đè lên banner ── */}
-      {slide.buttons && slide.buttons.length > 0 && (
-        <div className="md:hidden px-4 pt-4 pb-14 bg-slate-900">
+      {/* ── MOBILE: dots + buttons nằm DƯỚI ảnh, không đè lên banner ── */}
+      <div className="md:hidden px-4 pt-3 pb-14 bg-slate-900">
+        {slides.length > 1 && (
+          <div className="flex justify-center gap-2 mb-3.5">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`transition-all rounded-full ${i === current ? 'bg-[var(--accent)] w-5 h-2' : 'bg-white/40 w-2 h-2'}`}
+              />
+            ))}
+          </div>
+        )}
+        {slide.buttons && slide.buttons.length > 0 && (
           <div className="flex gap-3">
             {slide.buttons.map((btn, idx) => (
               <Link
@@ -232,8 +261,8 @@ export default function HeroSlider({ dynamicHero }: { dynamicHero?: any }) {
               </Link>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }
