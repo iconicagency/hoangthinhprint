@@ -26,16 +26,23 @@ function isUrl(value: string) {
   return /^https?:\/\//i.test(value.trim()) || value.trim().startsWith('/');
 }
 
-// Chip "Lien he" thong minh: SDT → bam goi ngay; link → mo trang; text thuong → hien thi
+// Chip "Lien he" thong minh:
+// - SDT (ke ca nhap dang "tel:09xx" hay "09xx") → bam goi ngay
+// - Link → mo trang
+// - Text thuong → hien thi nguyen van
 function ContactChip({ contact, fallback }: { contact?: string | null; fallback?: string }) {
   const chipClass = 'inline-flex items-center gap-2 bg-[var(--accent)]/10 text-[var(--accent)] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm';
 
   if (contact) {
     const value = contact.trim();
-    if (isPhoneNumber(value)) {
+    // Chap nhan ca dang "tel:0343498888" — bo prefix tel: truoc khi kiem tra
+    const telMatch = value.match(/^tel:\s*(.+)$/i);
+    const phoneCandidate = telMatch ? telMatch[1].trim() : value;
+
+    if (isPhoneNumber(phoneCandidate)) {
       return (
-        <a href={`tel:${value.replace(/[^\d+]/g, '')}`} className={`${chipClass} hover:bg-[var(--accent)] hover:text-white transition-colors`}>
-          <Phone size={14} /> {value}
+        <a href={`tel:${phoneCandidate.replace(/[^\d+]/g, '')}`} className={`${chipClass} hover:bg-[var(--accent)] hover:text-white transition-colors`}>
+          <Phone size={14} /> {phoneCandidate}
         </a>
       );
     }
