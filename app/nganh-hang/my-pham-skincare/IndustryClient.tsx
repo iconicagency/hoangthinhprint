@@ -61,6 +61,9 @@ export default function IndustryClient() {
         </div>
       </section>
 
+      {/* San pham mau: loc theo tag "my-pham-skincare", fallback san pham moi nhat — dat ngay duoi hero */}
+      <SampleProductsSection tag="my-pham-skincare" fallbackImages={acf.sampleImages?.nodes} />
+
       <section className="py-24 px-8 bg-[var(--bg)] text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Bao Bì Cho Ngành Mỹ Phẩm'}</h2>
@@ -110,9 +113,6 @@ export default function IndustryClient() {
           <p className="text-center text-[var(--accent)] font-bold text-lg">{acf.pricingText || 'Hộp cứng từ 10.200đ. Túi giấy ivory từ 8.500đ. MOQ 500.'}</p>
         </div>
       </section>
-
-      {/* San pham mau: loc theo tag "my-pham-skincare", fallback san pham moi nhat */}
-      <SampleProductsSection tag="my-pham-skincare" fallbackImages={acf.sampleImages?.nodes} />
 
       <section className="py-24 px-8 bg-[var(--bg)]">
         <div className="max-w-3xl mx-auto">
