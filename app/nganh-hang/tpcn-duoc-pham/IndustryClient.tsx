@@ -6,11 +6,25 @@ import ImagePlaceholder from '../../components/ImagePlaceholder';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
-import { getIndustryPageData } from '../../lib/wp';
+import { getIndustryPageData, fetchWP } from '../../lib/wp';
+
+// Lay dong san pham tu muc San pham (posts category san-pham, bao gom danh muc con)
+const SAMPLE_PRODUCTS_QUERY = `
+  query GetSampleProducts($first: Int!) {
+    posts(first: $first, where: {categoryName: "san-pham", orderby: {field: DATE, order: DESC}}) {
+      nodes {
+        id title slug
+        featuredImage { node { sourceUrl } }
+        categories { nodes { slug } }
+      }
+    }
+  }
+`;
 
 export default function IndustryClient() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [pageData, setPageData] = useState<any>(null);
+  const [sampleProducts, setSampleProducts] = useState<any[]>([]);
 
   useEffect(() => {
     async function loadData() {
@@ -21,7 +35,17 @@ export default function IndustryClient() {
         console.error('Lỗi khi tải trang TPCN:', error);
       }
     }
+    async function loadSampleProducts() {
+      try {
+        const data: any = await fetchWP(SAMPLE_PRODUCTS_QUERY, { variables: { first: 8 } });
+        const nodes = (data?.posts?.nodes || []).filter((p: any) => p?.featuredImage?.node?.sourceUrl);
+        setSampleProducts(nodes);
+      } catch (error) {
+        console.error('Lỗi khi tải sản phẩm mẫu:', error);
+      }
+    }
     loadData();
+    loadSampleProducts();
   }, []);
 
   const acf = pageData?.cauHinhChiTietNganhHang || {};
@@ -112,6 +136,7 @@ export default function IndustryClient() {
         </div>
       </section>
 
+      {/* San pham mau: lay DONG tu bai viet trong muc San pham (8 bai moi nhat co anh) */}
       <section className="py-24 px-8 bg-[var(--card-bg)] border-y border-[var(--border)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -119,7 +144,23 @@ export default function IndustryClient() {
             <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {acf.sampleImages?.nodes?.length > 0
+            {sampleProducts.length > 0
+              ? sampleProducts.map((p: any) => {
+                  const subCatSlug = p.categories?.nodes?.find((c: any) => c.slug !== 'san-pham')?.slug;
+                  return (
+                    <Link
+                      key={p.id}
+                      href={subCatSlug ? `/san-pham?cat=${subCatSlug}` : '/san-pham'}
+                      className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group block"
+                    >
+                      <Image src={p.featuredImage.node.sourceUrl} alt={p.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <span className="text-white text-sm font-bold line-clamp-2">{p.title}</span>
+                      </div>
+                    </Link>
+                  );
+                })
+              : acf.sampleImages?.nodes?.length > 0
               ? acf.sampleImages.nodes.map((img: any, i: number) => (
                 <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] group">
                   <Image src={img.sourceUrl} alt={`Mẫu ${i + 1}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
@@ -127,9 +168,14 @@ export default function IndustryClient() {
               ))
               : [1, 2, 3, 4].map((i) => (
                 <div key={i} className="relative aspect-square rounded-2xl overflow-hidden">
-                  <ImagePlaceholder label="Upload ảnh trong WP Admin" />
+                  <ImagePlaceholder label="Thêm sản phẩm trong WP Admin" />
                 </div>
               ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link href="/san-pham" className="inline-flex items-center gap-2 border-2 border-[var(--border)] text-[var(--text-main)] px-8 py-3 rounded-full font-bold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors bg-[var(--bg)]">
+              Xem tất cả sản phẩm <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
