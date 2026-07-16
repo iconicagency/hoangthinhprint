@@ -7,6 +7,16 @@ export interface ContactChannel {
   phone: string;
 }
 
+export interface FooterMenuItem {
+  label: string;
+  href: string;
+}
+
+export interface FooterMenu {
+  name: string;
+  items: FooterMenuItem[];
+}
+
 interface SiteSettings {
   logoUrl: string | null;
   logoText: string;
@@ -25,6 +35,8 @@ interface SiteSettings {
   // Danh sach kenh lien he cho FloatContact widget (nhap tu WP Header Settings)
   hotlines: ContactChannel[];
   zalos: ContactChannel[];
+  // Menu footer tu WP Admin → Giao dien → Menu (menu ten/slug "footer")
+  footerMenu: FooterMenu | null;
 }
 
 // Default không dùng web.archive.org nữa
@@ -46,6 +58,7 @@ const defaultSettings: SiteSettings = {
   zalos: [
     { label: 'Nhắn tin qua Zalo', phone: '0569.849.999' },
   ],
+  footerMenu: null,
 };
 
 const SettingsContext = createContext<SiteSettings>(defaultSettings);
@@ -80,6 +93,7 @@ function buildSettings(wpData: any): SiteSettings {
     copyrightText: wpData.copyrightText || undefined,
     hotlines: buildContactList(wpData.hotlines, 'Gọi điện thoại trực tiếp') || defaultSettings.hotlines,
     zalos: buildContactList(wpData.zalos, 'Nhắn tin qua Zalo') || defaultSettings.zalos,
+    footerMenu: wpData.footerMenu?.items?.length ? wpData.footerMenu : null,
   };
 }
 
