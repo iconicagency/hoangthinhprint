@@ -494,6 +494,54 @@ export async function getHomePageData() {
   };
 }
 
+// Chuyen URL menu item ve dang dung duoc tren frontend:
+// - Link tro ve CMS (cms.inhoangthinh.com.vn) → lay path tuong doi
+// - Link ngoai (https khac) → giu nguyen
+// - "#" hoac rong → "#"
+function normalizeMenuUrl(item: any): string {
+  const raw = item?.url || item?.uri || '';
+  if (!raw || raw === '#') return item?.uri && item.uri !== '#' ? item.uri : '#';
+  try {
+    const u = new URL(raw);
+    if (u.hostname.includes('cms.inhoangthinh.com.vn')) {
+      return (u.pathname + u.search) || '/';
+    }
+    return raw;
+  } catch {
+    // URL tuong doi (khong parse duoc) → dung truc tiep
+    return raw;
+  }
+}
+
+// Doc menu "Footer" tao trong WP Admin → Giao dien → Menu.
+// Tim theo slug "footer" hoac ten chua chu "footer" (khong phan biet hoa thuong).
+// Chua tao menu → tra null → Footer.tsx dung danh sach link mac dinh.
+export async function getFooterMenu() {
+  const data = await fetchWP(`
+    query GetFooterMenu {
+      menus(first: 20) {
+        nodes {
+          name
+          slug
+          menuItems(first: 20) {
+            nodes { label url uri parentId }
+          }
+        }
+      }
+    }
+  `);
+  const nodes = data?.menus?.nodes || [];
+  const menu = nodes.find(
+    (m: any) => m.slug === 'footer' || (m.name || '').toLowerCase().includes('footer')
+  );
+  if (!menu) return null;
+  const items = (menu.menuItems?.nodes || [])
+    .filter((i: any) => !i.parentId) // chi lay item cap 1 — footer khong co dropdown
+    .map((i: any) => ({ label: i.label, href: normalizeMenuUrl(i) }))
+    .filter((i: any) => i.label && i.href && i.href !== '#');
+  return items.length ? { name: menu.name, items } : null;
+}
+
 export async function getHeaderFooterSettings() {
   const query = `
     query GetHeaderFooterSettings {
@@ -533,10 +581,14 @@ export async function getHeaderFooterSettings() {
     // ACF fields chua ton tai — bo qua
   }
 
+  // Menu footer tu WP Admin → Giao dien → Menu (menu ten/slug "footer")
+  const footerMenu = await getFooterMenu().catch(() => null);
+
   return {
     siteTitle: data.generalSettings?.title,
     ...data.headerSettings?.headerSetup,
     hotlines: contactChannels?.hotlines || [],
     zalos: contactChannels?.zalos || [],
+    footerMenu,
   };
 }
