@@ -512,8 +512,31 @@ export async function getHeaderFooterSettings() {
   `;
   const data = await fetchWP(query);
   if (!data) return null;
+
+  // Query MO RONG: danh sach hotline/zalo cho FloatContact widget
+  // Field ACF can tao trong admin (lowercase): hotlines { label phone }, zalos { label phone }
+  // Tach rieng — neu field chua duoc tao thi query loi → fallback trong SettingsProvider, site van chay
+  let contactChannels: any = null;
+  try {
+    const extData = await fetchWP(`
+      query GetContactChannels {
+        headerSettings {
+          headerSetup {
+            hotlines { label phone }
+            zalos { label phone }
+          }
+        }
+      }
+    `);
+    contactChannels = extData?.headerSettings?.headerSetup || null;
+  } catch {
+    // ACF fields chua ton tai — bo qua
+  }
+
   return {
     siteTitle: data.generalSettings?.title,
     ...data.headerSettings?.headerSetup,
+    hotlines: contactChannels?.hotlines || [],
+    zalos: contactChannels?.zalos || [],
   };
 }
