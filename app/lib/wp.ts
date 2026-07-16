@@ -333,10 +333,11 @@ export async function getGalleryByCategory(categorySlug = 'san-pham', first = 50
 
 export async function getHomePageData() {
   // LƯU Ý QUAN TRỌNG:
-  // Tất cả các ACF field group trên trang chủ đều dùng field name "tagline", "title" giống nhau
-  // → WordPress lưu chung 1 meta_key trong wp_postmeta → data bị lẫn nhau
-  // → KHÔNG query tagline/title/tieuD từ bất kỳ section nào
-  // → Tất cả section title/tagline dùng VI constants trong page.tsx
+  // Trước đây nghi các ACF field group dùng chung field name "tagline"/"title" gây lẫn data
+  // → NGOẠI LỆ ĐÃ VERIFY (introspection + query thực tế 2026-07-16):
+  //   factoryTourSection, clientsSection, machinerysection đều trả về tagline/title RIÊNG BIỆT
+  //   → factoryTourSection được query tagline/title trực tiếp từ WP
+  // Các section khác vẫn dùng VI constants trong page.tsx cho đến khi được verify tương tự
   const query = `
     query GetHomePageData {
       page(id: "trang-chu", idType: URI) {
@@ -367,6 +368,8 @@ export async function getHomePageData() {
           clients { clientname clientlogo { node { sourceUrl } } }
         }
         factoryTourSection {
+          tagline
+          title
           description
           videoUrl
           coverImage { node { sourceUrl } }
@@ -453,8 +456,9 @@ export async function getHomePageData() {
       })),
     },
     factoryTour: {
-      tagline: null,
-      title: null,
+      // Text section video gioi thieu lay truc tiep tu WP — user sua trong CMS se hien ngay
+      tagline: factory?.tagline || null,
+      title: factory?.title || null,
       description: factory?.description || null,
       videosList: factory?.videoUrl ? [{
         title: null,
