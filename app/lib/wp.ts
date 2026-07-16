@@ -495,27 +495,38 @@ export async function getHomePageData() {
 }
 
 // Chuyen URL menu item ve dang dung duoc tren frontend:
+// - /category/san-pham/<slug>/ (category cua CMS) → /san-pham?cat=<slug> (route frontend)
+// - /category/san-pham/ → /san-pham
 // - Link tro ve CMS (cms.inhoangthinh.com.vn) → lay path tuong doi
 // - Link ngoai (https khac) → giu nguyen
 // - "#" hoac rong → "#"
+function mapCmsPathToFrontend(path: string): string {
+  const catMatch = path.match(/^\/category\/san-pham\/([^/]+)\/?$/);
+  if (catMatch) return `/san-pham?cat=${catMatch[1]}`;
+  if (/^\/category\/san-pham\/?$/.test(path)) return '/san-pham';
+  return path;
+}
+
 function normalizeMenuUrl(item: any): string {
   const raw = item?.url || item?.uri || '';
-  if (!raw || raw === '#') return item?.uri && item.uri !== '#' ? item.uri : '#';
+  if (!raw || raw === '#') return item?.uri && item.uri !== '#' ? mapCmsPathToFrontend(item.uri) : '#';
   try {
     const u = new URL(raw);
     if (u.hostname.includes('cms.inhoangthinh.com.vn')) {
-      return (u.pathname + u.search) || '/';
+      return mapCmsPathToFrontend(u.pathname) + u.search;
     }
     return raw;
   } catch {
-    // URL tuong doi (khong parse duoc) → dung truc tiep
-    return raw;
+    // URL tuong doi (khong parse duoc) → map path CMS ve frontend roi dung
+    return mapCmsPathToFrontend(raw);
   }
 }
 
 // Doc menu "Footer" tao trong WP Admin → Giao dien → Menu.
-// Tim theo slug "footer" hoac ten chua chu "footer" (khong phan biet hoa thuong).
-// Chua tao menu → tra null → Footer.tsx dung danh sach link mac dinh.
+// Tim theo slug "footer" hoac ten chua chu "footer" (khong phan biet hoa thuong, vd "Menu Footer").
+// LUU Y: WPGraphQL chi expose menu DA GAN display location voi request public
+// → menu can duoc gan vao mot location (theme can register_nav_menus location "footer").
+// Chua tao menu / chua gan location → tra null → Footer.tsx dung danh sach link mac dinh.
 export async function getFooterMenu() {
   const data = await fetchWP(`
     query GetFooterMenu {
