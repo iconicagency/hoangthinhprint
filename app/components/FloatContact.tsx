@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Phone, X } from 'lucide-react';
+import { Phone, Headset, X } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 
 // Widget lien he kieu panel mo/dong (giong mau Dabilux):
-// - Nut noi bam vao mo panel liet ke cac kenh lien he (ten + so)
+// - Nut noi (icon Headset) bam vao mo panel liet ke cac kenh lien he (ten + so)
 // - PC: toi da 4 hotline + 2 zalo + facebook
 // - Mobile: 2 hotline dau tien + 2 zalo + facebook (hotline 3, 4 an bang CSS hidden md:flex)
 // - Du lieu tu WP Header Settings (repeater hotlines/zalos) — fallback so mac dinh khi chua nhap
@@ -44,7 +44,7 @@ export default function FloatContact() {
         ) : (
           <>
             <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-50 animate-ping"></span>
-            <Phone size={24} className="text-white relative" />
+            <Headset size={26} className="text-white relative" />
           </>
         )}
       </button>
@@ -56,13 +56,13 @@ export default function FloatContact() {
           <div className="bg-[var(--accent)] px-5 py-4 flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
               {settings.logoUrl ? (
-                <Image src={settings.logoUrl} alt={settings.logoText} width={40} height={40} className="object-contain p-1" referrerPolicy="no-referrer" />
+                <Image src={settings.logoUrl} alt="In Hoàng Thịnh" width={40} height={40} className="object-contain p-1" referrerPolicy="no-referrer" />
               ) : (
                 <span className="text-[var(--accent)] font-black text-lg">H</span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white font-bold leading-tight truncate">{settings.logoText}</div>
+              <div className="text-white font-bold leading-tight truncate">Hỗ trợ In Hoàng Thịnh</div>
               <div className="text-white/80 text-xs mt-0.5">Chúng tôi có thể hỗ trợ gì cho bạn hôm nay?</div>
             </div>
             <button
