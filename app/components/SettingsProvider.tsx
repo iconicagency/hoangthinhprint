@@ -2,6 +2,11 @@
 
 import React, { createContext, useContext } from 'react';
 
+export interface ContactChannel {
+  label: string;
+  phone: string;
+}
+
 interface SiteSettings {
   logoUrl: string | null;
   logoText: string;
@@ -17,25 +22,43 @@ interface SiteSettings {
   copyrightText?: string;
   heroTitle: string;
   heroSubtitle: string;
+  // Danh sach kenh lien he cho FloatContact widget (nhap tu WP Header Settings)
+  hotlines: ContactChannel[];
+  zalos: ContactChannel[];
 }
 
-// Default kh\u00f4ng d\u00f9ng web.archive.org n\u1eefa
+// Default không dùng web.archive.org nữa
 const defaultSettings: SiteSettings = {
   logoUrl: null,
-  logoText: 'HO\u00c0NG TH\u1ecaNH PRINT',
+  logoText: 'HOÀNG THỊNH PRINT',
   contactPhone: '056.984.9999',
   contactEmail: 'inhoangthinh.hanoi@gmail.com',
-  contactAddress: 'V\u0103n Ph\u00f2ng: S\u1ed1 11 ng\u00e1ch 01/01 \u0111\u01b0\u1eddng V\u00f5 Ch\u00ed C\u00f4ng, C\u1ea7u Gi\u1ea5y, H\u00e0 N\u1ed9i. X\u01b0\u1edfng: S\u1ed1 55 Ng\u00f5 163 Ph\u1ed1 C\u1ea7u C\u1ed1c, T\u00e2y M\u1ed7, T\u1eeb Li\u00eam, H\u00e0 N\u1ed9i.',
+  contactAddress: 'Văn Phòng: Số 11 ngách 01/01 đường Võ Chí Công, Cầu Giấy, Hà Nội. Xưởng: Số 55 Ngõ 163 Phố Cầu Cốc, Tây Mỗ, Từ Liêm, Hà Nội.',
   facebookLink: 'https://www.facebook.com/intuigiayhoangthinh',
   zaloLink: 'https://zalo.me/0569849999',
-  footerDescription: '\u0110\u1ed1i t\u00e1c in \u1ea5n bao b\u00ec tr\u1ecdn g\u00f3i chuy\u00ean nghi\u1ec7p. Cam k\u1ebft ch\u1ea5t l\u01b0\u1ee3ng, \u0111\u00fang ti\u1ebfn \u0111\u1ed9, gi\u00e1 g\u1ed1c t\u1ea1i x\u01b0\u1edfng.',
-  heroTitle: 'Gi\u1ea3i ph\u00e1p bao b\u00ec to\u00e0n di\u1ec7n cho doanh nghi\u1ec7p',
-  heroSubtitle: 'Thi\u1ebft k\u1ebf s\u00e1ng t\u1ea1o - In \u1ea5n ch\u1ea5t l\u01b0\u1ee3ng - Giao h\u00e0ng \u0111\u00fang h\u1eb9n.'
+  footerDescription: 'Đối tác in ấn bao bì trọn gói chuyên nghiệp. Cam kết chất lượng, đúng tiến độ, giá gốc tại xưởng.',
+  heroTitle: 'Giải pháp bao bì toàn diện cho doanh nghiệp',
+  heroSubtitle: 'Thiết kế sáng tạo - In ấn chất lượng - Giao hàng đúng hẹn.',
+  // Fallback khi WP chua nhap danh sach hotline/zalo trong admin
+  hotlines: [
+    { label: 'Gọi điện thoại trực tiếp', phone: '034.349.8888' },
+  ],
+  zalos: [
+    { label: 'Nhắn tin qua Zalo', phone: '0569.849.999' },
+  ],
 };
 
 const SettingsContext = createContext<SiteSettings>(defaultSettings);
 
 export const useSettings = () => useContext(SettingsContext);
+
+function buildContactList(raw: any, fallbackLabel: string): ContactChannel[] | null {
+  if (!Array.isArray(raw) || !raw.length) return null;
+  const list = raw
+    .map((c: any) => ({ label: c?.label || fallbackLabel, phone: c?.phone || '' }))
+    .filter((c: ContactChannel) => c.phone);
+  return list.length ? list : null;
+}
 
 function buildSettings(wpData: any): SiteSettings {
   if (!wpData) return defaultSettings;
@@ -55,6 +78,8 @@ function buildSettings(wpData: any): SiteSettings {
     mapUrl: wpData.mapUrl || undefined,
     mapImage: wpData.mapImage?.node?.sourceUrl || undefined,
     copyrightText: wpData.copyrightText || undefined,
+    hotlines: buildContactList(wpData.hotlines, 'Gọi điện thoại trực tiếp') || defaultSettings.hotlines,
+    zalos: buildContactList(wpData.zalos, 'Nhắn tin qua Zalo') || defaultSettings.zalos,
   };
 }
 
@@ -65,7 +90,7 @@ export default function SettingsProvider({
   children: React.ReactNode;
   initialSettings?: any;
 }) {
-  // D\u00f9ng data t\u1eeb server truy\u1ec1n xu\u1ed1ng \u2014 kh\u00f4ng fetch l\u1ea1i ph\u00eda client
+  // Dùng data từ server truyền xuống — không fetch lại phía client
   const settings = buildSettings(initialSettings);
 
   return (
