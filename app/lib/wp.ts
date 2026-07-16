@@ -335,8 +335,9 @@ export async function getHomePageData() {
   // LƯU Ý QUAN TRỌNG:
   // Trước đây nghi các ACF field group dùng chung field name "tagline"/"title" gây lẫn data
   // → NGOẠI LỆ ĐÃ VERIFY (introspection + query thực tế 2026-07-16):
-  //   factoryTourSection, clientsSection, machinerysection đều trả về tagline/title RIÊNG BIỆT
-  //   → factoryTourSection được query tagline/title trực tiếp từ WP
+  //   factoryTourSection, clientsSection, machinerysection, testimonialsSection
+  //   đều trả về tagline/title RIÊNG BIỆT
+  //   → factoryTourSection + testimonialsSection được query tagline/title trực tiếp từ WP
   // Các section khác vẫn dùng VI constants trong page.tsx cho đến khi được verify tương tự
   const query = `
     query GetHomePageData {
@@ -374,6 +375,16 @@ export async function getHomePageData() {
           videoUrl
           coverImage { node { sourceUrl } }
         }
+        testimonialsSection {
+          tagline
+          title
+          reviews {
+            authorName
+            authorPosition
+            content
+            avatar { node { sourceUrl } }
+          }
+        }
       }
     }
   `;
@@ -407,6 +418,7 @@ export async function getHomePageData() {
   const machinery = p.machinerysection;
   const clients = p.clientsSection;
   const factory = p.factoryTourSection;
+  const testi = p.testimonialsSection;
   return {
     workingProcess: {
       tagline: null,
@@ -466,7 +478,19 @@ export async function getHomePageData() {
         cover: factory?.coverImage?.node?.sourceUrl || null,
       }] : [],
     },
-    testimonials: [],
+    // Heading section danh gia — sua trong CMS se hien ngay
+    testimonialsMeta: {
+      tagline: testi?.tagline || null,
+      title: testi?.title || null,
+    },
+    // Schema khong co field rating → mac dinh 5 sao
+    testimonials: (testi?.reviews || []).map((r: any) => ({
+      content: r.content,
+      author: r.authorName,
+      position: r.authorPosition,
+      rating: 5,
+      img: r.avatar?.node?.sourceUrl || null,
+    })),
   };
 }
 
