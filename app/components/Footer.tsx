@@ -5,8 +5,22 @@ import Link from 'next/link';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import { useSettings } from './SettingsProvider';
 
+// Danh sach link mac dinh — chi dung khi WP chua tao menu "Footer"
+// (WP Admin → Giao dien → Menu → tao menu ten "Footer")
+const FALLBACK_MENU_ITEMS = [
+  { label: 'In Hộp Cứng Cao Cấp', href: '/san-pham' },
+  { label: 'In Túi Giấy', href: '/san-pham' },
+  { label: 'In Hộp Sóng Carton', href: '/san-pham' },
+  { label: 'In Tem Nhãn Decal', href: '/san-pham' },
+  { label: 'In Catalogue, Brochure', href: '/san-pham' },
+];
+
 export default function Footer() {
   const settings = useSettings();
+
+  const menuItems = settings.footerMenu?.items?.length
+    ? settings.footerMenu.items
+    : FALLBACK_MENU_ITEMS;
 
   return (
     <footer className="bg-[var(--bg)] text-[var(--text-dim)] pt-24 pb-12 px-8 relative z-10">
@@ -62,11 +76,21 @@ export default function Footer() {
             {'Dịch Vụ In Ấn'}
           </h4>
           <ul className="space-y-3 text-sm">
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Hộp Cứng Cao Cấp'}</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Túi Giấy'}</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Hộp Sóng Carton'}</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> {'In Tem Nhãn Decal'}</Link></li>
-            <li><Link href="/san-pham" className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2"><ArrowRight size={12}/> In Catalogue, Brochure</Link></li>
+            {menuItems.map((item, i) => (
+              <li key={i}>
+                {item.href.startsWith('http') ? (
+                  <a href={item.href} target="_blank" rel="noopener noreferrer"
+                    className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2">
+                    <ArrowRight size={12}/> {item.label}
+                  </a>
+                ) : (
+                  <Link href={item.href}
+                    className="hover:text-[var(--accent)] cursor-pointer flex items-center gap-2">
+                    <ArrowRight size={12}/> {item.label}
+                  </Link>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -113,7 +137,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-[var(--border)] text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm">
-        <p>{settings.copyrightText || `\u00a9 ${new Date().getFullYear()} In ${'Hoàng Thịnh'}. All rights reserved.`}</p>
+        <p>{settings.copyrightText || `© ${new Date().getFullYear()} In ${'Hoàng Thịnh'}. All rights reserved.`}</p>
         <div className="flex gap-6 mt-4 md:mt-0">
           <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">{'Chính sách bảo mật'}</span>
           <span className="hover:text-[var(--text-main)] cursor-pointer transition-colors">{'Điều khoản dịch vụ'}</span>
