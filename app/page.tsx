@@ -108,10 +108,11 @@ export default async function Home() {
         { title: VI.m6, desc: VI.m6d, img: 'machine6' },
       ];
 
+  // Avatar that tu WP (r.avatar) — chi fallback picsum khi WP khong co anh
   const finalTestimonials = wpHomeData?.testimonials?.length
     ? wpHomeData.testimonials.map((t: any, i: number) => ({
         content: t.content, author: t.author, position: t.position,
-        rating: t.rating || 5, img: `https://picsum.photos/seed/user${i+1}/100/100`,
+        rating: t.rating || 5, img: t.img || `https://picsum.photos/seed/user${i+1}/100/100`,
       }))
     : [
         { content: VI.t1c, author: VI.t1a, position: VI.t1p, rating: 5, img: 'https://picsum.photos/seed/user1/100/100' },
@@ -124,6 +125,7 @@ export default async function Home() {
   const whyChooseUsData = wpHomeData?.whyChooseUs;
   const workingProcessData = wpHomeData?.workingProcess;
   const machinerySectionData = wpHomeData?.machinery;
+  const testimonialsMeta = wpHomeData?.testimonialsMeta;
 
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -314,11 +316,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials — heading + review lay tu WP testimonialsSection, fallback VI khi WP trong */}
       <section className="pt-24 pb-44 px-8 bg-[var(--card-bg)] border-t border-[var(--border)]">
         <div className="text-center mb-16">
-          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{VI.khachHangNoiGi}</div>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{VI.danhGiaTuDoiTac}</h2>
+          <div className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase mb-4">{testimonialsMeta?.tagline || VI.khachHangNoiGi}</div>
+          <h2 className="text-4xl md:text-5xl font-serif text-[var(--text-main)] mb-6 tracking-tight">{testimonialsMeta?.title || VI.danhGiaTuDoiTac}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto"></div>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
