@@ -194,6 +194,14 @@ export async function getIndustryPageData(uri: string) {
   // herotitle, herosubtitle, introtitle, introcontent, whytitle, whylist,
   // productstitle, productslist, pricingtext, sampleimages, faqs
   // KHÔNG dùng camelCase như heroTitle, heroSubtitle...
+  //
+  // GUARD CHONG DATA LAN (phat hien 2026-07-18):
+  // WP dang resolve CauHinhChiTietNganhHang GLOBAL — moi page (ke ca trang Lien he)
+  // deu tra ve cung 1 bo gia tri (noi dung TPCN). Nguyen nhan phia WP/ACF config.
+  // → Query them "sentinel" la trang Lien he (databaseId 26, KHONG BAO GIO co ACF nganh hang).
+  //   Neu herotitle cua page dich TRUNG voi sentinel → data dang bi lan global → bo qua ACF,
+  //   de IndustryClient dung fallback text dung nganh.
+  // Sau khi WP duoc fix (data luu theo tung page), sentinel tra null → guard tu vo hieu.
   const query = `
     query GetIndustryPageData($uri: ID!) {
       page(id: $uri, idType: URI) {
@@ -212,13 +220,23 @@ export async function getIndustryPageData(uri: string) {
           faqs { question answer }
         }
       }
+      sentinel: page(id: 26, idType: DATABASE_ID) {
+        cauHinhChiTietNganhHang { herotitle }
+      }
     }
   `;
   const data = await fetchWP(query, { variables: { uri } });
   if (!data?.page) return null;
 
-  // Normalize về camelCase để các IndustryClient.tsx dùng thống nhất
   const raw = data.page.cauHinhChiTietNganhHang;
+  const sentinelTitle = data.sentinel?.cauHinhChiTietNganhHang?.herotitle || null;
+  if (raw && sentinelTitle && raw.herotitle === sentinelTitle) {
+    // Data global bi lan — khong dung
+    data.page.cauHinhChiTietNganhHang = null;
+    return data.page;
+  }
+
+  // Normalize về camelCase để các IndustryClient.tsx dùng thống nhất
   if (raw) {
     data.page.cauHinhChiTietNganhHang = {
       heroTitle:    raw.herotitle    || null,
