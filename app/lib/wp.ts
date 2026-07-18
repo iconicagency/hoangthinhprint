@@ -304,6 +304,7 @@ const NON_BLOG_CATEGORY_SLUGS = new Set(['san-pham', 'tem-nhan-decal', 'thiet-ke
 
 // Bai viet BLOG that su: loai tru toan bo post thuoc category san-pham (va con cua no)
 // + cac category dich vu. Neu khong loc, 700+ post san pham se tran vao blog.
+// LUU Y: categoryNotIn KHONG tu loai category con → phai liet ke du ID cha + con.
 export async function getBlogPosts(first = 20) {
   const catData = await fetchWP(`
     query GetCatsForBlogFilter {
@@ -335,8 +336,11 @@ export async function getBlogPosts(first = 20) {
 }
 
 export async function getRecentPosts() {
-  // Trang chu "Bai viet moi nhat" — chi lay bai blog, khong lay post san pham
-  return getBlogPosts(3);
+  // Trang chu "Bai viet moi nhat" — uu tien bai blog that su.
+  // Chua co bai blog nao → fallback post moi nhat de section khong bi trong.
+  const blogPosts = await getBlogPosts(3);
+  if (blogPosts.length) return blogPosts;
+  return getPosts(3);
 }
 
 export async function getProjects() {
