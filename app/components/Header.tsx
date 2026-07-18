@@ -41,6 +41,13 @@ const PRODUCT_CATS_QUERY = `
   }
 `;
 
+// Format so dien thoai 10 so ve dang xxx.xxx.xxxx cho de doc
+function fmtPhone(p: string): string {
+  const d = (p || '').replace(/\D/g, '');
+  if (d.length === 10) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  return p;
+}
+
 export default function Header() {
   const settings = useSettings();
   const M = VI.menu as Record<string, string>;
@@ -59,16 +66,27 @@ export default function Header() {
 
   const closeMobile = () => { setMobileOpen(false); setOpenSub(null); };
 
+  const hotlines = (settings.hotlines || []).slice(0, 4);
+
   return (
     <>
-      {/* Top Bar */}
-      <div className="bg-[var(--card-bg)] text-[var(--text-dim)] text-xs py-2 px-8 justify-between items-center hidden md:flex border-b border-[var(--border)]">
-        <div className="flex gap-6">
+      {/* Top Bar — hien du danh sach hotline tu WP Header Settings */}
+      <div className="bg-[var(--card-bg)] text-[var(--text-dim)] text-xs py-2 px-8 justify-between items-center gap-4 hidden md:flex flex-wrap border-b border-[var(--border)]">
+        <div className="flex gap-6 items-center flex-wrap">
           <span className="flex items-center gap-2"><Mail size={14}/> {settings.contactEmail}</span>
-          <span className="flex items-center gap-2"><MapPin size={14}/> {settings.contactAddress}</span>
+          <span className="hidden xl:flex items-center gap-2"><MapPin size={14}/> {settings.contactAddress}</span>
         </div>
-        <div className="flex gap-6 items-center">
-          <span className="flex items-center gap-2 text-[var(--accent)] font-bold text-sm"><Phone size={14}/> Hotline: {settings.contactPhone}</span>
+        <div className="flex gap-4 items-center flex-wrap justify-end">
+          {hotlines.map((h, i) => (
+            <a
+              key={i}
+              href={`tel:${h.phone.replace(/\D/g, '')}`}
+              className="flex items-center gap-1.5 text-[var(--accent)] font-bold text-sm whitespace-nowrap hover:opacity-80 transition-opacity"
+              title={h.label}
+            >
+              <Phone size={14}/> {h.label ? `${h.label}: ` : ''}{fmtPhone(h.phone)}
+            </a>
+          ))}
           <a href={settings.zaloLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer">ZALO</a>
         </div>
       </div>
