@@ -299,8 +299,44 @@ export async function getPosts(first = 10) {
   return data?.posts?.nodes || [];
 }
 
+// Slug cac category SAN PHAM / DICH VU — khong phai bai viet blog
+const NON_BLOG_CATEGORY_SLUGS = new Set(['san-pham', 'tem-nhan-decal', 'thiet-ke-bao-bi']);
+
+// Bai viet BLOG that su: loai tru toan bo post thuoc category san-pham (va con cua no)
+// + cac category dich vu. Neu khong loc, 700+ post san pham se tran vao blog.
+export async function getBlogPosts(first = 20) {
+  const catData = await fetchWP(`
+    query GetCatsForBlogFilter {
+      categories(first: 100) {
+        nodes { databaseId slug parentDatabaseId }
+      }
+    }
+  `);
+  const cats = catData?.categories?.nodes || [];
+  const sanPhamIds = new Set(
+    cats.filter((c: any) => NON_BLOG_CATEGORY_SLUGS.has(c.slug)).map((c: any) => c.databaseId)
+  );
+  const excludedIds = cats
+    .filter((c: any) => NON_BLOG_CATEGORY_SLUGS.has(c.slug) || sanPhamIds.has(c.parentDatabaseId))
+    .map((c: any) => c.databaseId);
+
+  const data = await fetchWP(`
+    query GetBlogPosts($first: Int!, $notIn: [ID]) {
+      posts(first: $first, where: {categoryNotIn: $notIn, orderby: {field: DATE, order: DESC}}) {
+        nodes {
+          id title excerpt date slug
+          featuredImage { node { sourceUrl } }
+          categories { nodes { name slug } }
+        }
+      }
+    }
+  `, { variables: { first, notIn: excludedIds } });
+  return data?.posts?.nodes || [];
+}
+
 export async function getRecentPosts() {
-  return getPosts(3);
+  // Trang chu "Bai viet moi nhat" — chi lay bai blog, khong lay post san pham
+  return getBlogPosts(3);
 }
 
 export async function getProjects() {
@@ -443,7 +479,9 @@ export async function getHomePageData() {
       title: null,
       steps: (process?.steps || []).map((s: any, i: number) => ({
         step: (i + 1).toString().padStart(2, '0'),
-        title: s.steptitle,
+        // Strip so thu tu neu user nhap kem trong steptitle (vd "08 Giao hàng" → "Giao hàng")
+        // — so thu tu da duoc render rieng tu index
+        title: (s.steptitle || '').replace(/^\s*\d+[\s.\-–—]*/, ''),
         desc: s.stepdescription,
         iconName: s.stepicon,
       })),
@@ -513,15 +551,16 @@ export async function getHomePageData() {
 }
 
 // Chuyen URL menu item ve dang dung duoc tren frontend:
-// - /category/san-pham/<slug>/ (category cua CMS) → /san-pham?cat=<slug> (route frontend)
+// - /category/san-pham/<slug>/ va /category/<slug>/ (category cua CMS) → /san-pham?cat=<slug>
 // - /category/san-pham/ → /san-pham
 // - Link tro ve CMS (cms.inhoangthinh.com.vn) → lay path tuong doi
 // - Link ngoai (https khac) → giu nguyen
 // - "#" hoac rong → "#"
 function mapCmsPathToFrontend(path: string): string {
-  const catMatch = path.match(/^\/category\/san-pham\/([^/]+)\/?$/);
-  if (catMatch) return `/san-pham?cat=${catMatch[1]}`;
   if (/^\/category\/san-pham\/?$/.test(path)) return '/san-pham';
+  // Lay slug cuoi cung cua path category (ho tro ca category con va category cap 1)
+  const catMatch = path.match(/^\/category\/(?:.+\/)?([^/]+)\/?$/);
+  if (catMatch) return `/san-pham?cat=${catMatch[1]}`;
   return path;
 }
 
