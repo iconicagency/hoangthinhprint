@@ -5,9 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
-import { getPosts, getCategories } from '../lib/wp';
+import { getBlogPosts, getCategories } from '../lib/wp';
 
-// Slugs thuộc nhóm sản phẩm — loại bỏ khỏi blog
+// Slugs thuộc nhóm sản phẩm/dịch vụ — loại bỏ khỏi blog
+// (khớp danh sách category thực tế trong WP admin)
 const PRODUCT_CATEGORY_SLUGS = new Set([
   'san-pham',
   'catalogue',
@@ -15,9 +16,15 @@ const PRODUCT_CATEGORY_SLUGS = new Set([
   'hop-giay',
   'hop-carton-lanh',
   'hop-carton-song',
-  'in-nhan-tem-decal',
-  'hop-cung',
+  'hop-qua-tet',
   'hop-trung-thu',
+  'kep-file',
+  'name-card',
+  'phong-bi',
+  'hop-cung',
+  'in-nhan-tem-decal',
+  'tem-nhan-decal',
+  'thiet-ke-bao-bi',
 ]);
 
 export default function BlogClient() {
@@ -31,7 +38,8 @@ export default function BlogClient() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [postsData, catsData] = await Promise.all([getPosts(20), getCategories()]);
+        // getBlogPosts da loai post thuoc category san pham phia server query
+        const [postsData, catsData] = await Promise.all([getBlogPosts(20), getCategories()]);
         if (postsData) setPosts(postsData);
         if (catsData) {
           // Chỉ giữ categories KHÔNG thuộc nhóm sản phẩm và không phải uncategorized
