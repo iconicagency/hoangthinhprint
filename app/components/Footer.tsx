@@ -15,12 +15,28 @@ const FALLBACK_MENU_ITEMS = [
   { label: 'In Catalogue, Brochure', href: '/san-pham' },
 ];
 
+// Format so dien thoai 10 so ve dang xxx.xxx.xxxx cho de doc
+function fmtPhone(p: string): string {
+  const d = (p || '').replace(/\D/g, '');
+  if (d.length === 10) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  return p;
+}
+
+const ZaloMini = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 50 50" fill="currentColor" className="text-[var(--accent)] shrink-0">
+    <path d="M25 2C12.318 2 2 12.318 2 25c0 3.96 1.023 7.854 2.963 11.29L2.037 46.73a1 1 0 001.234 1.234l10.44-2.926A23 23 0 0025 48c12.682 0 23-10.318 23-23S37.682 2 25 2zm-8 28h-2v-8h2v8zm-1-9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm10 9.5h-2v-4.5c0-.827-.673-1.5-1.5-1.5S21 24.673 21 25.5V30h-2v-8h2v1.078C21.374 22.407 22.362 22 23.5 22c2.206 0 4 1.794 4 4V30zm5 0h-2l-3-8h2.2l1.8 5.143L31.8 22H34l-3 8z"/>
+  </svg>
+);
+
 export default function Footer() {
   const settings = useSettings();
 
   const menuItems = settings.footerMenu?.items?.length
     ? settings.footerMenu.items
     : FALLBACK_MENU_ITEMS;
+
+  const hotlines = (settings.hotlines || []).slice(0, 4);
+  const zalos = (settings.zalos || []).slice(0, 2);
 
   return (
     <footer className="bg-[var(--bg)] text-[var(--text-dim)] pt-24 pb-12 px-8 relative z-10">
@@ -103,10 +119,23 @@ export default function Footer() {
               <MapPin size={18} className="text-[var(--accent)] shrink-0 mt-0.5" />
               <span>{settings.contactAddress}</span>
             </li>
-            <li className="flex items-center gap-3">
-              <Phone size={18} className="text-[var(--accent)] shrink-0" />
-              <span>{settings.contactPhone}</span>
-            </li>
+            {hotlines.map((h, i) => (
+              <li key={`hotline-${i}`} className="flex items-center gap-3">
+                <Phone size={18} className="text-[var(--accent)] shrink-0" />
+                <a href={`tel:${h.phone.replace(/\D/g, '')}`} className="hover:text-[var(--accent)] transition-colors">
+                  {h.label ? `${h.label}: ` : ''}{fmtPhone(h.phone)}
+                </a>
+              </li>
+            ))}
+            {zalos.map((z, i) => (
+              <li key={`zalo-${i}`} className="flex items-center gap-3">
+                <ZaloMini />
+                <a href={`https://zalo.me/${z.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
+                  className="hover:text-[var(--accent)] transition-colors">
+                  Zalo {z.label ? `${z.label}: ` : ''}{fmtPhone(z.phone)}
+                </a>
+              </li>
+            ))}
             <li className="flex items-center gap-3">
               <Mail size={18} className="text-[var(--accent)] shrink-0" />
               <span>{settings.contactEmail}</span>
