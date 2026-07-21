@@ -2,9 +2,10 @@
 // - Danh muc lay DONG tu WordPress (children cua category san-pham)
 //   → them/xoa/doi ten danh muc trong WP Admin, filter tu cap nhat
 // - Fetch theo category dang xem + phan trang cursor (nut Xem them)
+// - Filter mobile: 1 hang truot ngang (snap, an scrollbar), desktop: wrap
 'use client';
 
-import { useState, useEffect, Suspense, useCallback } from 'react';
+import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import Link from 'next/link';
@@ -65,6 +66,7 @@ function ProductsContent() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   // Danh muc + page info: chi tai 1 lan
   useEffect(() => {
@@ -86,6 +88,12 @@ function ProductsContent() {
 
   // Dong bo activeSlug voi URL (?cat=...)
   useEffect(() => { setActiveSlug(catFromUrl); }, [catFromUrl]);
+
+  // Tu cuon thanh filter toi danh muc dang chon (mobile truot ngang)
+  useEffect(() => {
+    const el = filterRef.current?.querySelector(`[data-slug="${activeSlug}"]`) as HTMLElement | null;
+    if (el) el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [activeSlug, wpCategories.length]);
 
   // Moi khi doi category: reset va tai trang dau tien
   // "Tat ca" fetch theo slug cha "san-pham" — WordPress tu bao gom moi danh muc con
@@ -170,13 +178,30 @@ function ProductsContent() {
       </section>
 
       <section className="py-12 px-4 md:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-wrap gap-2 mb-12 justify-center md:justify-start">
-          {filterCategories.map((cat: any) => (
-            <Link key={cat.slug} href={cat.slug === 'tat-ca' ? '/san-pham' : `/san-pham?cat=${cat.slug}`} onClick={() => setActiveSlug(cat.slug)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${activeSlug === cat.slug ? 'bg-[var(--accent)] text-[var(--bg)]' : 'bg-[var(--bg)] text-[var(--text-dim)] hover:bg-[var(--card-bg)] border border-[var(--border)]'}`}>
-              {cat.name}{cat.count > 0 && <span className="ml-1.5 opacity-60 text-xs">({cat.count})</span>}
-            </Link>
-          ))}
+        {/* Filter danh muc:
+            - Mobile: 1 hang truot ngang, snap tung chip, an scrollbar, gradient mo 2 mep bao hieu con noi dung
+            - Desktop (md+): wrap nhieu hang nhu cu */}
+        <div className="relative mb-12">
+          <div
+            ref={filterRef}
+            className="flex md:flex-wrap flex-nowrap gap-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none -mx-4 px-4 md:mx-0 md:px-0 pb-1 md:pb-0 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none' }}
+          >
+            {filterCategories.map((cat: any) => (
+              <Link
+                key={cat.slug}
+                data-slug={cat.slug}
+                href={cat.slug === 'tat-ca' ? '/san-pham' : `/san-pham?cat=${cat.slug}`}
+                onClick={() => setActiveSlug(cat.slug)}
+                className={`snap-start shrink-0 md:shrink whitespace-nowrap px-4 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-medium transition-colors ${activeSlug === cat.slug ? 'bg-[var(--accent)] text-[var(--bg)] shadow-md shadow-[var(--accent)]/25' : 'bg-[var(--bg)] text-[var(--text-dim)] hover:bg-[var(--card-bg)] border border-[var(--border)]'}`}
+              >
+                {cat.name}{cat.count > 0 && <span className="ml-1.5 opacity-60 text-xs">({cat.count})</span>}
+              </Link>
+            ))}
+          </div>
+          {/* Gradient mo 2 mep — chi mobile, bao hieu vuot ngang de xem them */}
+          <div className="md:hidden pointer-events-none absolute inset-y-0 -left-4 w-6 bg-gradient-to-r from-slate-50 to-transparent"></div>
+          <div className="md:hidden pointer-events-none absolute inset-y-0 -right-4 w-10 bg-gradient-to-l from-slate-50 to-transparent"></div>
         </div>
 
         {loading ? (
@@ -191,7 +216,7 @@ function ProductsContent() {
                   <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
                     {product.img ? (
                       <>
-                        <Image src={product.img} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                        <Image src={product.img} alt={product.title} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
                           <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-4 py-2 rounded-full">Xem ảnh</span>
                         </div>
