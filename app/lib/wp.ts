@@ -21,11 +21,13 @@ export async function fetchWP(query: string, { variables }: { variables?: any } 
       return json.data;
     }
 
+    // Server-side: cache ket qua WP 60s (Next Data Cache) — dong bo voi ISR revalidate 60s.
+    // Truoc day dung cache no-store → moi request deu goi WP, TTFB cham.
     const res = await fetch(wpUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify({ query, variables }),
-      cache: 'no-store',
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -446,29 +448,29 @@ export async function getHomePageData() {
       }
     }
   `;
-  const data = await fetchWP(query);
-  if (!data?.page) return null;
-  const p = data.page;
 
-  // Query MO RONG cho dich vu: link nut "Xem san pham" + lien he
-  // Schema thuc te: field ten "serviceLink" (camelCase do ACF sinh) va "servicecontact"
-  // → dung alias servicelink: serviceLink de code phia sau dung thong nhat
-  // Tach rieng: neu field chua ton tai thi query loi → bo qua, trang chu van chay binh thuong
-  let extServices: any[] = [];
-  try {
-    const extData = await fetchWP(`
-      query GetServiceExtras {
-        page(id: "trang-chu", idType: URI) {
-          printingServices {
-            services { servicelink: serviceLink servicecontact }
-          }
+  // Query MO RONG cho dich vu (serviceLink/servicecontact) chay SONG SONG voi query chinh
+  // — truoc day chay tuan tu lam cham TTFB
+  const extQuery = `
+    query GetServiceExtras {
+      page(id: "trang-chu", idType: URI) {
+        printingServices {
+          services { servicelink: serviceLink servicecontact }
         }
       }
-    `);
-    extServices = extData?.page?.printingServices?.services || [];
-  } catch {
-    // ACF fields chua ton tai — bo qua
-  }
+    }
+  `;
+
+  const [dataResult, extResult] = await Promise.allSettled([
+    fetchWP(query),
+    fetchWP(extQuery),
+  ]);
+  const data = dataResult.status === 'fulfilled' ? dataResult.value : null;
+  const extData = extResult.status === 'fulfilled' ? extResult.value : null;
+
+  if (!data?.page) return null;
+  const p = data.page;
+  const extServices: any[] = extData?.page?.printingServices?.services || [];
 
   const process = p.workingProcess;
   const services = p.printingServices;
@@ -630,31 +632,33 @@ export async function getHeaderFooterSettings() {
       }
     }
   `;
-  const data = await fetchWP(query);
-  if (!data) return null;
 
   // Query MO RONG: danh sach hotline/zalo cho FloatContact widget
-  // Field ACF can tao trong admin (lowercase): hotlines { label phone }, zalos { label phone }
-  // Tach rieng — neu field chua duoc tao thi query loi → fallback trong SettingsProvider, site van chay
-  let contactChannels: any = null;
-  try {
-    const extData = await fetchWP(`
-      query GetContactChannels {
-        headerSettings {
-          headerSetup {
-            hotlines { label phone }
-            zalos { label phone }
-          }
+  // Field ACF (lowercase): hotlines { label phone }, zalos { label phone }
+  // Chay SONG SONG 3 query (chinh + hotline/zalo + footer menu) de giam TTFB
+  const contactQuery = `
+    query GetContactChannels {
+      headerSettings {
+        headerSetup {
+          hotlines { label phone }
+          zalos { label phone }
         }
       }
-    `);
-    contactChannels = extData?.headerSettings?.headerSetup || null;
-  } catch {
-    // ACF fields chua ton tai — bo qua
-  }
+    }
+  `;
 
-  // Menu footer tu WP Admin → Giao dien → Menu (menu ten/slug "footer")
-  const footerMenu = await getFooterMenu().catch(() => null);
+  const [dataResult, contactResult, footerMenuResult] = await Promise.allSettled([
+    fetchWP(query),
+    fetchWP(contactQuery),
+    getFooterMenu(),
+  ]);
+  const data = dataResult.status === 'fulfilled' ? dataResult.value : null;
+  if (!data) return null;
+
+  const contactChannels = contactResult.status === 'fulfilled'
+    ? contactResult.value?.headerSettings?.headerSetup || null
+    : null;
+  const footerMenu = footerMenuResult.status === 'fulfilled' ? footerMenuResult.value : null;
 
   return {
     siteTitle: data.generalSettings?.title,
