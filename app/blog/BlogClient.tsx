@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Search, Clock, ArrowRight, Phone } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 import { getBlogPosts, getCategories } from '../lib/wp';
+import SafeHtml from '../components/SafeHtml';
 
 // Slugs thuộc nhóm sản phẩm/dịch vụ — loại bỏ khỏi blog
 // (khớp danh sách category thực tế trong WP admin)
@@ -124,7 +125,7 @@ export default function BlogClient() {
                     <h3 className="font-bold text-xl text-[var(--text-main)] mb-3 line-clamp-2 hover:text-[var(--accent)] transition-colors cursor-pointer">
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
-                    <div className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1" dangerouslySetInnerHTML={{ __html: post.excerpt || '' }} />
+                    <SafeHtml className="text-[var(--text-dim)] text-sm mb-6 line-clamp-3 flex-1" html={post.excerpt || ''} />
                     <div className="flex items-center justify-between text-sm text-[var(--text-dim)] pt-4 border-t border-[var(--border)] mt-auto">
                       <span>{new Date(post.date).toLocaleDateString('vi-VN')}</span>
                       <span className="flex items-center gap-1"><Clock size={14} /> 5 phút đọc</span>
