@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Package, Sparkles, Heart, Gift, ShoppingCart, Briefcase, Coffee, Star, Shield } from 'lucide-react';
+import SafeHtml from '../components/SafeHtml';
 
 const iconMap: Record<string, any> = {
   Package, Sparkles, Heart, Gift, ShoppingCart, Briefcase, Coffee, Star, Shield
@@ -39,8 +40,8 @@ export default function NganhHangClient({ pageData, industries }: Props) {
 
       {pageData?.content && (
         <section className="py-12 px-4 md:px-8 max-w-7xl mx-auto">
-          <div className="prose max-w-none bg-slate-50 p-8 rounded-3xl border border-[var(--border)]"
-            dangerouslySetInnerHTML={{ __html: pageData.content }} />
+          <SafeHtml className="prose max-w-none bg-slate-50 p-8 rounded-3xl border border-[var(--border)]"
+            html={pageData.content} />
         </section>
       )}
 
