@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { CheckCircle2, Package, ChevronDown, ArrowRight, ChevronUp } from 'lucide-react';
 import { getIndustryPageData } from '../../lib/wp';
 import SampleProductsSection from '../../components/SampleProductsSection';
+import SafeHtml from '../../components/SafeHtml';
 
 export default function IndustryClient() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -69,7 +70,7 @@ export default function IndustryClient() {
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--text-main)] mb-6">{acf.introTitle || 'Hộp Ship Hàng Cho Ecommerce'}</h2>
           <div className="w-16 h-[2px] bg-[var(--accent)] mx-auto mb-8"></div>
           {acf.introContent ? (
-            <div className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none" dangerouslySetInnerHTML={{ __html: acf.introContent }} />
+            <SafeHtml className="text-[var(--text-dim)] text-lg leading-relaxed prose max-w-none" html={acf.introContent} />
           ) : (
             <p className="text-[var(--text-dim)] text-lg leading-relaxed">Seller Shopee, TikTok Shop cần hộp ship hàng có logo riêng.</p>
           )}
