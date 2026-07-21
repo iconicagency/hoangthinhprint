@@ -1,5 +1,6 @@
 import { getPostBySlug, getRecentPosts } from '@/app/lib/wp';
 import { getPostMetadata } from '@/app/lib/seo';
+import SafeHtml from '@/app/components/SafeHtml';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -86,8 +87,8 @@ export default async function PostDetail({ params }: { params: Promise<{ slug: s
               </span>
             </div>
 
-            {/* Nội dung bài viết từ WordPress */}
-            <div
+            {/* Nội dung bài viết từ WordPress — sanitize chong XSS qua SafeHtml */}
+            <SafeHtml
               className="prose prose-lg max-w-none
                 prose-headings:font-serif prose-headings:text-[var(--text-main)]
                 prose-p:text-[var(--text-dim)] prose-p:leading-relaxed
@@ -96,7 +97,7 @@ export default async function PostDetail({ params }: { params: Promise<{ slug: s
                 prose-strong:text-[var(--text-main)]
                 prose-ul:text-[var(--text-dim)] prose-ol:text-[var(--text-dim)]
                 prose-blockquote:border-[var(--accent)] prose-blockquote:text-[var(--text-dim)]"
-              dangerouslySetInnerHTML={{ __html: post.content || '<p>Đang cập nhật nội dung...</p>' }}
+              html={post.content || '<p>Đang cập nhật nội dung...</p>'}
             />
 
             {/* Chia sẻ */}
