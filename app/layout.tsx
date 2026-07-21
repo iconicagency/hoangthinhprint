@@ -9,7 +9,9 @@ import FloatContact from './components/FloatContact';
 import PromoPopup from './components/PromoPopup';
 import { getHeaderFooterSettings } from './lib/wp';
 
-export const dynamic = 'force-dynamic';
+// ISR: trang duoc cache va tu build lai moi 60s — nhanh hon nhieu so voi force-dynamic
+// (truoc day moi request deu SSR + goi WP GraphQL truc tiep)
+export const revalidate = 60;
 
 const inter = Inter({
   subsets: ['vietnamese'],
