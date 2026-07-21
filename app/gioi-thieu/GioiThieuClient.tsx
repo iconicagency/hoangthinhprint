@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Target, Eye, TrendingUp, Users, Award, Package, Printer, Sparkles, Shield, Settings, Box, UserCheck, ShieldCheck, Gem, Truck, Wand2, RefreshCcw, Factory, ArrowRight, Lightbulb, HeartHandshake, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useSettings } from '../components/SettingsProvider';
 import ContactForm from '../components/ContactForm';
+import SafeHtml from '../components/SafeHtml';
 import { getAboutPageData, getProjects } from '../lib/wp';
 
 const iconMap: Record<string, any> = {
@@ -88,9 +89,9 @@ export default function GioiThieuClient() {
             <div className="w-16 h-[2px] bg-[var(--accent)] mb-8"></div>
             <div className="space-y-6 text-[var(--text-dim)] leading-relaxed">
               {acf?.storycontent ? (
-                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: acf.storycontent }} />
+                <SafeHtml className="prose max-w-none" html={acf.storycontent} />
               ) : pageData?.content ? (
-                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: pageData.content }} />
+                <SafeHtml className="prose max-w-none" html={pageData.content} />
               ) : (
                 <>
                   <p>Khởi đầu từ một xưởng in quy mô nhỏ, In Hoàng Thịnh đã không ngừng nỗ lực và phát triển trong suốt 10 năm qua.</p>
