@@ -6,7 +6,8 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+// ISR 60s — dong bo voi layout, thay cho force-dynamic
+export const revalidate = 60;
 
 import HeroSlider from './components/HeroSlider';
 import WPRecentPosts from './components/WPRecentPosts';
@@ -221,7 +222,7 @@ export default async function Home() {
             {finalMachines.map((machine: any, i: number) => (
               <div key={i} className="flex flex-col gap-4">
                 <div className="relative h-40 rounded-xl overflow-hidden border border-[var(--border)] group">
-                  <Image src={(machine.img && machine.img.startsWith('http')) ? machine.img : `https://picsum.photos/seed/machine${i+10}/300/200`} alt={machine.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                  <Image src={(machine.img && machine.img.startsWith('http')) ? machine.img : `https://picsum.photos/seed/machine${i+10}/300/200`} alt={machine.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 220px" className="object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                   <div className="absolute bottom-0 left-0 w-full p-3"><span className="text-white font-bold text-xs drop-shadow-md">{machine.title}</span></div>
                 </div>
@@ -270,7 +271,7 @@ export default async function Home() {
                     className="group block bg-[var(--bg)] rounded-2xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-lg transition-all">
                     <div className="relative aspect-video overflow-hidden bg-slate-800">
                       {v.cover ? (
-                        <Image src={v.cover} alt={v.title || 'Video'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                        <Image src={v.cover} alt={v.title || 'Video'} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                       ) : (
                         <div className="w-full h-full bg-slate-800 flex items-center justify-center">
                           <div className="w-16 h-16 bg-[var(--accent)] rounded-full flex items-center justify-center">
@@ -331,7 +332,7 @@ export default async function Home() {
               <p className="text-[var(--text-dim)] mb-8 leading-relaxed relative z-10">&quot;{t.content}&quot;</p>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-[var(--border)] rounded-full overflow-hidden relative">
-                  <Image src={t.img} alt={t.author} fill className="object-cover" referrerPolicy="no-referrer" />
+                  <Image src={t.img} alt={t.author} fill sizes="48px" className="object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div>
                   <h4 className="font-bold text-[var(--text-main)]">{t.author}</h4>
