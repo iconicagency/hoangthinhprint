@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { fetchWP, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
+import SafeHtml from '../components/SafeHtml';
 
 const PER_PAGE = 100; // WPGraphQL gioi han toi da 100 bai/query
 
@@ -173,7 +174,7 @@ function ProductsContent() {
             <span className="text-[var(--text-main)] font-medium">Sản phẩm</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight">{pageData?.title || 'Tất cả sản phẩm'}</h1>
-          {pageData?.content && <div className="text-[var(--text-dim)] mt-3 max-w-2xl text-lg" dangerouslySetInnerHTML={{ __html: pageData.content }} />}
+          {pageData?.content && <SafeHtml className="text-[var(--text-dim)] mt-3 max-w-2xl text-lg" html={pageData.content} />}
         </div>
       </section>
 
