@@ -3,7 +3,8 @@
 // khi import vao server component se thanh client reference (khong con la string),
 // khien query gui len WP thanh rac va tra ve null.
 
-export const PER_PAGE = 24;
+// So san pham moi khung slide (xem ProductsClient.tsx — SLIDE_SIZE = PER_PAGE)
+export const PER_PAGE = 16;
 
 // Lay danh muc con cua "san-pham" truc tiep tu WordPress
 export const PRODUCT_CATS_QUERY = `
