@@ -2,8 +2,8 @@
 // - Nhan initialData render san tu server (page.tsx) → san pham hien ngay trong HTML,
 //   khong con man hinh cho + fetch chain khi mo trang
 // - Trang dau 24 san pham (truoc day 100 — query WP rat nang), cuon xuong tu tai them
-// - Danh muc lay DONG tu WordPress (children cua category san-pham)
-// - Filter mobile: 1 hang truot ngang (snap, an scrollbar), desktop: wrap
+// - Neu server render fail (initialData rong) → client tu fetch lai nhu cu
+// - Query/hang so dung chung nam o ./queries.ts (KHONG import nguoc tu file use client)
 'use client';
 
 import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
@@ -14,8 +14,7 @@ import { useSearchParams } from 'next/navigation';
 import { fetchWP, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
 import SafeHtml from '../components/SafeHtml';
-
-export const PER_PAGE = 24;
+import { PER_PAGE, PRODUCT_CATS_QUERY, GALLERY_QUERY, type ProductsInitialData } from './queries';
 
 // Fallback khi khong ket noi duoc WP — khop voi danh muc trong admin
 const FALLBACK_CATS = [
@@ -31,45 +30,13 @@ const FALLBACK_CATS = [
   { slug: 'tui-giay', name: 'Túi giấy', count: 0 },
 ];
 
-// Lay danh muc con cua "san-pham" truc tiep tu WordPress
-export const PRODUCT_CATS_QUERY = `
-  query GetProductCats {
-    category(id: "san-pham", idType: SLUG) {
-      children(first: 50) {
-        nodes { name slug count }
-      }
-    }
-  }
-`;
-
-export const GALLERY_QUERY = `
-  query GetGallery($first: Int!, $categorySlug: String!, $after: String) {
-    posts(first: $first, after: $after, where: {categoryName: $categorySlug, orderby: {field: DATE, order: DESC}}) {
-      pageInfo { hasNextPage endCursor }
-      nodes {
-        id title slug
-        featuredImage { node { sourceUrl } }
-        categories { nodes { name slug } }
-      }
-    }
-  }
-`;
-
-export interface ProductsInitialData {
-  cat: string;
-  products: any[];
-  hasNextPage: boolean;
-  endCursor: string | null;
-  categories: any[];
-  pageData: any;
-}
-
 function ProductsContent({ initialData }: { initialData?: ProductsInitialData }) {
   const searchParams = useSearchParams();
   const catFromUrl = searchParams.get('cat') || 'tat-ca';
 
-  // Neu server da render san dung category dang xem → dung luon, khong fetch lai
-  const hasInitial = !!initialData && initialData.cat === catFromUrl;
+  // Chi dung initialData khi server render DUNG category dang xem VA co san pham that
+  // (server fail → products rong → de client tu fetch lai)
+  const hasInitial = !!initialData && initialData.cat === catFromUrl && initialData.products.length > 0;
 
   const [activeSlug, setActiveSlug] = useState(catFromUrl);
   const [cmsProducts, setCmsProducts] = useState<any[]>(hasInitial ? initialData!.products : []);
