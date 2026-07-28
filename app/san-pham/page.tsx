@@ -1,6 +1,7 @@
 import { getPageMetadata } from '../lib/seo';
 import { fetchWP, getPageBySlug } from '../lib/wp';
-import ProductsClient, { GALLERY_QUERY, PRODUCT_CATS_QUERY, PER_PAGE, type ProductsInitialData } from './ProductsClient';
+import ProductsClient from './ProductsClient';
+import { GALLERY_QUERY, PRODUCT_CATS_QUERY, PER_PAGE, type ProductsInitialData } from './queries';
 
 export async function generateMetadata() {
   return getPageMetadata('san-pham', {
@@ -12,6 +13,8 @@ export async function generateMetadata() {
 // SSR trang dau: fetch san pham + danh muc NGAY TREN SERVER (WP data da cache 60s)
 // → HTML tra ve co san 24 san pham dau tien, khong con man hinh cho + fetch chain phia client.
 // Client chi fetch them khi cuon xuong hoac doi danh muc.
+// LUU Y: query import tu ./queries (module thuong) — KHONG import tu ProductsClient
+// vi moi export cua module 'use client' se thanh client reference trong server component.
 export default async function SanPhamPage({
   searchParams,
 }: {
