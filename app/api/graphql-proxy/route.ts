@@ -58,11 +58,15 @@ export async function POST(request: Request) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 55000);
 
+    // CACHE 120s trong Next Data Cache (key = URL + body):
+    // cung mot query + variables → khach sau lay tu cache Vercel (vai ms)
+    // thay vi cho WordPress xu ly lai (co the vai giay).
+    // Site chi co query doc du lieu (mutation da bi chan o tren) nen cache an toan.
     const res = await fetch(wpUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables: body?.variables }),
-      cache: 'no-store',
+      next: { revalidate: 120 },
       signal: controller.signal,
     });
 
