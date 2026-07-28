@@ -1,7 +1,8 @@
 // ProductsClient.tsx — Client Component trang san pham
+// - Nhan initialData render san tu server (page.tsx) → san pham hien ngay trong HTML,
+//   khong con man hinh cho + fetch chain khi mo trang
+// - Trang dau 24 san pham (truoc day 100 — query WP rat nang), cuon xuong tu tai them
 // - Danh muc lay DONG tu WordPress (children cua category san-pham)
-//   → them/xoa/doi ten danh muc trong WP Admin, filter tu cap nhat
-// - Fetch theo category dang xem + phan trang cursor (nut Xem them)
 // - Filter mobile: 1 hang truot ngang (snap, an scrollbar), desktop: wrap
 'use client';
 
@@ -14,7 +15,7 @@ import { fetchWP, getPageBySlug } from '../lib/wp';
 import Lightbox from '../components/Lightbox';
 import SafeHtml from '../components/SafeHtml';
 
-const PER_PAGE = 100; // WPGraphQL gioi han toi da 100 bai/query
+export const PER_PAGE = 24;
 
 // Fallback khi khong ket noi duoc WP — khop voi danh muc trong admin
 const FALLBACK_CATS = [
@@ -31,7 +32,7 @@ const FALLBACK_CATS = [
 ];
 
 // Lay danh muc con cua "san-pham" truc tiep tu WordPress
-const PRODUCT_CATS_QUERY = `
+export const PRODUCT_CATS_QUERY = `
   query GetProductCats {
     category(id: "san-pham", idType: SLUG) {
       children(first: 50) {
@@ -41,7 +42,7 @@ const PRODUCT_CATS_QUERY = `
   }
 `;
 
-const GALLERY_QUERY = `
+export const GALLERY_QUERY = `
   query GetGallery($first: Int!, $categorySlug: String!, $after: String) {
     posts(first: $first, after: $after, where: {categoryName: $categorySlug, orderby: {field: DATE, order: DESC}}) {
       pageInfo { hasNextPage endCursor }
@@ -54,23 +55,38 @@ const GALLERY_QUERY = `
   }
 `;
 
-function ProductsContent() {
+export interface ProductsInitialData {
+  cat: string;
+  products: any[];
+  hasNextPage: boolean;
+  endCursor: string | null;
+  categories: any[];
+  pageData: any;
+}
+
+function ProductsContent({ initialData }: { initialData?: ProductsInitialData }) {
   const searchParams = useSearchParams();
   const catFromUrl = searchParams.get('cat') || 'tat-ca';
 
+  // Neu server da render san dung category dang xem → dung luon, khong fetch lai
+  const hasInitial = !!initialData && initialData.cat === catFromUrl;
+
   const [activeSlug, setActiveSlug] = useState(catFromUrl);
-  const [cmsProducts, setCmsProducts] = useState<any[]>([]);
-  const [endCursor, setEndCursor] = useState<string | null>(null);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [wpCategories, setWpCategories] = useState<any[]>([]);
-  const [pageData, setPageData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [cmsProducts, setCmsProducts] = useState<any[]>(hasInitial ? initialData!.products : []);
+  const [endCursor, setEndCursor] = useState<string | null>(hasInitial ? initialData!.endCursor : null);
+  const [hasNextPage, setHasNextPage] = useState(hasInitial ? initialData!.hasNextPage : false);
+  const [wpCategories, setWpCategories] = useState<any[]>(initialData?.categories?.length ? initialData.categories : []);
+  const [pageData, setPageData] = useState<any>(initialData?.pageData || null);
+  const [loading, setLoading] = useState(!hasInitial);
   const [loadingMore, setLoadingMore] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const skipFirstLoadRef = useRef(hasInitial);
 
-  // Danh muc + page info: chi tai 1 lan
+  // Danh muc + page info: chi tai khi server chua cung cap
   useEffect(() => {
+    if (initialData?.categories?.length) return;
     async function loadMeta() {
       try {
         const [catsData, pData] = await Promise.all([
@@ -85,6 +101,7 @@ function ProductsContent() {
       }
     }
     loadMeta();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Dong bo activeSlug voi URL (?cat=...)
@@ -97,8 +114,12 @@ function ProductsContent() {
   }, [activeSlug, wpCategories.length]);
 
   // Moi khi doi category: reset va tai trang dau tien
-  // "Tat ca" fetch theo slug cha "san-pham" — WordPress tu bao gom moi danh muc con
+  // (bo qua lan dau neu server da render san — tranh fetch trung)
   useEffect(() => {
+    if (skipFirstLoadRef.current) {
+      skipFirstLoadRef.current = false;
+      return;
+    }
     let cancelled = false;
     async function loadFirstPage() {
       setLoading(true);
@@ -123,7 +144,7 @@ function ProductsContent() {
     return () => { cancelled = true; };
   }, [activeSlug]);
 
-  // Nut "Xem them": tai trang tiep theo
+  // Tai trang tiep theo (goi tu nut "Xem them" hoac tu dong khi cuon gan cuoi)
   const loadMore = useCallback(async () => {
     if (!hasNextPage || loadingMore || !endCursor) return;
     setLoadingMore(true);
@@ -142,6 +163,18 @@ function ProductsContent() {
       setLoadingMore(false);
     }
   }, [activeSlug, endCursor, hasNextPage, loadingMore]);
+
+  // Infinite scroll: cuon toi gan cuoi danh sach → tu tai trang tiep theo
+  useEffect(() => {
+    if (!hasNextPage) return;
+    const el = sentinelRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) loadMore();
+    }, { rootMargin: '800px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNextPage, loadMore]);
 
   const products = cmsProducts.map(p => {
     const subCat = p.categories?.nodes?.find((c: any) => c.slug !== 'san-pham');
@@ -234,6 +267,9 @@ function ProductsContent() {
               ))}
             </div>
 
+            {/* Sentinel cho infinite scroll — cuon toi day tu tai trang tiep */}
+            <div ref={sentinelRef} aria-hidden="true"></div>
+
             {hasNextPage && (
               <div className="mt-12 text-center">
                 <button
@@ -263,10 +299,10 @@ function ProductsContent() {
   );
 }
 
-export default function ProductsClient() {
+export default function ProductsClient({ initialData }: { initialData?: ProductsInitialData }) {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--accent)] border-t-transparent"></div></div>}>
-      <ProductsContent />
+      <ProductsContent initialData={initialData} />
     </Suspense>
   );
 }
