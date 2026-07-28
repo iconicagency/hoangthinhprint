@@ -4,12 +4,17 @@
 // - Uu tien: bai viet san pham gan tag "tieu-bieu" (chon san pham that tu muc Post)
 // - Fallback: CPT "cacDuAn" nhu cu neu chua co bai nao gan tag
 // - Filter danh muc tu dong build tu san pham dang hien thi
+// - Hien thi dang SLIDE (dong bo voi trang /san-pham): moi khung toi da 16 san pham,
+//   dieu huong bang nut Truoc/Sau. Du lieu da tai het tu dau (toi da 100 item gan tag
+//   tieu-bieu) nen phan trang slide chi la cat mang phia client, khong can fetch them.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
 import { getProjects, getPageBySlug, fetchWP } from '../lib/wp';
+
+const SLIDE_SIZE = 16;
 
 const FEATURED_PRODUCTS_QUERY = `
   query GetFeaturedProducts($first: Int!) {
@@ -29,6 +34,7 @@ export default function Projects() {
   const [products, setProducts] = useState<any[]>([]);
   const [pageData, setPageData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     async function loadData() {
@@ -81,6 +87,20 @@ export default function Projects() {
   const filteredProducts = activeCategory === 'Tất cả'
     ? products
     : products.filter(p => p.category === activeCategory);
+
+  // Doi danh muc → quay ve slide dau
+  useEffect(() => { setCurrentSlide(0); }, [activeCategory]);
+
+  const totalSlides = Math.max(1, Math.ceil(filteredProducts.length / SLIDE_SIZE));
+  const safeSlide = Math.min(currentSlide, totalSlides - 1);
+  const isLastSlide = safeSlide >= totalSlides - 1;
+  const visibleProducts = useMemo(
+    () => filteredProducts.slice(safeSlide * SLIDE_SIZE, safeSlide * SLIDE_SIZE + SLIDE_SIZE),
+    [filteredProducts, safeSlide]
+  );
+
+  const goToPrevSlide = () => setCurrentSlide(s => Math.max(0, s - 1));
+  const goToNextSlide = () => setCurrentSlide(s => (s >= totalSlides - 1 ? s : s + 1));
 
   return (
     <div className="bg-[var(--bg)] text-[var(--text-main)] font-sans">
@@ -170,43 +190,98 @@ export default function Projects() {
           </div>
         )}
 
-        {/* Product Grid */}
+        {/* Product Slide */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => <div key={i} className="animate-pulse bg-slate-200 rounded-xl aspect-square"></div>)}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
+            {[...Array(SLIDE_SIZE)].map((_, i) => <div key={i} className="animate-pulse bg-slate-200 rounded-xl aspect-square"></div>)}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                onClick={() => setSelectedImage({ img: product.img, title: product.title })}
-                className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
-              >
-                <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
-                  <Image
-                    src={product.img}
-                    alt={product.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                    unoptimized
-                  />
-                </div>
-                <div className="p-5">
-                  <h3 className="font-bold text-[var(--text-main)] text-sm mb-2 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
-                    {product.title}
-                  </h3>
-                  <div className="text-xs font-medium text-[var(--accent)]">
-                    {product.tag}
+        ) : filteredProducts.length > 0 ? (
+          <>
+            <div className="relative">
+              {/* Khung slide: toi da 16 san pham, chuyen slide co hieu ung fade + truot nhe */}
+              <div key={safeSlide} className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                {visibleProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    onClick={() => setSelectedImage({ img: product.img, title: product.title })}
+                    className="bg-[var(--card-bg)] rounded-xl overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-[var(--bg)]">
+                      <Image
+                        src={product.img}
+                        alt={product.title}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        referrerPolicy="no-referrer"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-[var(--text-main)] text-sm mb-2 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
+                        {product.title}
+                      </h3>
+                      <div className="text-xs font-medium text-[var(--accent)]">
+                        {product.tag}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
 
-        {!loading && filteredProducts.length === 0 && (
+              {/* Nut truot slide — chi hien khi co hon 1 slide */}
+              {totalSlides > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={goToPrevSlide}
+                    disabled={safeSlide === 0}
+                    aria-label="Slide trước"
+                    className="hidden sm:flex absolute top-1/2 -left-5 -translate-y-1/2 z-10 items-center justify-center w-11 h-11 rounded-full bg-white border border-[var(--border)] shadow-md hover:bg-[var(--card-bg)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNextSlide}
+                    disabled={isLastSlide}
+                    aria-label="Slide sau"
+                    className="hidden sm:flex absolute top-1/2 -right-5 -translate-y-1/2 z-10 items-center justify-center w-11 h-11 rounded-full bg-white border border-[var(--border)] shadow-md hover:bg-[var(--card-bg)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Dieu huong slide + trang hien tai — chi hien khi co hon 1 slide */}
+            {totalSlides > 1 && (
+              <div className="mt-10 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  onClick={goToPrevSlide}
+                  disabled={safeSlide === 0}
+                  className="sm:hidden inline-flex items-center gap-1.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-main)] font-medium px-4 py-2.5 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                  Trước
+                </button>
+                <span className="text-sm font-medium text-[var(--text-dim)] tabular-nums">
+                  Slide {safeSlide + 1} / {totalSlides}
+                </span>
+                <button
+                  type="button"
+                  onClick={goToNextSlide}
+                  disabled={isLastSlide}
+                  className="sm:hidden inline-flex items-center gap-1.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-main)] font-medium px-4 py-2.5 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Sau
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
           <div className="text-center py-20 text-[var(--text-dim)]">
             Chưa có sản phẩm tiêu biểu. Gắn tag &quot;tieu-bieu&quot; vào bài viết sản phẩm trong WP Admin để hiển thị tại đây.
           </div>
