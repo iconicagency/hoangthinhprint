@@ -279,25 +279,22 @@ function ProductsContent({ initialData }: { initialData?: ProductsInitialData })
               </button>
             </div>
 
-            {/* Dieu huong slide + trang hien tai — luon hien, ca mobile (thay the nut mui ten khi khong du cho) */}
-            <div className="mt-10 flex items-center justify-center gap-4">
+            {/* Dieu huong slide tren mobile (khong co mui ten 2 ben nhu desktop) */}
+            <div className="mt-10 flex sm:hidden items-center justify-center gap-4">
               <button
                 type="button"
                 onClick={goToPrevSlide}
                 disabled={currentSlide === 0}
-                className="sm:hidden inline-flex items-center gap-1.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-main)] font-medium px-4 py-2.5 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-main)] font-medium px-4 py-2.5 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                 Trước
               </button>
-              <span className="text-sm font-medium text-[var(--text-dim)] tabular-nums">
-                Slide {currentSlide + 1} / {totalSlides}
-              </span>
               <button
                 type="button"
                 onClick={goToNextSlide}
                 disabled={isLastSlide || loadingMore}
-                className="sm:hidden inline-flex items-center gap-1.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-main)] font-medium px-4 py-2.5 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--text-main)] font-medium px-4 py-2.5 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Sau
                 {loadingMore ? (
